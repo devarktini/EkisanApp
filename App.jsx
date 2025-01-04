@@ -53,7 +53,12 @@ export default function App() {
       <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
           {isFirstLaunch ? (
+            <>
             <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+            <Stack.Screen name="Landing" component={OnLandingScreen} />
+            <Stack.Screen name="Main" component={DrawerNavigator} />
+            </>
+            
           ) : (
             <>
             <Stack.Screen name="Landing" component={OnLandingScreen} />
