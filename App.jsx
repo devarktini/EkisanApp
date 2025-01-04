@@ -7,7 +7,8 @@ import DrawerNavigator from "./src/navigation/DrawerNavigator";
 import SplashScreen from './src/components/SplashScreen ';
 import OnboardingScreen from './src/screens/OnboardingScreen ';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Text, View } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
+import "./global.css"
 
 export default function App() {
  
@@ -47,7 +48,7 @@ export default function App() {
   }
   return (
     <SafeAreaProvider>
-      {/* <NavigationContainer>
+      <NavigationContainer>
       {isFirstLaunch ? (
           // Show OnboardingScreen if it's the first launch
           <OnboardingScreen  />
@@ -55,10 +56,7 @@ export default function App() {
           // Show DrawerNavigator if it's not the first launch
           <DrawerNavigator />
         )}
-      </NavigationContainer> */}
-      <View>
-        <Text className="text-6xl font-bold">App Component</Text>
-      </View>
+      </NavigationContainer>
     </SafeAreaProvider>
   );
 }
