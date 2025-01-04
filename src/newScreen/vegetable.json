@@ -1,0 +1,88 @@
+{
+    "veges":[
+        {
+            "name":"Tomatoes",
+            "rating":"4.5",
+            "discount":"02:48:26 20%",
+            "price":"$2.99/lb",
+            "img":"image"
+        },
+        {
+            "name":"Carrots",
+            "rating":"4.5",
+            "discount":"02:48:26 20%",
+            "price":"$2.99/lb",
+            "img":"image"
+        },
+        {
+            "name":"Brocoli",
+            "rating":"4.5",
+            "discount":"02:48:26 20%",
+            "price":"$2.99/lb",
+            "img":"image",
+            "msg":"Broccoli is a cruciferous vegetable that is a nutritional powerhouse.It is rich in vitamins, minerals, fiber, and antioxidants. Broccoli can be eaten raw or cooked, and it is a versatile "
+        },
+        {
+            "name":"Potatoes",
+            "rating":"4.5",
+            "discount":"02:48:26 20%",
+            "price":"$2.99/lb",
+            "img":"image"
+        }
+    ],
+    "offers":[
+        {
+            "name":"Spinach",
+            "rating":"4.5",
+            "discount":"02:48:26 20%",
+            "price":"$2.99/lb",
+            "img":"image"
+        },
+        {
+            "name":"Potatoes",
+            "rating":"4.5",
+            "discount":"02:48:26 20%",
+            "price":"$2.99/lb",
+            "img":"image"
+        },
+        {
+            "name":"Onion",
+            "rating":"4.5",
+            "discount":"02:48:26 20%",
+            "price":"$2.99/lb",
+            "img":"image"
+        },
+        {
+            "name":"Carrots",
+            "rating":"4.5",
+            "discount":"02:48:26 20%",
+            "price":"$2.99/lb",
+            "img":"image"
+        }
+    ],
+    "Extra":{"name":"Special Offer",
+            "msg":"Take advantage of our special offers on fresh vegetables. Enjoy discounts on a variety of vegetables, including broccoli, carrots, spinach, and tomatoes. Our vegetables are sourced from "
+            },
+    "electonics":[
+        {
+            "name":"Apple iPhone",
+            "price":"$799",
+            "img":"image"
+        },
+        {
+            "name":"Sony",
+            "price":"$799",
+            "img":"image"
+        },
+        {
+            "name":"MI",
+            "price":"$799",
+            "img":"image"
+        },
+        {
+            "name":"Lenovo",
+            "price":"$799",
+            "img":"image"
+        }
+    ]
+}
