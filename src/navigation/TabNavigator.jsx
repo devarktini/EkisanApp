@@ -18,6 +18,7 @@ const TabNavigator = () => {
           if (route.name === "HomeTab") iconName = "home";
           else if (route.name === "Profile") iconName = "user";
           else if (route.name === "Settings") iconName = "settings";
+          else if (route.name === "Set") iconName = "trending-up";
           return <Feather name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#10B981",
@@ -27,6 +28,7 @@ const TabNavigator = () => {
       <Tab.Screen name="HomeTab" component={HomeTab} options={{ title: "Home" }} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
       <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen name="Set" component={SettingsScreen} />
     </Tab.Navigator>
   );
 };
