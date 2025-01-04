@@ -6,7 +6,7 @@ const HomeTab = () => {
   return (
     <SafeAreaView className="flex-1 bg-gray-100">
       <View className="flex-1 justify-center items-center">
-        <Text className="text-xl font-bold">Home Tab</Text>
+        <Text className="text-xl font-bold">Home</Text>
       </View>
     </SafeAreaView>
   );

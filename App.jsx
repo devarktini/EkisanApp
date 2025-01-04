@@ -4,12 +4,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 // import * as SplashScreen from "expo-splash-screen";
 import DrawerNavigator from "./src/navigation/DrawerNavigator";
+import { createStackNavigator } from "@react-navigation/stack";
 import SplashScreen from './src/components/SplashScreen ';
 import OnboardingScreen from './src/screens/OnboardingScreen ';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text, View, TouchableOpacity } from 'react-native';
 import "./global.css"
-
+const Stack = createStackNavigator();
 export default function App() {
  
   const [isSplashVisible, setSplashVisible] = useState(true);
@@ -49,13 +50,14 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-      {isFirstLaunch ? (
-          // Show OnboardingScreen if it's the first launch
-          <OnboardingScreen  />
-        ) : (
-          // Show DrawerNavigator if it's not the first launch
-          <DrawerNavigator />
-        )}
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+          {isFirstLaunch ? (
+            <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+          ) : (
+            <Stack.Screen name="Main" component={DrawerNavigator} />
+            // <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+          )}
+        </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
   );

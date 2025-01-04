@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, Text, Button, StyleSheet, Image, ScrollView, SafeAreaView } from 'react-native';
 
 const OnboardingScreen = () => {
     const navigation = useNavigation();
@@ -28,37 +28,49 @@ const OnboardingScreen = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      navigation.navigate('HomeTabs'); // Redirect to main app after onboarding
+      navigation.navigate('HomeTab'); // Redirect to main app after onboarding
     }
   };
 
   const handleSkip = () => {
-    navigation.navigate('HomeTabs'); // Redirect to main app if skipped
+    navigation.navigate('HomeTab'); // Redirect to main app if skipped
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Image source={steps[currentStep].image} style={styles.image} />
-      <Text className="text-xl font-bold text-red-500" >{steps[currentStep].title}</Text>
-      <Text style={styles.subtitle}>{steps[currentStep].subtitle}</Text>
+    <SafeAreaView style={styles.container}>
+      <View className="flex-1 items-center mt-[50%] justify-center">
 
-      {currentStep !== steps.length - 1 && (
-        <Button className={""} title="Skip" onPress={handleSkip} />
-      )}
+     
+      <ScrollView   contentContainerStyle={styles.scrollView}>
+        <Image  source={steps[currentStep].image} style={styles.image} />
+        <Text style={styles.title}>{steps[currentStep].title}</Text>
+        <Text className="text-center text-4xl" style={styles.subtitle}>{steps[currentStep].subtitle}</Text>
+      </ScrollView>
+      </View>
 
-      <Button
-        title={currentStep === steps.length - 1 ? 'Get Started' : 'Next'}
-        onPress={handleNext}
-      />
-    </ScrollView>
+      <View style={styles.buttonContainer}>
+        {currentStep !== steps.length - 1 && (
+          <View style={styles.skipButtonContainer}>
+            <Text style={styles.skipButtonText} onPress={handleSkip}>Skip</Text>
+          </View>
+        )}
+
+        <Button
+        className="flex-1 items-center justify-center text-red-600"
+          title={currentStep === steps.length - 1 ? 'Get Started' : 'Next'}
+          onPress={handleNext}
+          style={[styles.button, { alignSelf: 'flex-end' }]}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  },
+  scrollView: {
     padding: 16,
   },
   image: {
@@ -77,6 +89,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#007540',
+    padding: 16,
+  },
+  button: {
+    flex: 1,
+    marginHorizontal: 16,
+    backgroundColor: '#007540',
+  },
 });
 
 export default OnboardingScreen;
+
