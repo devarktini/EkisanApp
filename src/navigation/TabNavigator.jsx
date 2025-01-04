@@ -18,7 +18,6 @@ const TabNavigator = () => {
           if (route.name === "HomeTab") iconName = "home";
           else if (route.name === "Profile") iconName = "user";
           else if (route.name === "Settings") iconName = "settings";
-
           return <Feather name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#10B981",

@@ -10,6 +10,7 @@ import OnboardingScreen from './src/screens/OnboardingScreen ';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text, View, TouchableOpacity } from 'react-native';
 import "./global.css"
+import OnLandingScreen from './src/screens/OnLandingScreen';
 const Stack = createStackNavigator();
 export default function App() {
  
@@ -54,7 +55,11 @@ export default function App() {
           {isFirstLaunch ? (
             <Stack.Screen name="Onboarding" component={OnboardingScreen} />
           ) : (
+            <>
+            <Stack.Screen name="Landing" component={OnLandingScreen} />
             <Stack.Screen name="Main" component={DrawerNavigator} />
+            </>
+            
             // <Stack.Screen name="Onboarding" component={OnboardingScreen} />
           )}
         </Stack.Navigator>

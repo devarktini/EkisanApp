@@ -28,12 +28,12 @@ const OnboardingScreen = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      navigation.navigate('HomeTab'); // Redirect to main app after onboarding
+      navigation.navigate('Landing'); // Redirect to main app after onboarding
     }
   };
 
   const handleSkip = () => {
-    navigation.navigate('HomeTab'); // Redirect to main app if skipped
+    navigation.navigate('Landing'); // Redirect to main app if skipped
   };
 
   return (
