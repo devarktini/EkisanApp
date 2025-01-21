@@ -1,42 +1,37 @@
-import 'react-native-gesture-handler';
-import React, { useEffect, useState} from "react";
+// App.js
+import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
+
 import { SafeAreaProvider } from "react-native-safe-area-context";
-// import * as SplashScreen from "expo-splash-screen";
-import DrawerNavigator from "./src/navigation/DrawerNavigator";
-import { createStackNavigator } from "@react-navigation/stack";
-import SplashScreen from './src/components/SplashScreen ';
-import OnboardingScreen from './src/screens/OnboardingScreen ';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Text, View, TouchableOpacity } from 'react-native';
-import "./global.css"
-import OnLandingScreen from './src/screens/OnLandingScreen';
-const Stack = createStackNavigator();
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { CartProvider } from "./src/context/CartContext"; // Import the CartProvider
+import AppNavigator from "./src/navigation/AppNavigator"; // Use the updated AppNavigator
+import SplashScreen from "./src/components/SplashScreen ";
+import { ActivityIndicator, View } from "react-native"; // Import ActivityIndicator for loading state
+import "./global.css";
+import Toast from 'react-native-toast-message';
+import { toastConfig } from './toastConfig';
 export default function App() {
- 
   const [isSplashVisible, setSplashVisible] = useState(true);
-  const [isFirstLaunch, setIsFirstLaunch] = useState(null);
+  const [isFirstLaunch, setIsFirstLaunch] = useState(false); // Initialize to false
 
-  const handleSplashFinish = () => {
-    setSplashVisible(false);
-  };
+  const handleSplashFinish = () => setSplashVisible(false);
 
-  // Wait until AsyncStorage is checked before rendering the app
   useEffect(() => {
     const checkFirstLaunch = async () => {
       try {
-        const value = await AsyncStorage.getItem('alreadyLaunched');
-        if (value == null) {
+        const value = await AsyncStorage.getItem("alreadyLaunched");
+        console.log("First Launch Value:", value); // Debug log
+        if (value === null) {
           setIsFirstLaunch(true);
-          await AsyncStorage.setItem('alreadyLaunched', 'true');
+          await AsyncStorage.setItem("alreadyLaunched", "true");
         } else {
           setIsFirstLaunch(false);
         }
       } catch (error) {
-        console.log('Error checking first launch: ', error);
+        console.log("Error checking first launch: ", error);
       }
     };
-
     checkFirstLaunch();
   }, []);
 
@@ -45,30 +40,22 @@ export default function App() {
   }
 
   if (isFirstLaunch === null) {
-    // Return null or a loading spinner while checking the first launch
-    return null;
+    // Render a loading spinner or placeholder while checking the first launch status
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
   }
+
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {isFirstLaunch ? (
-            <>
-            <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-            <Stack.Screen name="Landing" component={OnLandingScreen} />
-            <Stack.Screen name="Main" component={DrawerNavigator} />
-            </>
-            
-          ) : (
-            <>
-            <Stack.Screen name="Landing" component={OnLandingScreen} />
-            <Stack.Screen name="Main" component={DrawerNavigator} />
-            </>
-            
-            // <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
+      <CartProvider>
+        <NavigationContainer>
+          <AppNavigator isFirstLaunch={isFirstLaunch} />
+        </NavigationContainer>
+      </CartProvider>
+      <Toast config={toastConfig} />
     </SafeAreaProvider>
   );
 }
