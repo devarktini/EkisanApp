@@ -16,6 +16,8 @@ import UserProfile from "../screens/UserProfile";
 import ProductDetails from "../screens/ProductDetails";
 import CartScreen from "../screens/CartScreen";
 import ShoppingCart from "../screens/ShoppingCart";
+import SignInScreen from "../screens/SignInScreen";
+import SignupScreen from "../screens/SignupScreen";
 
 const Stack = createStackNavigator();
 
@@ -27,6 +29,8 @@ const AppNavigator = ({ isFirstLaunch }) => {
           <Stack.Screen name="Onboarding" component={OnboardingScreen} />
           <Stack.Screen name="Landing" component={OnLandingScreen} />
           <Stack.Screen name="Main" component={DrawerNavigator} />
+          <Stack.Screen name="SignIn" component={SignInScreen} />
+          <Stack.Screen name="SignUp" component={SignupScreen} />
         </React.Fragment>
       ) : (
         <React.Fragment>
@@ -36,6 +40,8 @@ const AppNavigator = ({ isFirstLaunch }) => {
           <Stack.Screen name="Category" component={CategoryProduct} />
           <Stack.Screen name="Checkout" component={CheckoutScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="SignIn" component={SignInScreen} />
+          <Stack.Screen name="SignUp" component={SignupScreen} />
           <Stack.Screen name="OtpScreen" component={OTPScreen} />
           <Stack.Screen name="PersonalInfo" component={PersonalDetails} />
           <Stack.Screen name="Product" component={ProductAddress} />

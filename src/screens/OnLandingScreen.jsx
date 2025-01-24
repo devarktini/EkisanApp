@@ -8,7 +8,7 @@ const OnLandingScreen = () => {
 
     // You can add any logic or UI elements here for the landing screen.
  const onGoToHome = () => {
-        navigation.navigate('Login');
+        navigation.navigate('SignIn');
     };
   return (
     <View className=" relative h-full w-full">
