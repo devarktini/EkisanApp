@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
-import { getAuth, signInWithPhoneNumber } from "firebase/auth";
-import { auth } from "../firebase/firebase"; // Adjust the path to your firebase config file
-
+import React, { useRef, useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, StyleSheet } from "react-native";
+import { getAuth, signInWithPhoneNumber, RecaptchaVerifier } from "firebase/auth";
+import { auth, app } from "../../firebase.config"; // Adjust the path to your firebase config file
+import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
+import { Button } from "react-native";
 const LoginScreen = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [loading, setLoading] = useState(false);
@@ -14,19 +15,29 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
+  const auth = getAuth(app);
+  const recaptchaVerifier = useRef(null);
+
   const handleLogin = async () => {
     if (phoneNumber.length === 10) {
       setLoading(true);
       try {
         const formattedPhoneNumber = `+91${phoneNumber}`; // Adjust country code as needed
-        const authInstance = getAuth(); // Get the auth instance
-        const confirmation = await signInWithPhoneNumber(authInstance, formattedPhoneNumber); // Use modular function
-        setLoading(false);
-        console.log("Confirmation object:", confirmation); // Debugging: Log the confirmation object
-        navigation.navigate("OtpScreen", { confirmation });
+        const verificationId = await signInWithPhoneNumber(auth, formattedPhoneNumber, recaptchaVerifier.current);
+        console.log("verificationId:", verificationId);
+         setLoading(false);
+        console.log("Confirmation object:", verificationId); // Debugging: Log the confirmation object
+        navigation.navigate("OtpScreen", { verificationId });
       } catch (error) {
+        if (error.code === "auth/too-many-requests") {
+          console.error("Too many requests! Please try again later.");
+          alert("Too many attempts! Please wait before trying again.");
+        } else {
+          console.error("Error during phone auth:", error.message);
+          Alert.alert("Error", error.message);
+        }
         setLoading(false);
-        Alert.alert("Error", error.message);
+        
       }
     } else {
       Alert.alert("Invalid Input", "Please enter a valid 10-digit phone number.");
@@ -35,6 +46,10 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, justifyContent: "center", padding: 20 }}>
+            <FirebaseRecaptchaVerifierModal
+        ref={recaptchaVerifier}
+        firebaseConfig={app.options}
+      />
       <Text style={{ textAlign: "center", fontSize: 18, fontWeight: "bold", marginBottom: 20 }}>Login</Text>
       <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 20 }}>Welcome Back!</Text>
       <TextInput
@@ -56,7 +71,31 @@ const LoginScreen = ({ navigation }) => {
         )}
       </TouchableOpacity>
     </View>
+
+
   );
 };
 
 export default LoginScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  title: {
+    fontSize: 20,
+    marginBottom: 20,
+  },
+  input: {
+    width: "100%",
+    height: 50,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+  },
+});

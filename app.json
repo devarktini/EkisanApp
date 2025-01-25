@@ -7,7 +7,6 @@
     "icon": "./assets/splash.png",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
-  
     "ios": {
       "supportsTablet": true
     },
@@ -15,11 +14,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.expo2331.ProjectFuncpro"
     },
     "web": {
       "bundler": "metro",
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a7254dd1-92e8-47d6-a6c4-548921ce6cc1"
+      }
     }
   }
 }
