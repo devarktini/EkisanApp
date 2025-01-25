@@ -1,4 +1,8 @@
 // App.js
+// import "expo-firebase-recaptcha/shims";
+// import "react-native-get-random-values";
+// import "@react-native-polyfills/base64";
+
 import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 

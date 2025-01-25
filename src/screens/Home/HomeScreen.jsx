@@ -41,122 +41,6 @@ const CategoryCircle = ({ image, name }) => {
   );
 };
 
-// const SaleCard = ({ title, description, image, buttonText, bgColor }) => (
-//   <TouchableOpacity className={`${bgColor} p-4 rounded-xl mx-2 my-2 flex-row justify-between items-center w-[300px]`}>
-//     <View className="flex-1">
-//       <Text className="text-lg font-bold text-white">{title}</Text>
-//       <Text className="text-sm text-white mt-1">{description}</Text>
-//       <TouchableOpacity className="bg-white rounded-full px-4 py-1.5 mt-2 self-start">
-//         <Text className="text-sm font-medium text-black">Shop Now →</Text>
-//       </TouchableOpacity>
-//     </View>
-//     <Image 
-//       source={{ uri: image }}
-//       className="w-24 h-24"
-//       resizeMode="contain"
-//     />
-//   </TouchableOpacity>
-// );
-
-// const ProductCard = ({ item }) => {
-//   const navigation = useNavigation();
-  
-//   return (
-//     <TouchableOpacity 
-//       className="w-[48%] mb-4 bg-white rounded-lg overflow-hidden"
-//       onPress={() => navigation.navigate('ProductDetails', { product: item })}
-//     >
-//       <Image
-//         source={{ uri: item.image }}
-//         className="w-full h-36"
-//         resizeMode="cover"
-//       />
-//       <View className="p-2">
-//         <Text className="text-sm font-medium" numberOfLines={2}>{item.name}</Text>
-//         <Text className="text-xs text-gray-500 mt-1">{item.description}</Text>
-//         <View className="flex-row items-center mt-1">
-//           <Text className="text-sm font-bold">${item.price}</Text>
-//           <View className="flex-row items-center ml-2">
-//             <Ionicons name="star" size={12} color="#FFD700" />
-//             <Text className="text-xs text-gray-500 ml-1">{item.rating}</Text>
-//           </View>
-//         </View>
-//       </View>
-//     </TouchableOpacity>
-//   );
-// };
-
-// const DealProduct = ({ item }) => {
-//   const navigation = useNavigation();
-  
-//   return (
-//     <TouchableOpacity 
-//       className="flex-1 mx-1 bg-white rounded-lg overflow-hidden"
-//       onPress={() => navigation.navigate('ProductDetails', { product: item })}
-//     >
-//       <Image
-//         source={{ uri: item.image }}
-//         className="w-full h-40"
-//         resizeMode="cover"
-//       />
-//       <View className="p-2">
-//         <Text className="text-sm font-medium" numberOfLines={2}>
-//           {item.name}
-//         </Text>
-//         <Text className="text-xs text-gray-500 mt-1" numberOfLines={1}>
-//           {item.description}
-//         </Text>
-//         <View className="flex-row items-center justify-between mt-1">
-//           <View>
-//             <Text className="text-sm font-bold">₹{item.price}</Text>
-//             {item.originalPrice && (
-//               <View className="flex-row items-center">
-//                 <Text className="text-xs text-gray-400 line-through">₹{item.originalPrice}</Text>
-//                 <Text className="text-xs text-red-500 ml-1">{item.discount}% OFF</Text>
-//               </View>
-//             )}
-//           </View>
-//           <View className="flex-row items-center">
-//             <Ionicons name="star" size={12} color="#FFD700" />
-//             <Text className="text-xs text-gray-500 ml-1">{item.rating}</Text>
-//           </View>
-//         </View>
-//       </View>
-//     </TouchableOpacity>
-//   );
-// };
-
-// const TrendingCard = ({ item }) => {
-//   const navigation = useNavigation();
-  
-//   return (
-//     <TouchableOpacity 
-//       className="w-[160px] mr-4 bg-white rounded-lg overflow-hidden shadow-md"
-//       onPress={() => {
-//         navigation.navigate('ProductDetails', { product: item });
-//       }}
-//     >
-//       <Image
-//         source={{ uri: item.image }}
-//         className="w-full h-40 rounded-t-lg"
-//         resizeMode="cover"
-//       />
-//       <View className="p-2">
-//         <Text className="text-sm font-medium" numberOfLines={2}>{item.name}</Text>
-//         <Text className="text-xs text-gray-500 mt-1" numberOfLines={1}>
-//           {item.description}
-//         </Text>
-//         <View className="flex-row items-center justify-between mt-1">
-//           <Text className="text-sm font-bold text-gray-900">${item.price}</Text>
-//           <View className="flex-row items-center">
-//             <Ionicons name="star" size={12} color="#FFD700" />
-//             <Text className="text-xs text-gray-500 ml-1">{item.rating}</Text>
-//           </View>
-//         </View>
-//       </View>
-//     </TouchableOpacity>
-//   );
-// };
 
 const HomeScreen = ({ navigation }) => {
   const categories = [
@@ -295,7 +179,7 @@ const HomeScreen = ({ navigation }) => {
             bgColor="bg-light-green-500"
           />
         </ScrollView> */}
-        <AppSlider/>
+        {/* <AppSlider/> */}
 
         {/* Special Offers */}
         <View className="mt-4 px-4">

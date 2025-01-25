@@ -1,38 +1,38 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
-import { getAuth } from "firebase/auth"; // Import from modular SDK
-import { auth } from "../firebase/firebase"; // Adjust the path to your firebase config file
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, StyleSheet } from "react-native";
+import { getAuth, PhoneAuthProvider, signInWithCredential } from "firebase/auth";
+import { auth } from "../../firebase.config"; // Adjust the path to your firebase config file
 
 const OTPScreen = ({ route, navigation }) => {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  const [counter, setCounter] = useState(60);
-  const { confirmation } = route.params;
 
-  useEffect(() => {
-    if (counter > 0) {
-      const timer = setTimeout(() => setCounter(counter - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [counter]);
+  const { verificationId } = route.params;
 
   const handleOtpChange = (text) => {
-    const cleanedText = text.replace(/[^0-9]/g, "");
-    if (cleanedText.length <= 6) {
-      setOtp(cleanedText);
-    }
+    setOtp(text);
   };
 
   const handleVerifyOtp = async () => {
     if (otp.length === 6) {
       setLoading(true);
       try {
-        await confirmation.confirm(otp);
+        console.log("verificationId:", verificationId); // Debugging: Log the verificationId
+        console.log("otp:", otp);
+        // Create the phone Auth credential with the verificationId and the OTP
+        const credential = PhoneAuthProvider.credential(verificationId.verificationId, otp);
+        
+        // Sign in with the credential
+        const userCredential = await signInWithCredential(auth, credential);
         setLoading(false);
-        navigation.navigate("Main");
+        console.log("User signed in successfully:", userCredential.user);
+        
+        // Navigate to the home screen or wherever you want after successful login
+        navigation.navigate("HomeScreen"); // Replace "HomeScreen" with your desired screen
       } catch (error) {
         setLoading(false);
-        Alert.alert("Error", "Invalid OTP");
+        console.error("Error during OTP verification:", error.message);
+        Alert.alert("Error", "Failed to verify OTP. Please try again.");
       }
     } else {
       Alert.alert("Invalid OTP", "Please enter a valid 6-digit OTP.");
@@ -40,25 +40,25 @@ const OTPScreen = ({ route, navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", padding: 20 }}>
-      <Text style={{ textAlign: "center", fontSize: 18, fontWeight: "bold", marginBottom: 20 }}>Enter OTP</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Enter OTP</Text>
       <TextInput
-        style={{ borderWidth: 1, borderColor: "#ccc", borderRadius: 5, padding: 10, marginBottom: 20 }}
-        placeholder="123456"
-        keyboardType="number-pad"
+        style={styles.input}
+        placeholder="Enter 6-digit OTP"
+        keyboardType="numeric"
         value={otp}
         onChangeText={handleOtpChange}
         maxLength={6}
       />
       <TouchableOpacity
-        style={{ backgroundColor: "#048404", borderRadius: 25, padding: 15, marginBottom: 20 }}
+        style={styles.button}
         onPress={handleVerifyOtp}
-        disabled={otp.length !== 6 || loading}
+        disabled={loading}
       >
         {loading ? (
           <ActivityIndicator color="#FFFFFF" />
         ) : (
-          <Text style={{ color: "#fff", textAlign: "center", fontSize: 18 }}>Verify OTP</Text>
+          <Text style={styles.buttonText}>Verify OTP</Text>
         )}
       </TouchableOpacity>
     </View>
@@ -66,3 +66,39 @@ const OTPScreen = ({ route, navigation }) => {
 };
 
 export default OTPScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  input: {
+    width: "100%",
+    height: 50,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+    fontSize: 18,
+  },
+  button: {
+    backgroundColor: "#048404",
+    borderRadius: 25,
+    padding: 15,
+    marginTop: 20,
+    width: "100%",
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+  },
+});

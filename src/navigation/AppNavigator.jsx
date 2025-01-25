@@ -30,6 +30,7 @@ const AppNavigator = ({ isFirstLaunch }) => {
           <Stack.Screen name="Landing" component={OnLandingScreen} />
           <Stack.Screen name="Main" component={DrawerNavigator} />
           <Stack.Screen name="SignIn" component={SignInScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="SignUp" component={SignupScreen} />
         </React.Fragment>
       ) : (
