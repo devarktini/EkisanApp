@@ -1,20 +1,16 @@
-// App.js
-// import "expo-firebase-recaptcha/shims";
-// import "react-native-get-random-values";
-// import "@react-native-polyfills/base64";
-
 import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CartProvider } from "./src/context/CartContext"; // Import the CartProvider
+import { FarmProvider } from "./src/context/FarmContext"; // Import the FarmProvider
 import AppNavigator from "./src/navigation/AppNavigator"; // Use the updated AppNavigator
-import SplashScreen from "./src/components/SplashScreen ";
+import SplashScreen from "./src/components/SplashScreen "; // Import the SplashScreen component
 import { ActivityIndicator, View } from "react-native"; // Import ActivityIndicator for loading state
 import "./global.css";
 import Toast from 'react-native-toast-message';
 import { toastConfig } from './toastConfig';
+
 export default function App() {
   const [isSplashVisible, setSplashVisible] = useState(true);
   const [isFirstLaunch, setIsFirstLaunch] = useState(false); // Initialize to false
@@ -54,11 +50,15 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <CartProvider>
-        <NavigationContainer>
-          <AppNavigator isFirstLaunch={isFirstLaunch} />
-        </NavigationContainer>
-      </CartProvider>
+      {/* Wrap the entire app with FarmProvider */}
+      <FarmProvider>
+        {/* Wrap the app with CartProvider */}
+        <CartProvider>
+          <NavigationContainer>
+            <AppNavigator isFirstLaunch={isFirstLaunch} />
+          </NavigationContainer>
+        </CartProvider>
+      </FarmProvider>
       <Toast config={toastConfig} />
     </SafeAreaProvider>
   );

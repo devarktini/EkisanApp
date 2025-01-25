@@ -2,6 +2,14 @@ import React from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { Feather } from "@expo/vector-icons";
+import FarmIcon from "../../assets/Framing.svg";
+import RentIcon from "../../assets/RentIcon.svg";
+import AccountIcon from "../../assets/AccountIcon.svg";
+import StoreIcon from "../../assets/StoreIcon.svg";
+import GroupIcon from "../../assets/GroupIcon.svg";
+import ExpertIcon from "../../assets/ExpertIcon.svg";
+
 const ProfileScreen = () => {
   const navigator = useNavigation();
   return (
@@ -14,14 +22,14 @@ const ProfileScreen = () => {
           }}
           className="w-full h-48"
         />
-        <TouchableOpacity className="absolute top-4 left-4 bg-white p-2 rounded-full shadow flex-row items-center"
+        <TouchableOpacity
+          className="absolute top-4 left-4 bg-white p-2 rounded-full shadow flex-row items-center"
           onPress={() => navigator.goBack()}
         >
           <Ionicons name="arrow-back" size={16} color="black" />
           <Text className="text-black ml-1">Back</Text>
         </TouchableOpacity>
       </View>
-
       {/* Profile Section */}
       <View className="px-4 -mt-12">
         <View className="flex-row items-center">
@@ -35,7 +43,7 @@ const ProfileScreen = () => {
             <Text className="text-lg font-bold mt-2">Mike Caixa</Text>
             <Text className="text-sm text-gray-500">Lagos, Place, 65 ha</Text>
           </View>
-          <TouchableOpacity  className="bg-[#048404] px-4 py-2 rounded-full ml-20">
+          <TouchableOpacity className="bg-[#048404] px-4 py-2 rounded-full ml-20">
             <Text className="text-white px-3">seller</Text>
           </TouchableOpacity>
         </View>
@@ -51,43 +59,98 @@ const ProfileScreen = () => {
           <Text className="font-bold">642 plants</Text> in GrowthByYou
         </Text>
       </View>
-
       {/* Products Section */}
       <View className="mt-4 px-4">
         <Text className="font-bold text-lg mb-2">Products</Text>
         <View className="flex-row flex-wrap">
-    {[
-      { name: "Tomatoes", icon: "seedling" },
-      { name: "Cucumbers", icon: "leaf" },
-      { name: "Carrots", icon: "carrot" },
-      { name: "Potatoes", icon: "box" },
-      { name: "Onions", icon: "cloud-rain" },
-      { name: "Oranges", icon: "lemon" },
-      { name: "Apples", icon: "apple-alt" },
-      { name: "Strawberries", icon: "stroopwafel" },
-      { name: "Olives", icon: "olive" },
-    ].map((item, index) => (
-      <View
-        key={index}
-        className="bg-gray-100 px-3 py-2 rounded-full flex-row items-center m-1"
-      >
-        <FontAwesome5 name={item.icon} size={14} color="black" className="mr-2" />
-        <Text className="text-sm">{item.name}</Text>
-      </View>
-    ))}
-  </View>
-      </View>
-
-      {/* Photo Section */}
-      <View className="mt-6 px-4 flex-col items-center">
-        <Text className="font-bold text-lg mb-2">Photo</Text>
-        <View className="grid grid-cols-2 gap-2 ">
-          {[1, 2, 3, 4, 5, 6].map((item, index) => (
+          {[
+            { name: "Tomatoes", icon: "sun" }, // Example Feather icon
+            { name: "Cucumbers", icon: "droplet" },
+            { name: "Carrots", icon: "carrot" },
+            { name: "Potatoes", icon: "package" },
+            { name: "Onions", icon: "cloud-rain" },
+            { name: "Oranges", icon: "sunrise" },
+            { name: "Apples", icon: "apple" },
+            { name: "Strawberries", icon: "heart" },
+            { name: "Olives", icon: "circle" },
+          ].map((item, index) => (
             <View
               key={index}
-              className={`bg-[${index % 2 === 0 ? "#F7F8E4" : "#E4E4E4"}] w-full h-24 rounded-lg`}
-            />
+              className="bg-gray-100 px-3 py-2 rounded-full flex-row items-center m-1"
+            >
+              <Feather
+                name={item.icon}
+                size={14}
+                color="black"
+                className="mr-2"
+              />
+              <Text className="text-sm">{item.name}</Text>
+            </View>
           ))}
+        </View>
+      </View>
+      {/* Card Section */}
+      {/* // Add this inside the ProfileScreen component, after the Products Section */}
+      <View className="mt-6 px-4">
+        <Text className="font-bold text-lg mb-4">Services</Text>
+        <View className="flex-row flex-wrap justify-between">
+          {/* Card 1: My Farm */}
+          <TouchableOpacity onPress={()=> navigator.navigate('AddFarm')} className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
+            <FarmIcon width={32} height={32} />
+            <View className="ml-3 flex-1">
+              <Text className="font-semibold text-gray-800">My Farm</Text>
+              <Text className="text-sm text-gray-500">Manage your farm</Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* Card 2: Rent Product */}
+          <TouchableOpacity className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
+            <RentIcon width={32} height={32} />
+            <View className="ml-3 flex-1">
+              <Text className="font-semibold text-gray-800">Rent Product</Text>
+              <Text className="text-sm text-gray-500">
+                Rent equipment easily
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* Card 3: My Account */}
+          <TouchableOpacity className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
+            <AccountIcon width={32} height={32} />
+            <View className="ml-3 flex-1">
+              <Text className="font-semibold text-gray-800">My Account</Text>
+              <Text className="text-sm text-gray-500">Access your account</Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* Card 4: My Store */}
+          <TouchableOpacity className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
+            <StoreIcon width={32} height={32} />
+            <View className="ml-3 flex-1">
+              <Text className="font-semibold text-gray-800">My Store</Text>
+              <Text className="text-sm text-gray-500">Manage your store</Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* Card 5: Group */}
+          <TouchableOpacity className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
+            <GroupIcon width={32} height={32} />
+            <View className="ml-3 flex-1">
+              <Text className="font-semibold text-gray-800">Group</Text>
+              <Text className="text-sm text-gray-500">Join communities</Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* Card 6: Talk to Expert */}
+          <TouchableOpacity className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
+            <ExpertIcon width={32} height={32} />
+            <View className="ml-3 flex-1">
+              <Text className="font-semibold text-gray-800">
+                Talk to Expert
+              </Text>
+              <Text className="text-sm text-gray-500">Get expert advice</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
@@ -95,4 +158,3 @@ const ProfileScreen = () => {
 };
 
 export default ProfileScreen;
-

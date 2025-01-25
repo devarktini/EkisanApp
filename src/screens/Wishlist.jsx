@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useCart } from '../context/CartContext';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import { useNavigation } from '@react-navigation/native';
 
 const WishlistScreen = () => {
   const {
@@ -11,18 +11,18 @@ const WishlistScreen = () => {
     incrementWishlistQuantity,
     decrementWishlistQuantity,
     getWishlistTotal,
-    moveToCart, // Add this function to your CartContext
+    moveToCart,
   } = useCart();
 
-  const navigation = useNavigation(); // Initialize navigation
+  const navigation = useNavigation();
 
   const handleMoveToCart = (item) => {
-    moveToCart(item); // Move the item to the cart
-    removeFromWishlist(item.id); // Remove the item from the wishlist
+    moveToCart(item);
+    removeFromWishlist(item.id);
   };
 
   const handleBuyNow = () => {
-    navigation.navigate('ShoppingBag', { cartItems: wishlistItems }); // Navigate to ShoppingBag with wishlist items
+    navigation.navigate('ShoppingBag', { cartItems: wishlistItems });
   };
 
   return (
@@ -58,7 +58,6 @@ const WishlistScreen = () => {
                     <TouchableOpacity
                       onPress={() => incrementWishlistQuantity(item.id)}
                       style={styles.quantityButton}
-                      // className= "rounded-full"
                     >
                       <Ionicons name="add" size={20} color="#048404" />
                     </TouchableOpacity>
@@ -67,7 +66,7 @@ const WishlistScreen = () => {
                     style={styles.moveToCartButton}
                     onPress={() => handleMoveToCart(item)}
                   >
-                    <Text className="rounded-full" style={styles.moveToCartText}>Move to Cart</Text>
+                    <Text style={styles.moveToCartText}>Move to Cart</Text>
                   </TouchableOpacity>
                 </View>
                 <TouchableOpacity
@@ -102,6 +101,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
+    color: '#333',
   },
   emptyText: {
     fontSize: 16,
@@ -113,53 +113,58 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 12,
+    borderRadius: 12,
+    padding: 16,
     marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowRadius: 6,
+    elevation: 3,
   },
   image: {
-    width: 10,
-    height: 10,
+    width: 80,
+    height: 80,
     borderRadius: 8,
-    marginRight: 12,
+    marginRight: 16,
   },
   details: {
     flex: 1,
   },
   name: {
-    fontSize: 5,
-    fontWeight: '100',
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 4,
   },
   price: {
     fontSize: 14,
-    color: '#888',
+    color: '#666',
+    marginBottom: 8,
   },
   quantityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8,
+    marginBottom: 8,
   },
   quantityButton: {
-    padding: 4,
-  
+    padding: 6,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 20,
   },
   quantityText: {
     fontSize: 16,
-    marginHorizontal: 8,
+    marginHorizontal: 12,
+    color: '#333',
   },
   deleteButton: {
     padding: 8,
   },
   moveToCartButton: {
     backgroundColor: '#048404',
-    padding: 8,
-    borderRadius: 100,
-    marginTop: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
     alignItems: 'center',
   },
   moveToCartText: {
@@ -173,12 +178,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 12,
     marginTop: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
   },
   totalText: {
     fontSize: 18,
     fontWeight: '500',
+    color: '#333',
   },
   totalAmount: {
     fontSize: 18,
@@ -188,9 +199,14 @@ const styles = StyleSheet.create({
   buyNowButton: {
     backgroundColor: '#048404',
     padding: 16,
-    borderRadius: 100,
+    borderRadius: 12,
     alignItems: 'center',
     marginTop: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
   },
   buyNowText: {
     color: '#fff',

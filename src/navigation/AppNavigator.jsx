@@ -18,6 +18,7 @@ import CartScreen from "../screens/CartScreen";
 import ShoppingCart from "../screens/ShoppingCart";
 import SignInScreen from "../screens/SignInScreen";
 import SignupScreen from "../screens/SignupScreen";
+import AddFarm from "../screens/Profile/AddFarm";
 
 const Stack = createStackNavigator();
 
@@ -41,8 +42,8 @@ const AppNavigator = ({ isFirstLaunch }) => {
           <Stack.Screen name="Category" component={CategoryProduct} />
           <Stack.Screen name="Checkout" component={CheckoutScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="SignIn" component={SignInScreen} />
-          <Stack.Screen name="SignUp" component={SignupScreen} />
+          {/* <Stack.Screen name="SignIn" component={SignInScreen} /> */}
+          {/* <Stack.Screen name="SignUp" component={SignupScreen} /> */}
           <Stack.Screen name="OtpScreen" component={OTPScreen} />
           <Stack.Screen name="PersonalInfo" component={PersonalDetails} />
           <Stack.Screen name="Product" component={ProductAddress} />
@@ -51,6 +52,7 @@ const AppNavigator = ({ isFirstLaunch }) => {
           <Stack.Screen name="ProductDetails" component={ProductDetails} />
           <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="ShoppingCart" component={ShoppingCart} />
+          <Stack.Screen name="AddFarm" component={AddFarm} />
         </React.Fragment>
       )}
     </Stack.Navigator>
