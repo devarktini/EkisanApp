@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ProjectFuncpro",
-    "slug": "ProjectFuncpro",
+    "name": "EkisanApp",
+    "slug": "ekisanapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/splash.png",
@@ -15,7 +15,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.expo2331.ProjectFuncpro"
+      "package": "com.expo2331.ekisanapp"
     },
     "web": {
       "bundler": "metro",
@@ -23,7 +23,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "a7254dd1-92e8-47d6-a6c4-548921ce6cc1"
+        "projectId": "117a11d3-f509-4498-b9d3-3d78c91aa825"
       }
     }
   }

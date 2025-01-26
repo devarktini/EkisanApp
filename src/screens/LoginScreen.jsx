@@ -46,9 +46,11 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, justifyContent: "center", padding: 20 }}>
-            <FirebaseRecaptchaVerifierModal
+      <FirebaseRecaptchaVerifierModal
         ref={recaptchaVerifier}
         firebaseConfig={app.options}
+        title="Verify Recaptcha"
+        cancelButtonLabel="Cancel"
       />
       <Text style={{ textAlign: "center", fontSize: 18, fontWeight: "bold", marginBottom: 20 }}>Login</Text>
       <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 20 }}>Welcome Back!</Text>

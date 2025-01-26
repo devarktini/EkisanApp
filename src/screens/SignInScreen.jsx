@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text, View, TextInput, TouchableOpacity, SafeAreaView, Image, Animated } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { StyleSheet } from 'react-native';
-import { SocialIcon } from 'react-native-elements';
+// import { SocialIcon } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const SignInScreen = ({ navigation }) => {
@@ -97,7 +97,7 @@ const SignInScreen = ({ navigation }) => {
 
                         <View style={styles.socialContainer}>
                             <Text style={styles.socialText}>Or continue with</Text>
-                            <View style={styles.socialButtonsContainer}>
+                            {/* <View style={styles.socialButtonsContainer}>
                                 <TouchableOpacity style={styles.socialButton}>
                                     <SocialIcon
                                         type="google"
@@ -110,7 +110,7 @@ const SignInScreen = ({ navigation }) => {
                                         light
                                     />
                                 </TouchableOpacity>
-                            </View>
+                            </View> */}
                         </View>
                     </View>
                 </Animated.View>
