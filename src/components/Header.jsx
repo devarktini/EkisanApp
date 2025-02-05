@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { DrawerActions, useRoute } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import logo from '../../assets/splash.png';
+import logo from '../../assets/splashscreen_logo.png';
 
 const Header = () => {
   const [show, setShow] = React.useState(false);

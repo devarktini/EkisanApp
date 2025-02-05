@@ -31,8 +31,9 @@ const AppNavigator = ({ isFirstLaunch }) => {
           <Stack.Screen name="Landing" component={OnLandingScreen} />
           <Stack.Screen name="Main" component={DrawerNavigator} />
           <Stack.Screen name="SignIn" component={SignInScreen} />
-          <Stack.Screen name="Login" component={LoginScreen} />
+          {/* <Stack.Screen name="Login" component={LoginScreen} /> */}
           <Stack.Screen name="SignUp" component={SignupScreen} />
+          {/* <Stack.Screen name="OtpScreen" component={OTPScreen} /> */}
         </React.Fragment>
       ) : (
         <React.Fragment>
@@ -41,10 +42,10 @@ const AppNavigator = ({ isFirstLaunch }) => {
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
           <Stack.Screen name="Category" component={CategoryProduct} />
           <Stack.Screen name="Checkout" component={CheckoutScreen} />
-          <Stack.Screen name="Login" component={LoginScreen} />
-          {/* <Stack.Screen name="SignIn" component={SignInScreen} /> */}
-          {/* <Stack.Screen name="SignUp" component={SignupScreen} /> */}
-          <Stack.Screen name="OtpScreen" component={OTPScreen} />
+          {/* <Stack.Screen name="Login" component={LoginScreen} /> */}
+          <Stack.Screen name="SignIn" component={SignInScreen} />
+          <Stack.Screen name="SignUp" component={SignupScreen} />
+          {/* <Stack.Screen name="OtpScreen" component={OTPScreen} /> */}
           <Stack.Screen name="PersonalInfo" component={PersonalDetails} />
           <Stack.Screen name="Product" component={ProductAddress} />
           <Stack.Screen name="ShoppingBag" component={ShoppingBag} />

@@ -12,7 +12,7 @@ const SplashScreen = ({ onFinish }) => {
   return (
     <View style={styles.container}>
       <Image
-        source={require("../../assets/splash.png")} // Replace with your splash image path
+        source={require("../../assets/splashscreen_logo.png")} // Replace with your splash image path
         style={styles.image}
       />
       <Text style={styles.text}>EKisan Darshan</Text>

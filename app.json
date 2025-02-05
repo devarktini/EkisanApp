@@ -4,7 +4,7 @@
     "slug": "ekisanapp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/splash.png",
+    "image": "./assets/splashscreen_logo.png", 
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "ios": {

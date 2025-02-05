@@ -10,17 +10,17 @@ const OnboardingScreen = () => {
     {
       title: 'Welcome to the App',
       subtitle: 'Get started with our amazing app!',
-      image: require('../../assets/splash.png'),
+      image: require('../../assets/splashscreen_logo.png'),
     },
     {
       title: 'Easy to Use',
       subtitle: 'Everything is simple and user-friendly.',
-      image: require('../../assets/splash.png'),
+      image: require('../../assets/splashscreen_logo.png'),
     },
     {
       title: 'Get Started!',
       subtitle: 'Explore all the features now!',
-      image: require('../../assets/splash.png'),
+      image: require('../../assets/splashscreen_logo.png'),
     },
   ];
 
