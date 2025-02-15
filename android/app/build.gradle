@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.expo2331.ekisanapp'
+    namespace 'com.null2331.ekisanapp'
     defaultConfig {
-        applicationId 'com.expo2331.ekisanapp'
+        applicationId 'com.null2331.ekisanapp'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

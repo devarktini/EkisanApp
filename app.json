@@ -3,27 +3,17 @@
     "name": "EkisanApp",
     "slug": "ekisanapp",
     "version": "1.0.0",
-    "orientation": "portrait",
-    "image": "./assets/splashscreen_logo.png", 
-    "userInterfaceStyle": "dark",
-    "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true
-    },
+    "userInterfaceStyle": "automatic",
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.expo2331.ekisanapp"
-    },
-    "web": {
-      "bundler": "metro",
-      "favicon": "./assets/favicon.png"
+      "package": "com.null2331.ekisanapp"
     },
     "extra": {
       "eas": {
-        "projectId": "117a11d3-f509-4498-b9d3-3d78c91aa825"
+        "projectId": "6af56e04-106d-4d96-b5a5-06a14c796ef6"
       }
     }
   }
