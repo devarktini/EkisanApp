@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, TextInput, SafeAreaView, StatusBar } from 'react-native';
 import { DrawerActions, useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,21 +6,22 @@ import Header from '../../components/Header';
 import AppSlider from '../../slider/AppSlider';
 import ProductCard from '../../components/ProductCard';
 import DealOfTheDay from '../../components/DealOfTheDay';
- import FertilizersPesticide from '../../components/FertilizersPesticide';
+import FertilizersPesticide from '../../components/FertilizersPesticide';
 import Pulses from '../../components/Pulses';
 import IrrigationEquipment from '../../components/IrrigationEquipment';
 import AdScrollView from '../../components/AdScrollView';
-const CategoryCircle = ({ image, name }) => {
+import { fetchCategories, fetchProducts } from '../../services/productService';
+import { AppContext } from '../../context/AppContext';
+
+const CategoryCircle = ({coverUrl, coverImage, categorieName }) => {
   const navigation = useNavigation();
   
     const route = useRoute();
     const user = route.params?.user || {};
 
-    console.log("userData", user)
-
   const handleCategoryPress = () => {
-    if (name) {
-      navigation.navigate('Category', { categoryName: name });
+    if (categorieName) {
+      navigation.navigate('ProductList', { searchQuery: categorieName })
     } else {
       console.log('Category name is undefined');
     }
@@ -37,25 +38,36 @@ const CategoryCircle = ({ image, name }) => {
         elevation: 5 }}
     >
       <Image
-        source={{ uri: image }}
+        source={{ uri: coverUrl }}
         style={{ width: 48, height: 48, borderRadius: 24 }}
         resizeMode="cover"
       />
-      <Text className="text-xs mt-1 text-gray-600" style={{ fontWeight: 'bold' }}>{name}</Text>
+      <Text className="text-xs mt-1 text-gray-600" style={{ fontWeight: 'bold' }}>{categorieName}</Text>
     </TouchableOpacity>
   );
 };
 
 
-const HomeScreen = ({ navigation }) => {
-  const categories = [
-    { id: 1, name: 'Women', image: 'https://i.imgur.com/user1.jpg' },
-    { id: 2, name: 'Men', image: 'https://i.imgur.com/user2.jpg' },
-    { id: 3, name: 'Kids', image: 'https://i.imgur.com/user3.jpg' },
-    { id: 4, name: 'Sport', image: 'https://i.imgur.com/user4.jpg' },
-    { id: 5, name: 'Beauty', image: 'https://i.imgur.com/user5.jpg' },
+const HomeScreen = ({ navigation, route }) => {
+  const user = route?.params?.user;
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const[fullProducts, setFullProducts]= useState([])
+  const [vegetables, setVegetables]= useState([])
+  const [fertilizers, setFertilizers] = useState([]);
+  const [pulses, setPulses] = useState([]);
+  const [Irrigation, setIrrigation]= useState([])
+   const {  setCategoryList, categoryList } = useContext(AppContext);
+  useEffect(() => {
+    fetchCategories({ user }).then(setCategories);
+    fetchCategories({ user }).then(setCategoryList);
 
-  ];
+    fetchProducts({ sortType: "newest", limit: 10 }).then(setProducts);
+    fetchProducts({ sortType: "newest", limit: 10, search:"Vegetables" }).then(setVegetables);
+    fetchProducts({ sortType: "newest", limit: 10, search: "Fertilizers & Pesticides" }).then(setFertilizers);
+    fetchProducts({ sortType: "newest", limit: 10, search: "Pulses" }).then(setPulses);
+    fetchProducts({ sortType: "newest", limit: 10, search: "Irrigation Equipment" }).then(setIrrigation);
+  }, [user]);
 
   const trendingProducts = [
     {
@@ -115,6 +127,11 @@ const HomeScreen = ({ navigation }) => {
     }
   ];
 
+  const ViewAllProductList = (searchQuery) => {
+    console.log("searchQuery", searchQuery)
+    navigation.navigate("ProductList", { searchQuery: searchQuery });
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
       <StatusBar backgroundColor="#fff" barStyle="dark-content" />
@@ -144,7 +161,7 @@ const HomeScreen = ({ navigation }) => {
         <View className="py-4">
           <View className="flex-row justify-between items-center px-4 mb-3">
             <Text className="text-xl font-bold text-[#048404]">All Featured</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={()=>navigation.navigate('Category', { screen: 'Search' })}>
               <Text className="text-[#048404]">View all →</Text>
             </TouchableOpacity>
           </View>
@@ -211,7 +228,7 @@ const HomeScreen = ({ navigation }) => {
         <View className="mt-4">
           <View className="flex-row justify-between items-center px-4 mb-3 ">
             <Text className="text-xl font-bold text-[#048404]">Trending Products</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={()=>ViewAllProductList()}>
               <Text className="text-[#048404]">View all</Text>
             </TouchableOpacity>
           </View>
@@ -220,7 +237,7 @@ const HomeScreen = ({ navigation }) => {
             showsHorizontalScrollIndicator={false} 
             className="px-4 py-2"
           >
-            {trendingProducts.map((product) => (
+            {products.map((product) => (
               <ProductCard key={product.id} item={product} />
             ))}
           </ScrollView>
@@ -250,13 +267,13 @@ const HomeScreen = ({ navigation }) => {
         </View>
 
         {/* Deal of the Day - Now Horizontal */}
-        <DealOfTheDay/>
+        <DealOfTheDay vegetables={vegetables} ViewAllProductList={ViewAllProductList}/>
       {/* Fertilizers and Pesticides */}
-        <FertilizersPesticide/>
+        <FertilizersPesticide fertilizers={fertilizers} ViewAllProductList={ViewAllProductList}/>
         {/* Pulses */}
-        <Pulses/>
+        <Pulses pulses={pulses} ViewAllProductList={ViewAllProductList}/>
    {/* Irrigation Equipment */}
-        <IrrigationEquipment/>
+        <IrrigationEquipment Irrigation={Irrigation} ViewAllProductList={ViewAllProductList}/>
     {/* sponsors */}  
     <AdScrollView/>      
 

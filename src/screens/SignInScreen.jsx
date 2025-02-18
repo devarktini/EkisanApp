@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
-import { Text, View, TextInput,Alert, TouchableOpacity, SafeAreaView, Image, Animated, ActivityIndicator } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { Text, View, TextInput, Alert, TouchableOpacity, SafeAreaView, Image, Animated, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { StyleSheet } from 'react-native';
-// import { SocialIcon } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
 import { signinAuthService } from '../services/authservice';
 import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
-import { saveAuthToken, saveUserData } from '../asyncStorege/authStorage';
+import { AppContext } from '../context/AppContext';
 
 const SignInScreen = () => {
     const [email, setEmail] = useState('');
@@ -15,7 +14,8 @@ const SignInScreen = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const fadeAnim = new Animated.Value(0);
-    const navigation = useNavigation()
+    const navigation = useNavigation();
+    const { login } = useContext(AppContext);
 
     React.useEffect(() => {
         Animated.timing(fadeAnim, {
@@ -34,7 +34,7 @@ const SignInScreen = () => {
         setLoading(true);
         const response = await signinAuthService(email, password);
         setLoading(false);
-        console.log("35",response)
+        console.log("35", response);
         if (response.success) {
             Toast.show({
                 type: "success",
@@ -42,14 +42,8 @@ const SignInScreen = () => {
                 text2: "Welcome back!",
                 position: "top",
             });
-            await saveAuthToken(response.tokenResponse.idToken);
-            await saveUserData(response.user);
-
-            Alert.alert("Success", "Login successful!");
-            navigation.reset({
-                index: 0,
-                routes: [{ name: "Main", params: { user: response.user } }],
-            }); // Navigate to Home screen
+            await login(response.tokenResponse.idToken, response.userData);
+            navigation.replace("Main", { user: response.userData });
         } else {
             Alert.alert("Login Failed", response.error);
         }
@@ -57,7 +51,7 @@ const SignInScreen = () => {
 
     return (
         <LinearGradient
-            colors={['#FFFFFF', '#4CAF50', '#2E7D32']}
+            colors={['#2E7D32', '#1B5E20', '#004D40']}
             className="flex-1"
             style={{ flex: 1 }}
         >
@@ -77,7 +71,7 @@ const SignInScreen = () => {
                     {/* Logo and Header */}
                     <View style={styles.headerContainer}>
                         <Image
-                            source={require('../../assets/icon.png')}
+                            source={require('../../assets/splashscreen_logo.png')}
                             style={styles.logo}
                             resizeMode="contain"
                         />
@@ -120,11 +114,16 @@ const SignInScreen = () => {
                         </View>
 
                         <TouchableOpacity style={styles.signInButton} onPress={handleSignIn} disabled={loading}>
-                            {loading ? (
-                                <ActivityIndicator size="small" color="#4CAF50" />
-                            ) : (
-                                <Text style={styles.signInButtonText}>Sign In</Text>
-                            )}
+                            <LinearGradient
+                                colors={['#66BB6A', '#388E3C']}
+                                style={styles.signInButtonGradient}
+                            >
+                                {loading ? (
+                                    <ActivityIndicator size="small" color="#fff" />
+                                ) : (
+                                    <Text style={styles.signInButtonText}>Sign In</Text>
+                                )}
+                            </LinearGradient>
                         </TouchableOpacity>
 
                         <View style={styles.optionsContainer}>
@@ -191,14 +190,18 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     signInButton: {
-        backgroundColor: '#fff',
         borderRadius: 10,
-        padding: 15,
         marginTop: 20,
         alignItems: 'center',
     },
+    signInButtonGradient: {
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        width: '100%',
+    },
     signInButtonText: {
-        color: '#4c669f',
+        color: '#fff',
         textAlign: 'center',
         fontSize: 18,
         fontWeight: 'bold',

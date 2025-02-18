@@ -1,9 +1,8 @@
-// Add this import at the top with other imports
-import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword, signOut, getIdToken, onIdTokenChanged } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
-import { auth, database } from '../../firebase.config'
+import { auth, database } from '../../firebase.config';
 import { ref, set, get } from "firebase/database";
-
+import { saveAuthToken, saveUserData, getAuthToken, removeAuthToken, removeUserData } from '../asyncStorege/authStorage';
 
 export const signupAuthService = async (email, password, userData) => {
 
@@ -85,7 +84,6 @@ export const signupAuthService = async (email, password, userData) => {
 };
 
 export const signinAuthService = async (email, password) => {
-
     try {
         // Validate required fields
         if (!email || !password) {
@@ -104,14 +102,21 @@ export const signinAuthService = async (email, password) => {
         // Authenticate user
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
+        const token = await getIdToken(user, true); // Get the ID token
+        const refreshToken = user.refreshToken; // Get the refresh token
+
         // Fetch user details from Realtime Database
         const userRef = ref(database, `users/${user.uid}`);
         const userSnapshot = await get(userRef);
         const userData = userSnapshot.exists() ? userSnapshot.val() : null;
 
+        // Save tokens and user data to AsyncStorage
+        await saveAuthToken(token);
+        await saveUserData(JSON.stringify(userData));
+
         return {
             success: true,
-            tokenResponse:userCredential._tokenResponse,
+            tokenResponse: userCredential._tokenResponse,
             user: user,
             userData: userData,
             message: 'Login successful!',
@@ -148,6 +153,8 @@ export const signinAuthService = async (email, password) => {
 export const signoutAuthService = async () => {
     try {
         await signOut(auth);
+        await removeAuthToken();
+        await removeUserData();
         console.log("User successfully logged out");
         return { success: true, message: "Logout successful!" };
     } catch (error) {
@@ -155,3 +162,49 @@ export const signoutAuthService = async () => {
         return { success: false, error: "Failed to log out. Please try again." };
     }
 };
+
+export const refreshAuthToken = async () => {
+    try {
+        const user = auth.currentUser;
+        if (user) {
+            const token = await getIdToken(user, true);
+            await saveAuthToken(token);
+            return token;
+        }
+        return null;
+    } catch (error) {
+        console.error("Token Refresh Error:", error);
+        return null;
+    }
+};
+
+export const autoLogin = async () => {
+    try {
+        const token = await getAuthToken();
+        console.log("auto token", token)
+        if (token) {
+            const user = auth.currentUser;
+            if (user) {
+                const userRef = ref(database, `users/${user.uid}`);
+                const userSnapshot = await get(userRef);
+                const userData = userSnapshot.exists() ? userSnapshot.val() : null;
+                return { user, userData };
+            }
+        }
+        return null;
+    } catch (error) {
+        console.error("Auto Login Error:", error);
+        return null;
+    }
+};
+
+// Listen for token changes and refresh token if necessary
+onIdTokenChanged(auth, async (user) => {
+    if (user) {
+        const token = await getIdToken(user, true);
+        await saveAuthToken(token);
+    } else {
+        await removeAuthToken();
+        await removeUserData();
+    }
+});

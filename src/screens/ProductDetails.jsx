@@ -10,6 +10,7 @@ import {
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { useCart } from '../context/CartContext';
+
 const ProductDetails = ({}) => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -19,6 +20,7 @@ const ProductDetails = ({}) => {
     product?.availableSizes?.[0] || "N/A"
   );
   const [cartItems, setCartItems] = useState([]);
+  const [mainImage, setMainImage] = useState(product?.imgUrl);
 
   if (!product) {
     return <Text>No product data available.</Text>;
@@ -62,12 +64,16 @@ const ProductDetails = ({}) => {
     navigation.navigate("ShoppingBag", { cartItems: updatedCartItems });
   };
 
+  const handleImagePress = (url) => {
+    setMainImage(url);
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
       <View className="flex-row justify-between items-center px-4 py-3">
         <TouchableOpacity
-          className=" shadow-md bg-white p-2 rounded-full shadow flex-row items-center"
+          className=" shadow-md bg-white p-2 rounded-full  flex-row items-center"
           onPress={() => navigation.goBack()}
         >
           <Ionicons name="arrow-back" size={16} color="black" />
@@ -85,15 +91,32 @@ const ProductDetails = ({}) => {
         {/* Product Image */}
         <ScrollView>
           <Image
-            source={{ uri: product.image }}
+            source={{ uri: mainImage }}
             className="w-full h-72"
             resizeMode="cover"
           />
         </ScrollView>
 
+        {/* Image Thumbnails */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-4 py-2">
+          {product.productImages?.map((image, index) => (
+            <TouchableOpacity key={index} onPress={() => handleImagePress(image.url)}>
+              <Image
+                source={{ uri: image.url }}
+                className="w-20 rounded-lg border border-green-400 h-20 mr-2"
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
         {/* Size Selection */}
         <View className="px-4 py-3">
-          <Text className="text-base mb-2">Size: {selectedSize}</Text>
+          <View className =" flex flex-wrap items-center justify-start flex-row">
+          <Text className="text-base mb-2">SellerName: </Text>
+          <View className='border rounded-full text-center my-auto bg-green-300  border-gray-400'>
+            <Text className="px-3 text-center text-sm">{product.sellerName}</Text></View>
+          </View>
           <View className="flex-row">
             {product.availableSizes?.map((size, index) => (
               <TouchableOpacity
@@ -132,7 +155,8 @@ const ProductDetails = ({}) => {
           </View>
 
           <View className="flex-row items-center mt-2">
-            <Text className="text-xl font-bold">${product.price}</Text>
+            <Text className="text-xl font-bold">₹{product.price}</Text>
+            <Text> /{product.unit}</Text>
             {product.originalPrice && (
               <Text className="ml-2 line-through text-gray-500">
                 ${product.originalPrice}

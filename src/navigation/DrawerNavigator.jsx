@@ -7,10 +7,13 @@ import ContactScreen from "../screens/Contact/ContactScreen";
 
 const Drawer = createDrawerNavigator();
 
-const DrawerNavigator = () => {
+const DrawerNavigator = ({route}) => {
+  const user = route?.params?.user;
+  console.log("112", user)
+
   return (
-    <Drawer.Navigator screenOptions={{ headerShown: false }} drawerContent={(props) => <CustomDrawerContent {...props} />}>
-      <Drawer.Screen name="HomeTabs" component={TabNavigator} options={{ title: "Home" }}  />
+    <Drawer.Navigator screenOptions={{ headerShown: false }} drawerContent={(props) => <CustomDrawerContent {...props} user={user} />}>
+      <Drawer.Screen name="HomeTabs" component={TabNavigator} initialParams={{ user }} options={{ title: "Home" }}  />
       <Drawer.Screen name="About" component={AboutScreen} />
       <Drawer.Screen name="Contact" component={ContactScreen} />
     </Drawer.Navigator>

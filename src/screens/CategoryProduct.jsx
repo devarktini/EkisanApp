@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, TextInput, SafeAreaView, StatusBar } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,64 +12,26 @@ import {cartItems,
   removeFromWishlist,
   isInWishlist,
 } from '../context/CartContext';
+import { AppContext } from '../context/AppContext';
 const ProductCard = ({  item  }) => {
   const navigation = useNavigation();
 
   return (
     <TouchableOpacity 
-      className="w-[49%] mb-4 shadow-black shadow-md rounded-lg overflow-hidden "
-      onPress={() => navigation.navigate('ProductDetails', { product: item })}
+      className="w-[49%] mb-4 rounded-lg overflow-hidden"
+      onPress={() => navigation.navigate('ProductList', { searchQuery: item.categorieName })}
     >
-      <View className="relative">
+      <View>
         <Image
-          source={{ uri: item.image }}
+          source={{ uri: item.coverUrl }}
           className="w-full h-48 bg-gray-100"
           resizeMode="cover"
         />
-        {item.discount && (
-          <View className="absolute top-2 left-2 bg-red-500 px-2 py-1 rounded-full">
-            <Text className="text-white text-xs">
-              {item.discount}% OFF
-            </Text>
-          </View>
-        )}
-         <View className="absolute top-2 right-2 flex-col gap-5 z-20 backdrop-blur-sm">
-        <TouchableOpacity>
-          <Ionicons name="heart-outline" size={30} color="#048404" />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons name="cart-outline" size={30} color="#048404" />
-        </TouchableOpacity>
-      </View>
       </View>
       <View className="p-2 bg-white">
-        <Text className="text-sm font-medium text-gray-800" numberOfLines={2}>
-          {item.name}
+        <Text className="text-sm font-medium text-gray-800 text-center" numberOfLines={2}>
+          {item.categorieName}
         </Text>
-        <Text className="text-xs text-gray-500 mt-1" numberOfLines={1}>
-          {item.description}
-        </Text>
-        <View className="flex-row items-center mt-1.5">
-          <Text className="text-sm font-bold text-gray-900">
-            ${item.price}
-          </Text>
-          {item.originalPrice && (
-            <Text className="ml-2 text-xs text-gray-500 line-through">
-              ${item.originalPrice}
-            </Text>
-          )}
-        </View>
-        <View className="flex-row items-center mt-1">
-          <View className="flex-row">
-            <Ionicons name="star" size={12} color="#FFD700" />
-            <Text className="text-xs text-gray-500 ml-1">{item.rating}</Text>
-          </View>
-          <Text className="text-xs text-gray-400 ml-1">({item.reviews})</Text>
-          {item.freeShipping && (
-            <Text className="text-xs text-green-600 ml-2">Free Shipping</Text>
-          )}
-          <Text>{item.CategoryProduct}</Text>
-        </View>
       </View>
     </TouchableOpacity>
   );
@@ -77,6 +39,7 @@ const ProductCard = ({  item  }) => {
 
 const CategoryProduct = () => {
   const navigation = useNavigation();
+  const { categoryList } = useContext(AppContext);
   const route = useRoute();
   const params = route.params || {};
   const { categoryName = 'All' } = params;
@@ -84,7 +47,7 @@ const CategoryProduct = () => {
   console.log('Category Name:', categoryName);
 
 
-
+ console.log("vvvvvvvvvv", categoryList.length)
   const products = [
     // WOMEN CATEGORY
     {
@@ -411,7 +374,7 @@ const CategoryProduct = () => {
       </View>
       
       <View className="flex-row flex-wrap justify-between px-2">
-        {categoryProducts.map((item) => (
+        {categoryList.map((item) => (
           <ProductCard key={item.id} item={item} />
         ))}
       </View>

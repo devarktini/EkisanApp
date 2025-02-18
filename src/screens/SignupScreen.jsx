@@ -10,7 +10,8 @@ import {
     Dimensions, 
     Animated, 
     StyleSheet,
-    Alert 
+    Alert, 
+    Image
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
@@ -122,12 +123,12 @@ const SignupScreen = () => {
 
     return (
         <ImageBackground 
-            source={require('../../assets/icon.png')}
+            source={require('../../assets/splashscreen_logo.png')}
             className="flex-1"
             blurRadius={3}
         >
             <LinearGradient
-                colors={['#4CAF50',  '#2E7D32', '#FFFFFF']} className="flex-1"
+                colors={['#2E7D32', '#1B5E20', '#004D40']} className="flex-1"
                 
             >
                 <ScrollView className="flex-1">
@@ -140,7 +141,11 @@ const SignupScreen = () => {
                     >
                         <View className="flex-col items-center justify-center mb-8">
                             <View className="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl items-center justify-center mb-6 shadow-xl rotate-12">
-                                <Ionicons name="leaf-outline" size={48} color="white" />
+                                <Image
+                                    source={require('../../assets/splashscreen_logo.png')}
+                                    style={styles.logo}
+                                    resizeMode="contain"
+                                    />
                             </View>
                             <Text className="text-4xl font-bold text-center mb-3 text-green-600 tracking-wider">
                                 Welcome

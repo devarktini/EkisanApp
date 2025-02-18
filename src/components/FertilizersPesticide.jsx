@@ -37,7 +37,7 @@ const FertilizersPesticid  = [
       rating: 4.9
     }
   ];
-const FertilizersPesticide = () => {
+const FertilizersPesticide = ({fertilizers, ViewAllProductList}) => {
   return (
     <View className="mt-4">
               <View className="flex-row justify-between items-center px-4">
@@ -45,7 +45,7 @@ const FertilizersPesticide = () => {
               <Text className="text-xl  font-bold text-[#048404] py-2 ">Fertilizers & Pesticides</Text>
              
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={()=>ViewAllProductList('Fertilizers & Pesticides')}>
               <Text className="text-[#048404]">View all →</Text>
             </TouchableOpacity>
           </View>
@@ -54,7 +54,7 @@ const FertilizersPesticide = () => {
                showsHorizontalScrollIndicator={false} 
                className="px-4 py-2"
              >
-               {FertilizersPesticid.map((product) => (
+               {fertilizers.map((product) => (
                  <ProductCard key={product.id} item={product} />
                ))}
              </ScrollView>

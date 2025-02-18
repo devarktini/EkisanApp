@@ -16,7 +16,8 @@ import { useCart } from '../context/CartContext';
 
 const Tab = createBottomTabNavigator();
 
-const TabNavigator = () => {
+const TabNavigator = ({ route }) => {
+  const user = route?.params?.user;
   const { getCartItemCount,  getWishlistItemCount } = useCart(); // Get the cart item count
   return (
     <Tab.Navigator
@@ -37,7 +38,7 @@ const TabNavigator = () => {
         tabBarInactiveTintColor: "#6B7280",
       })}
     >
-      <Tab.Screen name="HomeTab" component={HomeScreen}  />
+      <Tab.Screen name="HomeTab" component={HomeScreen} initialParams={{ user }}  />
       <Tab.Screen name="Profile" component={ProfileScreen} />
       <Tab.Screen name="Search" component={CategoryProduct} options={{ title: "Categories" }}/>
       <Tab.Screen name="Wishlist" component={Wishlist} 

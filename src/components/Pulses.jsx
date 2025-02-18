@@ -37,7 +37,7 @@ const Pulsess  = [
       rating: 4.9
     }
   ];
-const Pulses= () => {
+const Pulses= ({pulses, ViewAllProductList}) => {
   return (
     <View className="mt-4">
               <View className="flex-row justify-between items-center px-4">
@@ -45,7 +45,7 @@ const Pulses= () => {
               <Text className="text-xl  font-bold text-[#048404] py-2 ">Pulses</Text>
              
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={()=>ViewAllProductList('Pulses')}>
               <Text className="text-[#048404]">View all →</Text>
             </TouchableOpacity>
           </View>
@@ -54,7 +54,7 @@ const Pulses= () => {
                showsHorizontalScrollIndicator={false} 
                className="px-4 py-2"
              >
-               {Pulsess.map((product) => (
+               {pulses.map((product) => (
                  <ProductCard key={product.id} item={product} />
                ))}
              </ScrollView>
