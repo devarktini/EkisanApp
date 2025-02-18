@@ -9,7 +9,6 @@ import SplashScreen from "./src/components/SplashScreen "; // Import the SplashS
 import { ActivityIndicator, View } from "react-native"; // Import ActivityIndicator for loading state
 import "./global.css";
 import Toast from 'react-native-toast-message';
-import { toastConfig } from './toastConfig';
 
 export default function App() {
   const [isSplashVisible, setSplashVisible] = useState(true);
@@ -51,6 +50,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       {/* Wrap the entire app with FarmProvider */}
+      
       <FarmProvider>
         {/* Wrap the app with CartProvider */}
         <CartProvider>
@@ -59,7 +59,8 @@ export default function App() {
           </NavigationContainer>
         </CartProvider>
       </FarmProvider>
-      <Toast config={toastConfig} />
+      <Toast />
+      {/* <Toast config={toastConfig} /> */}
     </SafeAreaProvider>
   );
 }

@@ -3,6 +3,7 @@
     "name": "EkisanApp",
     "slug": "ekisanapp",
     "version": "1.0.0",
+    "newArchEnabled":true,
     "userInterfaceStyle": "automatic",
     "android": {
       "adaptiveIcon": {

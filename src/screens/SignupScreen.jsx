@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { signupAuthService } from '../services/authservice';
 
 const SignupScreen = () => {
     const navigation = useNavigation();
@@ -78,35 +79,46 @@ const SignupScreen = () => {
         return true;
     };
 
-    const onChangeTextHandler = (value) => {
+    const onChangeTextHandler = (field, value) => {
         setFormData({
             ...formData,
-            [value]: value  });
+            [field]: value
+        });
     }
 
     const onHandlerSignup = async () => {
         if (!validateForm()) return;
-
+    
         setIsSubmitting(true);
-
+        const userData = {
+            fullName: formData.fullName,
+            email: formData.email
+        };
+    
         try {
-            // Mock API request
-            const response = await new Promise((resolve) =>
-                setTimeout(() => resolve({ success: true }), 2000)
-            );
-
-            if (response.success) {
+            const results = await signupAuthService(formData.email, formData.password, userData);
+            console.log("Signup Response: ", results);
+    
+            if (results.success) {
+                // User created successfully
                 Alert.alert('Success', 'Account created successfully!');
-                navigation.navigate('Home'); // Navigate to home or desired screen
+                console.log("Registered User:", results.user);
+                console.log("Saved User Data:", results.userData);
+    
+                // Navigate to Home or Login screen
+                navigation.navigate('SignIn');
             } else {
-                Alert.alert('Error', 'Signup failed. Please try again.');
+                // Handle specific error from API
+                Alert.alert('Signup Failed', results.error || 'Please try again.');
             }
         } catch (error) {
-            Alert.alert('Error', 'An unexpected error occurred.');
+            console.error("Unexpected Error:", error);
+            Alert.alert('Error', 'An unexpected error occurred. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
     };
+    
 
     return (
         <ImageBackground 
@@ -146,8 +158,7 @@ const SignupScreen = () => {
                                 placeholder="Enter your Name"
                                 placeholderTextColor="#rgba(255,255,255,0.7)"
                                 value={formData.fullName}
-                                onChangeText={()=>{onChangeTextHandler('name')}}
-                                keyboardType="email-address"
+                                onChangeText={(value)=>{onChangeTextHandler('fullName', value)}}
                                 autoCapitalize="none"
                             />
                         </View>
@@ -158,7 +169,7 @@ const SignupScreen = () => {
                                 placeholder="Enter your email"
                                 placeholderTextColor="#rgba(255,255,255,0.7)"
                                 value={formData.email}
-                                onChangeText={()=>{onChangeTextHandler('email')}}
+                                onChangeText={(value)=>{onChangeTextHandler('email', value)}}
                                 keyboardType="email-address"
                                 autoCapitalize="none"
                             />
@@ -171,7 +182,7 @@ const SignupScreen = () => {
                                 placeholder="Enter your password"
                                 placeholderTextColor="#rgba(255,255,255,0.7)"
                                 value={formData.password}
-                                onChangeText={()=>{onChangeTextHandler('passowrd')}}
+                                onChangeText={(value)=>{onChangeTextHandler('password', value)}}
                                 secureTextEntry={!showPassword}
                             />
                             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
@@ -189,7 +200,7 @@ const SignupScreen = () => {
                                 placeholder="Renter your password"
                                 placeholderTextColor="#rgba(255,255,255,0.7)"
                                 value={formData.confirmPassword}
-                                onChangeText={()=>{onChangeTextHandler('confirmPassword')}}
+                                onChangeText={(value)=>{onChangeTextHandler('confirmPassword', value)}}
                                 secureTextEntry={!showPassword}
                             />
                             <TouchableOpacity onPress={() => setShowPassword1(!showPassword1)}>
@@ -201,7 +212,7 @@ const SignupScreen = () => {
                             </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity style={styles.signInButton}>
+                        <TouchableOpacity onPress={()=>onHandlerSignup()} style={styles.signInButton}>
                             <Text style={styles.signInButtonText}>Sign Up</Text>
                         </TouchableOpacity>
 

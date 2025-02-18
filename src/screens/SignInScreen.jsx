@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
-import { Text, View, TextInput, TouchableOpacity, SafeAreaView, Image, Animated } from 'react-native';
+import { Text, View, TextInput,Alert, TouchableOpacity, SafeAreaView, Image, Animated, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { StyleSheet } from 'react-native';
 // import { SocialIcon } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
+import { signinAuthService } from '../services/authservice';
+import Toast from 'react-native-toast-message';
+import { useNavigation } from '@react-navigation/native';
+import { saveAuthToken, saveUserData } from '../asyncStorege/authStorage';
 
-const SignInScreen = ({ navigation }) => {
+const SignInScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
     const fadeAnim = new Animated.Value(0);
+    const navigation = useNavigation()
 
     React.useEffect(() => {
         Animated.timing(fadeAnim, {
@@ -19,9 +25,40 @@ const SignInScreen = ({ navigation }) => {
         }).start();
     }, []);
 
+    const handleSignIn = async () => {
+        if (!email || !password) {
+            Alert.alert("Error", "Please enter both email and password.");
+            return;
+        }
+
+        setLoading(true);
+        const response = await signinAuthService(email, password);
+        setLoading(false);
+        console.log("35",response)
+        if (response.success) {
+            Toast.show({
+                type: "success",
+                text1: response.message,
+                text2: "Welcome back!",
+                position: "top",
+            });
+            await saveAuthToken(response.tokenResponse.idToken);
+            await saveUserData(response.user);
+
+            Alert.alert("Success", "Login successful!");
+            navigation.reset({
+                index: 0,
+                routes: [{ name: "Main", params: { user: response.user } }],
+            }); // Navigate to Home screen
+        } else {
+            Alert.alert("Login Failed", response.error);
+        }
+    };
+
     return (
         <LinearGradient
-            colors={['#FFFFFF', '#4CAF50',  '#2E7D32', ]} className="flex-1"
+            colors={['#FFFFFF', '#4CAF50', '#2E7D32']}
+            className="flex-1"
             style={{ flex: 1 }}
         >
             <SafeAreaView style={{ flex: 1 }}>
@@ -55,7 +92,7 @@ const SignInScreen = ({ navigation }) => {
                             <TextInput
                                 style={styles.input}
                                 placeholder="Enter your email"
-                                placeholderTextColor="#rgba(255,255,255,0.7)"
+                                placeholderTextColor="rgba(255,255,255,0.7)"
                                 value={email}
                                 onChangeText={setEmail}
                                 keyboardType="email-address"
@@ -68,7 +105,7 @@ const SignInScreen = ({ navigation }) => {
                             <TextInput
                                 style={styles.input}
                                 placeholder="Enter your password"
-                                placeholderTextColor="#rgba(255,255,255,0.7)"
+                                placeholderTextColor="rgba(255,255,255,0.7)"
                                 value={password}
                                 onChangeText={setPassword}
                                 secureTextEntry={!showPassword}
@@ -82,8 +119,12 @@ const SignInScreen = ({ navigation }) => {
                             </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity style={styles.signInButton}>
-                            <Text style={styles.signInButtonText}>Sign In</Text>
+                        <TouchableOpacity style={styles.signInButton} onPress={handleSignIn} disabled={loading}>
+                            {loading ? (
+                                <ActivityIndicator size="small" color="#4CAF50" />
+                            ) : (
+                                <Text style={styles.signInButtonText}>Sign In</Text>
+                            )}
                         </TouchableOpacity>
 
                         <View style={styles.optionsContainer}>
@@ -97,20 +138,6 @@ const SignInScreen = ({ navigation }) => {
 
                         <View style={styles.socialContainer}>
                             <Text style={styles.socialText}>Or continue with</Text>
-                            {/* <View style={styles.socialButtonsContainer}>
-                                <TouchableOpacity style={styles.socialButton}>
-                                    <SocialIcon
-                                        type="google"
-                                        light
-                                    />
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.socialButton}>
-                                    <SocialIcon
-                                        type="facebook"
-                                        light
-                                    />
-                                </TouchableOpacity>
-                            </View> */}
                         </View>
                     </View>
                 </Animated.View>
@@ -142,7 +169,7 @@ const styles = StyleSheet.create({
     },
     subHeaderText: {
         fontSize: 16,
-        color: '#rgba(255,255,255,0.8)',
+        color: 'rgba(255,255,255,0.8)',
     },
     inputContainer: {
         backgroundColor: 'rgba(255,255,255,0.1)',
@@ -168,6 +195,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 15,
         marginTop: 20,
+        alignItems: 'center',
     },
     signInButtonText: {
         color: '#4c669f',
@@ -192,15 +220,5 @@ const styles = StyleSheet.create({
         color: '#fff',
         marginBottom: 20,
     },
-    socialButtonsContainer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        gap: 20,
-    },
-    socialButton: {
-        borderRadius: 10,
-        overflow: 'hidden',
-    },
 });
-
 export default SignInScreen;

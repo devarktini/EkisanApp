@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, TextInput, SafeAreaView, StatusBar } from 'react-native';
-import { DrawerActions, useNavigation } from '@react-navigation/native';
+import { DrawerActions, useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Header from '../../components/Header';
 import AppSlider from '../../slider/AppSlider';
@@ -12,6 +12,11 @@ import IrrigationEquipment from '../../components/IrrigationEquipment';
 import AdScrollView from '../../components/AdScrollView';
 const CategoryCircle = ({ image, name }) => {
   const navigation = useNavigation();
+  
+    const route = useRoute();
+    const user = route.params?.user || {};
+
+    console.log("userData", user)
 
   const handleCategoryPress = () => {
     if (name) {

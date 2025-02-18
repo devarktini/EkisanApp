@@ -1,10 +1,25 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styles from "../styles/styles";
+import { signoutAuthService } from "../services/authservice";
 
 const CustomDrawerContent = ({ navigation }) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleLogout = async () => {
+    setLoading(true);
+    const response = await signoutAuthService();
+    setLoading(false);
+
+    if (response.success) {
+        Alert.alert("Success", "You have been logged out.");
+        navigation.replace("SignIn"); // Redirect to Sign-In screen
+    } else {
+        Alert.alert("Logout Failed", response.error);
+    }
+};
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -34,8 +49,8 @@ const CustomDrawerContent = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.logoutButton} onPress={() => console.log("Logout pressed")}>
-        <Text style={styles.logoutButtonText}>Logout</Text>
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} disabled={loading}>
+      {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.logoutButtonText}>Logout</Text>}
       </TouchableOpacity>
     </SafeAreaView>
   );
