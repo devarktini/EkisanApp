@@ -1,14 +1,7 @@
 import React from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
-import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { Ionicons, Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { Feather } from "@expo/vector-icons";
-import FarmIcon from "../../assets/Framing.svg";
-import RentIcon from "../../assets/RentIcon.svg";
-import AccountIcon from "../../assets/AccountIcon.svg";
-import StoreIcon from "../../assets/StoreIcon.svg";
-import GroupIcon from "../../assets/GroupIcon.svg";
-import ExpertIcon from "../../assets/ExpertIcon.svg";
 
 const ProfileScreen = () => {
   const navigator = useNavigation();
@@ -66,11 +59,11 @@ const ProfileScreen = () => {
           {[
             { name: "Tomatoes", icon: "sun" }, // Example Feather icon
             { name: "Cucumbers", icon: "droplet" },
-            { name: "Carrots", icon: "carrot" },
+            // { name: "Carrots", icon: "carrot" },
             { name: "Potatoes", icon: "package" },
             { name: "Onions", icon: "cloud-rain" },
             { name: "Oranges", icon: "sunrise" },
-            { name: "Apples", icon: "apple" },
+            // { name: "Apples", icon: "apple" },
             { name: "Strawberries", icon: "heart" },
             { name: "Olives", icon: "circle" },
           ].map((item, index) => (
@@ -96,7 +89,7 @@ const ProfileScreen = () => {
         <View className="flex-row flex-wrap justify-between">
           {/* Card 1: My Farm */}
           <TouchableOpacity onPress={()=> navigator.navigate('AddFarm')} className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
-            <FarmIcon width={32} height={32} />
+            {/* <FarmIcon width={32} height={32} /> */}
             <View className="ml-3 flex-1">
               <Text className="font-semibold text-gray-800">My Farm</Text>
               <Text className="text-sm text-gray-500">Manage your farm</Text>
@@ -105,7 +98,7 @@ const ProfileScreen = () => {
 
           {/* Card 2: Rent Product */}
           <TouchableOpacity className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
-            <RentIcon width={32} height={32} />
+            {/* <RentIcon width={32} height={32} /> */}
             <View className="ml-3 flex-1">
               <Text className="font-semibold text-gray-800">Rent Product</Text>
               <Text className="text-sm text-gray-500">
@@ -116,7 +109,7 @@ const ProfileScreen = () => {
 
           {/* Card 3: My Account */}
           <TouchableOpacity className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
-            <AccountIcon width={32} height={32} />
+            {/* <AccountIcon width={32} height={32} /> */}
             <View className="ml-3 flex-1">
               <Text className="font-semibold text-gray-800">My Account</Text>
               <Text className="text-sm text-gray-500">Access your account</Text>
@@ -125,7 +118,7 @@ const ProfileScreen = () => {
 
           {/* Card 4: My Store */}
           <TouchableOpacity className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
-            <StoreIcon width={32} height={32} />
+            {/* <StoreIcon width={32} height={32} /> */}
             <View className="ml-3 flex-1">
               <Text className="font-semibold text-gray-800">My Store</Text>
               <Text className="text-sm text-gray-500">Manage your store</Text>
@@ -134,7 +127,7 @@ const ProfileScreen = () => {
 
           {/* Card 5: Group */}
           <TouchableOpacity className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
-            <GroupIcon width={32} height={32} />
+            {/* <GroupIcon width={32} height={32} /> */}
             <View className="ml-3 flex-1">
               <Text className="font-semibold text-gray-800">Group</Text>
               <Text className="text-sm text-gray-500">Join communities</Text>
@@ -143,7 +136,7 @@ const ProfileScreen = () => {
 
           {/* Card 6: Talk to Expert */}
           <TouchableOpacity className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
-            <ExpertIcon width={32} height={32} />
+            {/* <ExpertIcon width={32} height={32} /> */}
             <View className="ml-3 flex-1">
               <Text className="font-semibold text-gray-800">
                 Talk to Expert

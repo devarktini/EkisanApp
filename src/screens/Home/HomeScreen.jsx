@@ -161,7 +161,7 @@ const HomeScreen = ({ navigation, route }) => {
         <View className="py-4">
           <View className="flex-row justify-between items-center px-4 mb-3">
             <Text className="text-xl font-bold text-[#048404]">All Featured</Text>
-            <TouchableOpacity onPress={()=>navigation.navigate('Category', { screen: 'Search' })}>
+            <TouchableOpacity onPress={() => navigation.navigate('Search')}>
               <Text className="text-[#048404]">View all →</Text>
             </TouchableOpacity>
           </View>

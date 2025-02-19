@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { autoLogin, refreshAuthToken } from '../services/authservice';
 import OnboardingScreen from "../screens/OnboardingScreen";
@@ -21,8 +22,18 @@ import SignupScreen from "../screens/SignupScreen";
 import AddFarm from "../screens/Profile/AddFarm";
 import { AppContext } from '../context/AppContext';
 import ProductsListingPage from "../screens/ProductsListingPage";
+import TabNavigator from "./TabNavigator";
 
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+
+// const MainTabNavigator = () => (
+//   <Tab.Navigator>
+//     <Tab.Screen name="Home" component={HomeScreen} />
+//     <Tab.Screen name="Category" component={CategoryProduct} />
+//     {/* ...other screens... */}
+//   </Tab.Navigator>
+// );
 
 const AppNavigator = ({ isFirstLaunch }) => {
   const { isAuthenticated, setIsAuthenticated } = useContext(AppContext);
@@ -43,20 +54,18 @@ const AppNavigator = ({ isFirstLaunch }) => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {isFirstLaunch ? (
-        <React.Fragment>
+        <>
           <Stack.Screen name="Onboarding" component={OnboardingScreen} />
           <Stack.Screen name="Landing" component={OnLandingScreen} />
           <Stack.Screen name="SignIn" component={SignInScreen} />
           <Stack.Screen name="SignUp" component={SignupScreen} />
-        </React.Fragment>
+        </>
       ) : isAuthenticated ? (
-        <React.Fragment>
-          <Stack.Screen name="Main" component={DrawerNavigator} />
-          <Stack.Screen name="HomeScreen" component={HomeScreen} />
-          <Stack.Screen name="Category" component={CategoryProduct} />
+        <>
+          <Stack.Screen name="Main" component={TabNavigator} />
           <Stack.Screen name="Checkout" component={CheckoutScreen} />
           <Stack.Screen name="PersonalInfo" component={PersonalDetails} />
-          <Stack.Screen name= "ProductList" component={ProductsListingPage} />
+          <Stack.Screen name="ProductList" component={ProductsListingPage} />
           <Stack.Screen name="Product" component={ProductAddress} />
           <Stack.Screen name="ShoppingBag" component={ShoppingBag} />
           <Stack.Screen name="UserProfile" component={UserProfile} />
@@ -64,12 +73,12 @@ const AppNavigator = ({ isFirstLaunch }) => {
           <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="ShoppingCart" component={ShoppingCart} />
           <Stack.Screen name="AddFarm" component={AddFarm} />
-        </React.Fragment>
+        </>
       ) : (
-        <React.Fragment>
+        <>
           <Stack.Screen name="SignIn" component={SignInScreen} />
           <Stack.Screen name="SignUp" component={SignupScreen} />
-        </React.Fragment>
+        </>
       )}
     </Stack.Navigator>
   );
