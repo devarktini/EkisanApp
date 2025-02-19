@@ -42,7 +42,7 @@ const CartScreen = () => {
                   <Text style={styles.name} numberOfLines={1}>
                     {item.name}
                   </Text>
-                  <Text style={styles.price}>${item.price.toFixed(2)}</Text>
+                  <Text style={styles.price}>${item?.price}</Text>
                   <View style={styles.quantityContainer}>
                     <TouchableOpacity
                       onPress={() => decrementCartQuantity(item.id)}
