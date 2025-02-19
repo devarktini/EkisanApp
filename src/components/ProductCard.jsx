@@ -1,11 +1,13 @@
 import { View, Text, TouchableOpacity, Image } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { useCart } from "../context/CartContext";
+import { AppContext } from "../context/AppContext";
 
 export default function ProductCard({ item }) {
   const navigation = useNavigation();
+  const { userData, logout, loading } = useContext(AppContext);
   const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useCart();
 
   const handleWishlistToggle = () => {
@@ -13,7 +15,7 @@ export default function ProductCard({ item }) {
       removeFromWishlist(item.id);
     } else {
       console.log("Item to add:", item); // Debugging
-      addToWishlist(item);
+      addToWishlist(item, userData);
     }
   };
 
@@ -32,7 +34,7 @@ export default function ProductCard({ item }) {
             color={isInWishlist(item.id) ? "blue" : "#048404"}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => addToCart(item)}>
+        <TouchableOpacity onPress={() => addToCart(item, userData)}>
           <Ionicons name="cart-outline" size={30} color="#048404" />
         </TouchableOpacity>
       </View>

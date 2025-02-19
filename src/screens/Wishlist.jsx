@@ -1,18 +1,23 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useCart } from '../context/CartContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { AppContext } from '../context/AppContext';
+import { getUserWishlist } from '../services/wishlistService';
+import { fetchProductDatabyId } from '../services/productService';
 
 const WishlistScreen = () => {
   const {
     wishlistItems,
+    setWishlistItems,
     removeFromWishlist,
     incrementWishlistQuantity,
     decrementWishlistQuantity,
     getWishlistTotal,
     moveToCart,
   } = useCart();
+  const { userData, logout, loading } = useContext(AppContext);
 
   const navigation = useNavigation();
 
@@ -25,6 +30,24 @@ const WishlistScreen = () => {
     navigation.navigate('ShoppingBag', { cartItems: wishlistItems });
   };
 
+  // const  wishListData =  getUserWishlist(userData.uid)
+  // console.log("dddddddd",wishListData)
+  useEffect(() => {
+    const fetchWishlistProducts = async () => {
+      const wishListData = await getUserWishlist(userData.uid);
+      
+      if (wishListData) {
+        const itemIds = Object.values(wishListData).map(item => item.itemId); // Extract itemIds
+        
+        // Fetch product details for each itemId
+        const products = await Promise.all(itemIds.map(id => fetchProductDatabyId(id)));
+        setWishlistItems(products)
+        console.log("Fetched Products:", products);
+      }
+    };
+  
+    fetchWishlistProducts();
+  }, [userData]);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Your Wishlist</Text>

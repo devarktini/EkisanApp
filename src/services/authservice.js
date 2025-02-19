@@ -1,7 +1,7 @@
 import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword, signOut, getIdToken, onIdTokenChanged } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, database } from '../../firebase.config';
-import { ref, set, get } from "firebase/database";
+import { ref, set, get, onValue } from "firebase/database";
 import { saveAuthToken, saveUserData, getAuthToken, removeAuthToken, removeUserData } from '../asyncStorege/authStorage';
 
 export const signupAuthService = async (email, password, userData) => {
@@ -208,3 +208,15 @@ onIdTokenChanged(auth, async (user) => {
         await removeUserData();
     }
 });
+
+export const fetchUser = ({ user }) => {
+
+    const userRef = ref(database, `users/${user.uid}`);
+    return new Promise(resolve => {
+        onValue(userRef, (snapshot) => {
+            const snapVal = snapshot.val();
+            resolve({ ...snapVal, uid: user.uid, phone: user.phoneNumber })
+
+        });
+    })
+}

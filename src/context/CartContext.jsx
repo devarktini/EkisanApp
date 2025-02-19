@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useState } from "react";
 import Toast from "react-native-toast-message";
+import { AddToWishlist } from "../services/wishlistService";
+import { addToCarts } from "../services/cartService";
 // Create Context
 const CartContext = createContext();
-
+ 
 export const CartProvider = ({ children }) => {
   // Cart state
   const [cartItems, setCartItems] = useState([]);
@@ -11,7 +13,7 @@ export const CartProvider = ({ children }) => {
   const [wishlistItems, setWishlistItems] = useState([]);
 
   // Add item to cart
-  const addToCart = (item) => {
+  const addToCart = async(item, userData) => {
     const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
     if (existingItem) {
       updateCartItem(item.id, existingItem.quantity + 1);
@@ -19,10 +21,18 @@ export const CartProvider = ({ children }) => {
       setCartItems((prevItems) => [...prevItems, { ...item, quantity: 1 }]);
     }
     // Show toast message
+  //   Toast.show({
+  //     type: "success",
+  //     text1: response.message,
+  //     text2: "Welcome back!",
+  //     position: "top",
+  // });
+     const cartData = await addToCarts(userData, item)
+     console.log("cartData", cartData)
     Toast.show({
       type: "success",
       text1: "Success!",
-      props: { productName: item.name },
+      position: "top",
     });
   };
 
@@ -44,15 +54,19 @@ export const CartProvider = ({ children }) => {
   };
 
   // Add item to wishlist
-  const addToWishlist = (item) => {
+  const addToWishlist = async(item, userData) => {
     if (!wishlistItems.find((wishlistItem) => wishlistItem.id === item.id)) {
       setWishlistItems((prevItems) => [...prevItems, { ...item, quantity: 1 }]);
+      console.log("firstdddd", item)
+      console.log("userDataddd", userData)
+     const wishListResponse = await  AddToWishlist(item, userData )
+     console.log("wishListResponse", wishListResponse)
     }
     // Show toast message
     Toast.show({
-      type: "wishlist",
+      type: "success",
       text1: "Success!",
-      props: { productName: item.name },
+      position: "top",
     });
   };
 
@@ -171,6 +185,7 @@ export const CartProvider = ({ children }) => {
         clearCart,
         getCartTotal,
         wishlistItems,
+        setWishlistItems,
         addToWishlist,
         removeFromWishlist,
         clearWishlist,

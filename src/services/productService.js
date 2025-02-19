@@ -1,8 +1,9 @@
-
 import { auth, database } from '../../firebase.config'
 import { ref, set, get, onValue } from "firebase/database";
+import { incGST } from '../utils/calc/gst';
 // import { ref, onValue } from 'firebase/database';
 // import { database } from '../../firebase.config';
+
 
 const fetchCategories = ({ sortType = "newest", limit = null, productList = null, user = undefined }) => {
     const itemsRef = ref(database, 'categories/');
@@ -98,4 +99,25 @@ const fetchProducts = ({ sortType = "newest", limit = null, search = null }) => 
     });
 }
 
-export { fetchCategories, fetchProducts };
+const fetchProductDatabyId = (id) => {
+    return new Promise(async (resolve) => {
+        const itemsRef = ref(database, `items/${id}`);
+        onValue(itemsRef, (snapShot => {
+            const snapVal = snapShot.val();
+            if (snapVal) {
+                resolve(
+                    {
+                        ...snapVal,
+                        price: incGST(snapVal),
+                        id: id
+                    }
+                );
+            }
+            else {
+                resolve(undefined)
+            }
+        }));
+    });
+};
+
+export { fetchCategories, fetchProducts, fetchProductDatabyId };
