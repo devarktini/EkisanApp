@@ -38,7 +38,7 @@ const ShoppingCart = ({ navigation }) => {
                 <Image source={{ uri: item.image }} style={styles.productImage} />
                 <Text style={styles.productName}>{item.name}</Text>
               </View>
-              <Text style={styles.cellText}>${item.price.toFixed(2)}</Text>
+              <Text style={styles.cellText}>${item.price.toFixed()}</Text>
               <Text style={styles.cellText}>{item.quantity}</Text>
               <Text style={styles.cellText}>${(item.price * item.quantity).toFixed(2)}</Text>
             </View>

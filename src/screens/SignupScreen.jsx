@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
     Text, 
     View, 
@@ -7,7 +7,6 @@ import {
     TouchableOpacity, 
     ScrollView, 
     ImageBackground, 
-    Dimensions, 
     Animated, 
     StyleSheet,
     Alert, 
@@ -19,8 +18,11 @@ import { signupAuthService } from '../services/authservice';
 
 const SignupScreen = () => {
     const navigation = useNavigation();
-    const fadeAnim = new Animated.Value(0);
-    const slideAnim = new Animated.Value(50);
+
+    // Persist animated values with useRef
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const slideAnim = useRef(new Animated.Value(50)).current;
+
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword1, setShowPassword1] = useState(false);
     const [formData, setFormData] = useState({
@@ -29,14 +31,6 @@ const SignupScreen = () => {
         password: '',
         confirmPassword: ''
     });
-    
-        React.useEffect(() => {
-            Animated.timing(fadeAnim, {
-                toValue: 1,
-                duration: 1000,
-                useNativeDriver: true,
-            }).start();
-        }, []);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     React.useEffect(() => {
@@ -52,7 +46,7 @@ const SignupScreen = () => {
                 useNativeDriver: true,
             })
         ]).start();
-    }, []);
+    }, [fadeAnim, slideAnim]);
 
     const validateForm = () => {
         const { fullName, email, password, confirmPassword } = formData;
@@ -85,7 +79,7 @@ const SignupScreen = () => {
             ...formData,
             [field]: value
         });
-    }
+    };
 
     const onHandlerSignup = async () => {
         if (!validateForm()) return;
@@ -101,15 +95,9 @@ const SignupScreen = () => {
             console.log("Signup Response: ", results);
     
             if (results.success) {
-                // User created successfully
                 Alert.alert('Success', 'Account created successfully!');
-                console.log("Registered User:", results.user);
-                console.log("Saved User Data:", results.userData);
-    
-                // Navigate to Home or Login screen
                 navigation.navigate('SignIn');
             } else {
-                // Handle specific error from API
                 Alert.alert('Signup Failed', results.error || 'Please try again.');
             }
         } catch (error) {
@@ -119,118 +107,115 @@ const SignupScreen = () => {
             setIsSubmitting(false);
         }
     };
-    
 
     return (
         <ImageBackground 
             source={require('../../assets/splashscreen_logo.png')}
-            className="flex-1"
+            style={{ flex: 1 }}
             blurRadius={3}
         >
             <LinearGradient
-                colors={['#2E7D32', '#1B5E20', '#004D40']} className="flex-1"
-                
+                colors={['#2E7D32', '#1B5E20', '#004D40']}
+                style={{ flex: 1 }}
             >
-                <ScrollView className="flex-1">
+                <ScrollView style={{ flex: 1 }}>
                     <Animated.View 
-                        className="px-4 pt-12 flex w-full"
-                        style={{
-                            opacity: fadeAnim,
-                            transform: [{ translateY: slideAnim }]
-                        }}
+                        style={[
+                            styles.container,
+                            {
+                                opacity: fadeAnim,
+                                transform: [{ translateY: slideAnim }]
+                            }
+                        ]}
                     >
-                        <View className="flex-col items-center justify-center mb-8">
-                            <View className="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl items-center justify-center mb-6 shadow-xl rotate-12">
+                        <View style={styles.headerWrapper}>
+                            <View style={styles.logoWrapper}>
                                 <Image
                                     source={require('../../assets/splashscreen_logo.png')}
                                     style={styles.logo}
                                     resizeMode="contain"
-                                    />
+                                />
                             </View>
-                            <Text className="text-4xl font-bold text-center mb-3 text-green-600 tracking-wider">
-                                Welcome
-                            </Text>
-                            <Text className="text-center text-white mb-4 text-lg">
+                            <Text style={styles.headerText}>Welcome</Text>
+                            <Text style={styles.subHeaderText}>
                                 Create your account to get started
                             </Text>
                         </View>
 
                         <View style={styles.inputContainer}>
-                        <View style={styles.inputWrapper}>
-                            <MaterialIcons name="email" size={20} color="#fff" />
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Enter your Name"
-                                placeholderTextColor="#rgba(255,255,255,0.7)"
-                                value={formData.fullName}
-                                onChangeText={(value)=>{onChangeTextHandler('fullName', value)}}
-                                autoCapitalize="none"
-                            />
-                        </View>
-                        <View style={styles.inputWrapper}>
-                            <MaterialIcons name="email" size={20} color="#fff" />
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Enter your email"
-                                placeholderTextColor="#rgba(255,255,255,0.7)"
-                                value={formData.email}
-                                onChangeText={(value)=>{onChangeTextHandler('email', value)}}
-                                keyboardType="email-address"
-                                autoCapitalize="none"
-                            />
-                        </View>
-
-                        <View style={styles.inputWrapper}>
-                            <MaterialIcons name="lock" size={20} color="#fff" />
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Enter your password"
-                                placeholderTextColor="#rgba(255,255,255,0.7)"
-                                value={formData.password}
-                                onChangeText={(value)=>{onChangeTextHandler('password', value)}}
-                                secureTextEntry={!showPassword}
-                            />
-                            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                                <MaterialIcons
-                                    name={showPassword ? "visibility" : "visibility-off"}
-                                    size={20}
-                                    color="#fff"
+                            <View style={styles.inputWrapper}>
+                                <MaterialIcons name="email" size={20} color="#fff" />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Enter your Name"
+                                    placeholderTextColor="rgba(255,255,255,0.7)"
+                                    value={formData.fullName}
+                                    onChangeText={(value) => onChangeTextHandler('fullName', value)}
+                                    autoCapitalize="none"
                                 />
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.inputWrapper}>
-                            <MaterialIcons name="lock" size={20} color="#fff" />
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Renter your password"
-                                placeholderTextColor="#rgba(255,255,255,0.7)"
-                                value={formData.confirmPassword}
-                                onChangeText={(value)=>{onChangeTextHandler('confirmPassword', value)}}
-                                secureTextEntry={!showPassword}
-                            />
-                            <TouchableOpacity onPress={() => setShowPassword1(!showPassword1)}>
-                                <MaterialIcons
-                                    name={showPassword ? "visibility" : "visibility-off"}
-                                    size={20}
-                                    color="#fff"
+                            </View>
+                            <View style={styles.inputWrapper}>
+                                <MaterialIcons name="email" size={20} color="#fff" />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Enter your email"
+                                    placeholderTextColor="rgba(255,255,255,0.7)"
+                                    value={formData.email}
+                                    onChangeText={(value) => onChangeTextHandler('email', value)}
+                                    keyboardType="email-address"
+                                    autoCapitalize="none"
                                 />
+                            </View>
+                            <View style={styles.inputWrapper}>
+                                <MaterialIcons name="lock" size={20} color="#fff" />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Enter your password"
+                                    placeholderTextColor="rgba(255,255,255,0.7)"
+                                    value={formData.password}
+                                    onChangeText={(value) => onChangeTextHandler('password', value)}
+                                    secureTextEntry={!showPassword}
+                                />
+                                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                                    <MaterialIcons
+                                        name={showPassword ? "visibility" : "visibility-off"}
+                                        size={20}
+                                        color="#fff"
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.inputWrapper}>
+                                <MaterialIcons name="lock" size={20} color="#fff" />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Re-enter your password"
+                                    placeholderTextColor="rgba(255,255,255,0.7)"
+                                    value={formData.confirmPassword}
+                                    onChangeText={(value) => onChangeTextHandler('confirmPassword', value)}
+                                    secureTextEntry={!showPassword1}
+                                />
+                                <TouchableOpacity onPress={() => setShowPassword1(!showPassword1)}>
+                                    <MaterialIcons
+                                        name={showPassword1 ? "visibility" : "visibility-off"}
+                                        size={20}
+                                        color="#fff"
+                                    />
+                                </TouchableOpacity>
+                            </View>
+
+                            <TouchableOpacity onPress={onHandlerSignup} style={styles.signInButton}>
+                                <Text style={styles.signInButtonText}>Sign Up</Text>
                             </TouchableOpacity>
+
+                            <View style={styles.socialContainer}>
+                                <Text style={styles.socialText}>Or continue with</Text>
+                            </View>
                         </View>
 
-                        <TouchableOpacity onPress={()=>onHandlerSignup()} style={styles.signInButton}>
-                            <Text style={styles.signInButtonText}>Sign Up</Text>
-                        </TouchableOpacity>
-
-                        <View style={styles.socialContainer}>
-                            <Text style={styles.socialText}>Or continue with</Text>
-                            
-                        </View>
-                    </View>
-
-                        <View className="flex-row justify-center mt-8 mb-8">
-                            <Text className="text-white text-lg">Already have an account? </Text>
+                        <View style={styles.footer}>
+                            <Text style={styles.footerText}>Already have an account? </Text>
                             <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
-                                <Text className="text-green-600 font-bold text-lg">Login</Text>
+                                <Text style={styles.footerLink}>Login</Text>
                             </TouchableOpacity>
                         </View>
                     </Animated.View>
@@ -240,31 +225,40 @@ const SignupScreen = () => {
     );
 };
 
-// Styles
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         padding: 20,
+        paddingTop: 48,
+        flex: 1,
     },
-    headerContainer: {
+    headerWrapper: {
         alignItems: 'center',
-        marginTop: 50,
-        marginBottom: 40,
+        marginBottom: 24,
+    },
+    logoWrapper: {
+        width: 96,
+        height: 96,
+        backgroundColor: 'transparent',
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 12,
+        transform: [{ rotate: '12deg' }],
     },
     logo: {
-        width: 100,
-        height: 100,
-        marginBottom: 20,
+        width: 80,
+        height: 80,
     },
     headerText: {
         fontSize: 32,
         fontWeight: 'bold',
-        color: '#fff',
-        marginBottom: 10,
+        color: '#4CAF50',
+        marginBottom: 8,
     },
     subHeaderText: {
-        fontSize: 16,
-        color: '#rgba(255,255,255,0.8)',
+        fontSize: 18,
+        color: '#fff',
+        textAlign: 'center',
     },
     inputContainer: {
         backgroundColor: 'rgba(255,255,255,0.1)',
@@ -297,15 +291,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-    optionsContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: 20,
-    },
-    linkText: {
-        color: '#fff',
-        fontSize: 14,
-    },
     socialContainer: {
         marginTop: 30,
         alignItems: 'center',
@@ -314,17 +299,20 @@ const styles = StyleSheet.create({
         color: '#fff',
         marginBottom: 20,
     },
-    socialButtonsContainer: {
+    footer: {
         flexDirection: 'row',
         justifyContent: 'center',
-        gap: 20,
+        marginVertical: 24,
     },
-    socialButton: {
-        borderRadius: 10,
-        overflow: 'hidden',
+    footerText: {
+        color: '#fff',
+        fontSize: 16,
+    },
+    footerLink: {
+        color: '#4CAF50',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });
 
 export default SignupScreen;
-
-

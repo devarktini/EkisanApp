@@ -34,7 +34,7 @@ const CartScreen = () => {
             renderItem={({ item }) => (
               <View style={styles.card}>
                 <Image
-                  source={{ uri: item.image }}
+                  source={{ uri: item.imgUrl }}
                   style={styles.image}
                   resizeMode="cover"
                 />

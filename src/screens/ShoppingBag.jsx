@@ -71,6 +71,7 @@ const ShoppingBag = () => {
           cartItems.map((item, index) => (
             <CartCard
               key={`${item.id}-${item.selectedSize}`}
+              
               item={item}
               index={index}
               handleQuantityChange={handleQuantityChange}
