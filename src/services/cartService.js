@@ -1,9 +1,9 @@
 import { database, auth } from "../../firebase.config";
 import { push, ref } from "firebase/database";
 import Toast from "react-native-toast-message";
-import { fetchUser } from "./authservice";
 
 export const addToCarts = async (userData, item) => {
+    console.log("ddddddddd", userData, item)
     try {
         const user = auth.currentUser;
         if (!user) {

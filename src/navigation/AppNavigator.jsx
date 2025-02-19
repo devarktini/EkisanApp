@@ -1,15 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { autoLogin, refreshAuthToken } from '../services/authservice';
 import OnboardingScreen from "../screens/OnboardingScreen";
 import OnLandingScreen from "../screens/OnLandingScreen";
-import DrawerNavigator from "../navigation/DrawerNavigator";
-import HomeScreen from "../screens/Home/HomeScreen";
-import CategoryProduct from "../screens/CategoryProduct";
+import DrawerNavigator from "./DrawerNavigator";
 import CheckoutScreen from "../screens/CheckoutScreen";
-import LoginScreen from "../screens/LoginScreen";
-import OTPScreen from "../screens/OTPScreen";
 import PersonalDetails from "../screens/PersonalDetails";
 import ProductAddress from "../screens/ProductAddress";
 import ShoppingBag from "../screens/ShoppingBag";
@@ -22,18 +17,8 @@ import SignupScreen from "../screens/SignupScreen";
 import AddFarm from "../screens/Profile/AddFarm";
 import { AppContext } from '../context/AppContext';
 import ProductsListingPage from "../screens/ProductsListingPage";
-import TabNavigator from "./TabNavigator";
 
 const Stack = createStackNavigator();
-const Tab = createBottomTabNavigator();
-
-// const MainTabNavigator = () => (
-//   <Tab.Navigator>
-//     <Tab.Screen name="Home" component={HomeScreen} />
-//     <Tab.Screen name="Category" component={CategoryProduct} />
-//     {/* ...other screens... */}
-//   </Tab.Navigator>
-// );
 
 const AppNavigator = ({ isFirstLaunch }) => {
   const { isAuthenticated, setIsAuthenticated } = useContext(AppContext);
@@ -62,7 +47,7 @@ const AppNavigator = ({ isFirstLaunch }) => {
         </>
       ) : isAuthenticated ? (
         <>
-          <Stack.Screen name="Main" component={TabNavigator} />
+          <Stack.Screen name="Main" component={DrawerNavigator} />
           <Stack.Screen name="Checkout" component={CheckoutScreen} />
           <Stack.Screen name="PersonalInfo" component={PersonalDetails} />
           <Stack.Screen name="ProductList" component={ProductsListingPage} />
