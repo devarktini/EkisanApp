@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { autoLogin, refreshAuthToken } from '../services/authservice';
+import { autoLogin, refreshAuthToken } from "../services/authservice";
+import { AppContext } from "../context/AppContext";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import OnLandingScreen from "../screens/OnLandingScreen";
 import DrawerNavigator from "./DrawerNavigator";
@@ -15,13 +16,13 @@ import ShoppingCart from "../screens/ShoppingCart";
 import SignInScreen from "../screens/SignInScreen";
 import SignupScreen from "../screens/SignupScreen";
 import AddFarm from "../screens/Profile/AddFarm";
-import { AppContext } from '../context/AppContext';
 import ProductsListingPage from "../screens/ProductsListingPage";
 
 const Stack = createStackNavigator();
 
 const AppNavigator = ({ isFirstLaunch }) => {
   const { isAuthenticated, setIsAuthenticated } = useContext(AppContext);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -32,9 +33,12 @@ const AppNavigator = ({ isFirstLaunch }) => {
       } else {
         setIsAuthenticated(false);
       }
+      setLoading(false);
     };
     checkAuth();
-  }, []);
+  }, [setIsAuthenticated]);
+
+  if (loading) return null; // Show a splash screen if needed
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

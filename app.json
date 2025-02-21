@@ -3,18 +3,18 @@
     "name": "EkisanApp",
     "slug": "ekisanapp",
     "version": "1.0.0",
-    "newArchEnabled":true,
+    "newArchEnabled": true,
     "userInterfaceStyle": "automatic",
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.null2331.ekisanapp"
+      "package": "com.hazzuvai.ekisanapp"
     },
     "extra": {
       "eas": {
-        "projectId": "6af56e04-106d-4d96-b5a5-06a14c796ef6"
+        "projectId": "2c479d40-6504-48ba-948b-2157aa6b26e5"
       }
     }
   }

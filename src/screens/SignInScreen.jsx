@@ -45,7 +45,7 @@ const SignInScreen = () => {
                 position: "top",
             });
             await login(response.tokenResponse.idToken, response.userData);
-            navigation.navigate("Main", { user: response.userData });
+           
         } else {
             Alert.alert("Login Failed", response.error);
         }

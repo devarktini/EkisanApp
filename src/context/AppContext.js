@@ -57,7 +57,7 @@ export const AppProvider = ({ children }) => {
         setIsAuthenticated(false);
         setLoading(false);
         if (navigation) {
-            navigation.navigate("SignIn");
+            navigation.dispatch(StackActions.replace("SignIn"));
 
         } // Navigate to SignIn screen
     };
