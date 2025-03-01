@@ -8,7 +8,8 @@ const OnLandingScreen = () => {
 
     // You can add any logic or UI elements here for the landing screen.
  const onGoToHome = () => {
-        navigation.navigate('SignIn');
+  navigation.navigate('PhoneAuth');
+        // navigation.navigate('PhoneAuth');
     };
   return (
     <View className=" relative h-full w-full">
@@ -44,7 +45,6 @@ const OnLandingScreen = () => {
         {/* Button to go to Main screen (Home) */}
         <View className=" mt-6">
         <Button
-         
           title="Get Started"
           onPress={onGoToHome}
           color="#548d22" // Button text color

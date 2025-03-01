@@ -69,12 +69,9 @@ const fetchProducts = ({ sortType = "newest", limit = null, search = null }) => 
                 };
                 rawItemsList.push({ ...newObj, id });
             }
-
             let filteredItems = rawItemsList;
-
             if (search) {
                 const searchQuery = search.toLowerCase();
-                console.log("received search query is", searchQuery)
                 filteredItems = rawItemsList.filter((item) => {
                     const name = item.name ? item.name.toLowerCase() : "";
                     const seller = item.sellerName ? item.sellerName.toLowerCase() : "";

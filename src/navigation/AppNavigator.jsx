@@ -17,6 +17,10 @@ import SignupScreen from "../screens/SignupScreen";
 import AddFarm from "../screens/Profile/AddFarm";
 import { AppContext } from '../context/AppContext';
 import ProductsListingPage from "../screens/ProductsListingPage";
+import PhoneAuthScreen from "../screens/PhoneAuthScreen";
+import AuthOtpScreen from "../screens/AuthOtpScreen";
+import UpdateProfileScreen from "../screens/UpdateProfileScreen";
+import MyAccount from "../screens/Account/MyAccount";
 
 const Stack = createStackNavigator();
 
@@ -35,15 +39,27 @@ const AppNavigator = ({ isFirstLaunch }) => {
     };
     checkAuth();
   }, []);
-
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {isFirstLaunch ? (
         <>
           <Stack.Screen name="Onboarding" component={OnboardingScreen} />
           <Stack.Screen name="Landing" component={OnLandingScreen} />
-          <Stack.Screen name="SignIn" component={SignInScreen} />
-          <Stack.Screen name="SignUp" component={SignupScreen} />
+          <Stack.Screen name="PhoneAuth" component={PhoneAuthScreen} />
+          <Stack.Screen name="OtpVerify" component={AuthOtpScreen} />
+          <Stack.Screen 
+            name="UpdateProfile" 
+            component={UpdateProfileScreen}
+            options={{
+              presentation: 'modal',
+              headerShown: false,
+              gestureEnabled: true,
+              gestureDirection: 'vertical',
+            }}
+          />
+          <Stack.Screen name="Main" component={DrawerNavigator} />
+          {/* <Stack.Screen name="SignIn" component={SignInScreen} />
+          <Stack.Screen name="SignUp" component={SignupScreen} /> */}
         </>
       ) : isAuthenticated ? (
         <>
@@ -58,11 +74,37 @@ const AppNavigator = ({ isFirstLaunch }) => {
           <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="ShoppingCart" component={ShoppingCart} />
           <Stack.Screen name="AddFarm" component={AddFarm} />
+          <Stack.Screen name='MyAccount' component={MyAccount} />
+          <Stack.Screen 
+            name="UpdateProfile" 
+            component={UpdateProfileScreen}
+            options={{
+              presentation: 'modal',
+              headerShown: false,
+              gestureEnabled: true,
+              gestureDirection: 'vertical',
+            }}
+          />
+          {/* ✅ Always include PhoneAuth */}
+      {/* <Stack.Screen name="PhoneAuth" component={PhoneAuthScreen} />
+      <Stack.Screen name="OtpVerify" component={AuthOtpScreen} /> */}
         </>
       ) : (
         <>
-          <Stack.Screen name="SignIn" component={SignInScreen} />
-          <Stack.Screen name="SignUp" component={SignupScreen} />
+        <Stack.Screen name="PhoneAuth" component={PhoneAuthScreen} />
+        <Stack.Screen name="OtpVerify" component={AuthOtpScreen} />
+        <Stack.Screen 
+            name="UpdateProfile" 
+            component={UpdateProfileScreen}
+            options={{
+              presentation: 'modal',
+              headerShown: false,
+              gestureEnabled: true,
+              gestureDirection: 'vertical',
+            }}
+          />
+          {/* <Stack.Screen name="SignIn" component={SignInScreen} />
+          <Stack.Screen name="SignUp" component={SignupScreen} /> */}
         </>
       )}
     </Stack.Navigator>

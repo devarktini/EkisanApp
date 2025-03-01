@@ -8,7 +8,6 @@ import { AppContext } from "../context/AppContext";
 const CustomDrawerContent = (props) => {
   const { userData, logout, loading } = useContext(AppContext);
   const { navigation } = props;
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -16,7 +15,7 @@ const CustomDrawerContent = (props) => {
           <Feather name="user" size={40} color="white" />
         </View>
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>{userData?.fullName}</Text>
+          <Text style={styles.userName}>{userData?.phoneNumber}</Text>
           <Text style={styles.userEmail}>{userData?.email}</Text>
         </View>
       </View>

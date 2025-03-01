@@ -26,6 +26,7 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="com.null2331.ekisanapp"/>
         <data android:scheme="exp+ekisanapp"/>
+        <data android:scheme="com.expo2331.ekisanapp"/>
       </intent-filter>
     </activity>
   </application>

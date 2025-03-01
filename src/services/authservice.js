@@ -1,7 +1,7 @@
-import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword, signOut, getIdToken, onIdTokenChanged } from 'firebase/auth';
+import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword, signOut, getIdToken, onIdTokenChanged, signInAnonymously } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, database } from '../../firebase.config';
-import { ref, set, get, onValue } from "firebase/database";
+import { ref, set, get, onValue, update } from "firebase/database";
 import { saveAuthToken, saveUserData, getAuthToken, removeAuthToken, removeUserData } from '../asyncStorege/authStorage';
 
 export const signupAuthService = async (email, password, userData) => {
@@ -181,7 +181,7 @@ export const refreshAuthToken = async () => {
 export const autoLogin = async () => {
     try {
         const token = await getAuthToken();
-        console.log("auto token", token)
+       
         if (token) {
             const user = auth.currentUser;
             if (user) {
@@ -216,7 +216,124 @@ export const fetchUser = ({ user }) => {
         onValue(userRef, (snapshot) => {
             const snapVal = snapshot.val();
             resolve({ ...snapVal, uid: user.uid, phone: user.phoneNumber })
-
         });
     })
 }
+
+
+export const signInAnonymouslyToFirebase = async () => {
+    try {
+      const userCredential = await signInAnonymously(auth);
+      const user = userCredential.user;
+      const token = await getIdToken(user, true);
+  
+      const getUserData = async (uid) => {
+        try {
+          const userRef = ref(database, `users/${uid}`);
+          const userSnapshot = await get(userRef);
+          return userSnapshot.exists() ? userSnapshot.val() : null;
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          return null;
+        }
+      };
+  
+      let userData = await getUserData(user.uid);
+      let isFirstTimeUser = false;
+  
+      if (!userData) {
+        // This is a first-time user
+        isFirstTimeUser = true;
+        userData = {
+          uid: user.uid,
+          phoneNumber: "",
+          createdAt: new Date().toISOString(),
+          isAnonymous: true,
+          isProfileComplete: false,
+          isFirstTimeUser: true,
+        };
+  
+        const userRef = ref(database, `users/${user.uid}`);
+        await set(userRef, userData);
+      }
+
+      return {
+        success: true,
+        tokenResponse: userCredential._tokenResponse,
+        user,
+        token,
+        userData,
+        isFirstTimeUser,
+        message: "Login successful!",
+      };
+    } catch (error) {
+      console.error("Error signing in anonymously:", error);
+      return { success: false, message: "Login failed!", error };
+    }
+};
+
+export const saveUserInDatabase = async (uid, phoneNumber) => {
+    try {
+      const userRef = ref(database, `users/${uid}`);
+      const userSnapshot = await get(userRef);
+      const existingData = userSnapshot.exists() ? userSnapshot.val() : {};
+  
+      await set(userRef, {
+        ...existingData, // Preserve existing data
+        uid,
+        phoneNumber,
+        updatedAt: new Date().toISOString(),
+      });
+  
+      console.log("User data saved successfully!");
+    } catch (error) {
+      console.error("Error saving user data:", error);
+    }
+  };
+
+// export const updateUserProfile = async (userData) => {
+//     console.log("first", userData)
+//   try {
+//     const userRef = ref(database, `users/${userData.uid}`);
+//     await update(userRef, {
+//       ...userData,
+//       updatedAt: new Date().toISOString(),
+//     });
+
+//     return {
+//       success: true,
+//       userData: userData,
+//       message: 'Profile updated successfully!'
+//     };
+//   } catch (error) {
+//     console.error("Error updating profile:", error);
+//     return {
+//       success: false,
+//       error: 'Failed to update profile'
+//     };
+//   }
+// };
+
+export const updateUserProfile = async (userData) => {
+    console.log("Updating user data:", userData);
+    try {
+      const userRef = ref(database, `users/${userData.uid}`);
+      
+      await update(userRef, {
+        ...userData,
+        updatedAt: new Date().toISOString(),
+      });
+  
+      return {
+        success: true,
+        userData,
+        message: 'Profile updated successfully!'
+      };
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      return {
+        success: false,
+        error: 'Failed to update profile'
+      };
+    }
+  };

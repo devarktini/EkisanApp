@@ -9,7 +9,7 @@ const Drawer = createDrawerNavigator();
 
 const DrawerNavigator = ({route}) => {
   const user = route?.params?.user;
-  console.log("112", user)
+ 
 
   return (
     <Drawer.Navigator screenOptions={{ headerShown: false }} drawerContent={(props) => <CustomDrawerContent {...props} user={user} />}>

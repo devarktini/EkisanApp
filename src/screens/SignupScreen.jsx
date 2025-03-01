@@ -103,8 +103,7 @@ const SignupScreen = () => {
             if (results.success) {
                 // User created successfully
                 Alert.alert('Success', 'Account created successfully!');
-                console.log("Registered User:", results.user);
-                console.log("Saved User Data:", results.userData);
+               
     
                 // Navigate to Home or Login screen
                 navigation.navigate('SignIn');
@@ -113,7 +112,7 @@ const SignupScreen = () => {
                 Alert.alert('Signup Failed', results.error || 'Please try again.');
             }
         } catch (error) {
-            console.error("Unexpected Error:", error);
+           
             Alert.alert('Error', 'An unexpected error occurred. Please try again.');
         } finally {
             setIsSubmitting(false);

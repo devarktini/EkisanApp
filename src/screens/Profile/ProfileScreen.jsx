@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { AppContext } from "../../context/AppContext";
 
 const ProfileScreen = () => {
   const navigator = useNavigation();
+  const {userData}= useContext(AppContext)
   return (
     <ScrollView className="flex-1 bg-white">
       {/* Header Image */}
@@ -33,8 +35,9 @@ const ProfileScreen = () => {
               }}
               className="w-20 h-20 rounded-full border-2 border-white"
             />
-            <Text className="text-lg font-bold mt-2">Mike Caixa</Text>
-            <Text className="text-sm text-gray-500">Lagos, Place, 65 ha</Text>
+            <Text className="text-lg font-bold mt-2">{userData.fullName}</Text>
+            <Text className="text-md font-bold ">{userData.phoneNumber}</Text>
+            <Text className="text-sm text-gray-500">{userData.block + ' '+  userData.district + ' '+  userData.state}</Text>
           </View>
           <TouchableOpacity className="bg-[#048404] px-4 py-2 rounded-full ml-20">
             <Text className="text-white px-3">seller</Text>
@@ -108,7 +111,7 @@ const ProfileScreen = () => {
           </TouchableOpacity>
 
           {/* Card 3: My Account */}
-          <TouchableOpacity className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
+          <TouchableOpacity onPress={()=> navigator.navigate('MyAccount')} className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
             {/* <AccountIcon width={32} height={32} /> */}
             <View className="ml-3 flex-1">
               <Text className="font-semibold text-gray-800">My Account</Text>

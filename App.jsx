@@ -21,7 +21,6 @@ export default function App() {
     const checkFirstLaunch = async () => {
       try {
         const value = await AsyncStorage.getItem("alreadyLaunched");
-        console.log("First Launch Value:", value); // Debug log
         if (value === null) {
           setIsFirstLaunch(true);
           await AsyncStorage.setItem("alreadyLaunched", "true");

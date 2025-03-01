@@ -43,11 +43,6 @@ const CategoryProduct = () => {
   const route = useRoute();
   const params = route.params || {};
   const { categoryName = 'All' } = params;
-
-  console.log('Category Name:', categoryName);
-
-
- console.log("vvvvvvvvvv", categoryList.length)
   const products = [
     // WOMEN CATEGORY
     {

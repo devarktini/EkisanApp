@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AUTH_TOKEN_KEY = 'authToken';
 const USER_DATA = 'user';
+const AUTH_REFRESH_KEY = 'refreshToken'
 
 /**
  * Save authentication token
@@ -10,10 +11,14 @@ const USER_DATA = 'user';
 export const saveAuthToken = async (token) => {
     try {
         await AsyncStorage.setItem(AUTH_TOKEN_KEY, token);
+        // await AsyncStorage.setItem(AUTH_REFRESH_KEY, refreshToken);
     } catch (error) {
         console.error("Error saving auth token:", error);
+        throw error;
     }
 };
+
+
 
 /**
  * Get authentication token
@@ -34,6 +39,7 @@ export const getAuthToken = async () => {
 export const removeAuthToken = async () => {
     try {
         await AsyncStorage.removeItem(AUTH_TOKEN_KEY);
+        // await AsyncStorage.removeItem(AUTH_REFRESH_KEY);
     } catch (error) {
         console.error("Error removing auth token:", error);
     }
@@ -85,3 +91,17 @@ export const clearAuthData = async () => {
         console.error("Error clearing auth data:", error);
     }
 };
+
+/**
+ * Remove all data from AsyncStorage
+ */
+export const removeAllData = async () => {
+    try {
+        const allKeys = await AsyncStorage.getAllKeys();
+        await AsyncStorage.multiRemove(allKeys);
+        console.log('All data cleared from AsyncStorage');
+    } catch (error) {
+        console.error('Error clearing all data from AsyncStorage:', error);
+    }
+};
+
