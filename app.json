@@ -3,8 +3,8 @@
     "name": "EkisanApp",
     "slug": "ekisanapp",
     "version": "1.0.0",
-    "newArchEnabled":true,
     "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
