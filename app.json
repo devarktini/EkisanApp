@@ -10,12 +10,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.null2331.ekisanapp"
+      "package": "com.sharma777.ekisanapp"
     },
     "extra": {
-      "eas": {
-        "projectId": "6af56e04-106d-4d96-b5a5-06a14c796ef6"
-      }
+      "eas": {}
     }
   }
 }
