@@ -109,9 +109,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.sharma777.ekisanapp'
+    namespace 'com.gks2331.ekisanapp'
     defaultConfig {
-        applicationId 'com.sharma777.ekisanapp'
+        applicationId 'com.gks2331.ekisanapp'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
