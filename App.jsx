@@ -23,6 +23,7 @@ export default function App() {
         const value = await AsyncStorage.getItem("alreadyLaunched");
         if (value === null) {
           setIsFirstLaunch(true);
+          await AsyncStorage.setItem("isFirstLaunch", "true");
           await AsyncStorage.setItem("alreadyLaunched", "true");
         } else {
           setIsFirstLaunch(false);

@@ -14,10 +14,11 @@ import {
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { AppContext } from '../context/AppContext';
-import { updateUserProfile } from '../services/authservice';
+import { getCurrentUser, updateUserProfile } from '../services/authservice';
 import { IndianDistrict, IndianStates, Blocks } from '../constants/GeographicalData'; // Import your geographical data
 import { useRoute } from '@react-navigation/native';
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
@@ -54,12 +55,11 @@ const UpdateProfileScreen = ({ navigation }) => {
     block: '',
   }
   const [formData, setFormData] = useState(object);
-  console.log("56", type)
-  
   const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState('');
   const [optionDistrict, setOptionDistrict] = useState([]);
   const [optionBlock, setOptionBlock] = useState([]);
+  const [userPhone, setUserPhone] = useState('');
 
   useEffect(() => {
     if (user) {
@@ -73,15 +73,31 @@ const UpdateProfileScreen = ({ navigation }) => {
       });
     }
   }, [user]);
+
+  useEffect(() => {
+    const getCurrentUserData = async () => {
+      try {
+        const response = await getCurrentUser();
+        if (response.success) {
+          console.log("response", response)
+          setUserPhone(response.userData.phoneNumber);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    getCurrentUserData();
+  }, []);
   
-//  console.log()
   useEffect(() => {
     // Update districts when state changes
     // setFormData(userData)
     if (formData.state) {
       setOptionDistrict(IndianDistrict[formData.state] || []);
-      setFormData((prev) => ({ ...prev, district: '', block: '' })); // Reset district and block
-      setOptionBlock([]);
+      if (!formData.district) {
+        setFormData((prev) => ({ ...prev, district: '', block: '' }));
+      }
     } else {
       setOptionDistrict([]);
       setOptionBlock([]);
@@ -141,7 +157,7 @@ const UpdateProfileScreen = ({ navigation }) => {
       const result = await updateUserProfile({
         ...formData,
         uid: userData.uid,
-        phoneNumber: userData.phoneNumber,
+        phoneNumber: userPhone,
         isProfileComplete: true,
         isFirstTimeUser: false,
         updatedAt: new Date().toISOString()
@@ -149,6 +165,7 @@ const UpdateProfileScreen = ({ navigation }) => {
       if (result.success) {
         setIsAuthenticated (true)
         setUserData(result.userData);
+        await AsyncStorage.setItem("isFirstLaunch", "false");
         if (type === 'edit') {
           navigation.navigate('MyAccount');
         }
@@ -265,7 +282,7 @@ const UpdateProfileScreen = ({ navigation }) => {
                     selectedValue={formData.district}
                     onValueChange={(itemValue) => handleFormChanges('district', itemValue)}
                     style={styles.picker}
-                    enabled={!!formData.state}
+                    // enabled={optionDistrict.length > 0}
                   >
                     <Picker.Item label="Select a District" value="" />
                     {optionDistrict.map((item, index) => (
@@ -281,7 +298,7 @@ const UpdateProfileScreen = ({ navigation }) => {
                     selectedValue={formData.block}
                     onValueChange={(itemValue) => handleFormChanges('block', itemValue)}
                     style={styles.picker}
-                    enabled={!!formData.district}
+                    // enabled={!!formData.district}
                   >
                     <Picker.Item label="Select a Block" value="" />
                     {optionBlock.map((item, index) => (

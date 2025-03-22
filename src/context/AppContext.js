@@ -2,6 +2,8 @@ import React, { createContext, useState, useEffect } from 'react';
 import { getAuthToken, getUserData, saveAuthToken, saveUserData, removeAuthToken, removeUserData, removeAllData } from '../asyncStorege/authStorage';
 import { refreshAuthToken, autoLogin } from '../services/authservice';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { findUserByMobile } from '../services/userService';
 
 export const AppContext = createContext();
 
@@ -19,7 +21,10 @@ export const AppProvider = ({ children }) => {
             const token = await getAuthToken()
             // const user = await getUserData();
             const { user, userData } = await autoLogin()
+            // const mobileUser = await findUserByMobile('+919473883218')
+            // console.log("mobile Number", mobileUser)
             if (token && user) {
+                console.log("dddd", userData)
                 if(userData.isFirstTimeUser){
                     setShowUpdateProfile(true);
                     navigation.navigate("UpdateProfile", { user: userData });

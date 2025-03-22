@@ -7,7 +7,7 @@ const CartCard = ({ item, index, handleQuantityChange, handleDeleteCartItem }) =
   return (
     <View className="mb-4 border border-gray-200 rounded-lg p-4 bg-white shadow-sm">
       <View className="flex-row">
-        <Image source={{ uri: item.image }} className="w-24 h-24 rounded-lg" />
+        <Image source={{ uri: item.imgUrl }} className="w-24 h-24 rounded-lg" />
         <View className="ml-4 flex-1">
           <Text className="text-lg font-bold">{item.name}</Text>
           <Text className="text-gray-500 text-sm">Size: {item.selectedSize}</Text>

@@ -35,9 +35,9 @@ const ProfileScreen = () => {
               }}
               className="w-20 h-20 rounded-full border-2 border-white"
             />
-            <Text className="text-lg font-bold mt-2">{userData.fullName}</Text>
-            <Text className="text-md font-bold ">{userData.phoneNumber}</Text>
-            <Text className="text-sm text-gray-500">{userData.block + ' '+  userData.district + ' '+  userData.state}</Text>
+            <Text className="text-lg font-bold mt-2">{userData?.fullName}</Text>
+            <Text className="text-md font-bold ">{userData?.phoneNumber}</Text>
+            <Text className="text-sm text-gray-500">{userData?.block + ' '+  userData?.district + ' '+  userData?.state}</Text>
           </View>
           <TouchableOpacity className="bg-[#048404] px-4 py-2 rounded-full ml-20">
             <Text className="text-white px-3">seller</Text>
@@ -93,6 +93,7 @@ const ProfileScreen = () => {
           {/* Card 1: My Farm */}
           <TouchableOpacity onPress={()=> navigator.navigate('AddFarm')} className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
             {/* <FarmIcon width={32} height={32} /> */}
+            <Feather name="box" size={32} color="#048404" />
             <View className="ml-3 flex-1">
               <Text className="font-semibold text-gray-800">My Farm</Text>
               <Text className="text-sm text-gray-500">Manage your farm</Text>
@@ -102,6 +103,7 @@ const ProfileScreen = () => {
           {/* Card 2: Rent Product */}
           <TouchableOpacity className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
             {/* <RentIcon width={32} height={32} /> */}
+            <Feather name="package" size={32} color="#048404" />
             <View className="ml-3 flex-1">
               <Text className="font-semibold text-gray-800">Rent Product</Text>
               <Text className="text-sm text-gray-500">
@@ -112,7 +114,8 @@ const ProfileScreen = () => {
 
           {/* Card 3: My Account */}
           <TouchableOpacity onPress={()=> navigator.navigate('MyAccount')} className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
-            {/* <AccountIcon width={32} height={32} /> */}
+            
+            <Feather name="user" size={32} color="#048404" />
             <View className="ml-3 flex-1">
               <Text className="font-semibold text-gray-800">My Account</Text>
               <Text className="text-sm text-gray-500">Access your account</Text>
@@ -122,6 +125,7 @@ const ProfileScreen = () => {
           {/* Card 4: My Store */}
           <TouchableOpacity className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
             {/* <StoreIcon width={32} height={32} /> */}
+            <Feather name="shopping-bag" size={32} color="#048404" />
             <View className="ml-3 flex-1">
               <Text className="font-semibold text-gray-800">My Store</Text>
               <Text className="text-sm text-gray-500">Manage your store</Text>
@@ -129,8 +133,8 @@ const ProfileScreen = () => {
           </TouchableOpacity>
 
           {/* Card 5: Group */}
-          <TouchableOpacity className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
-            {/* <GroupIcon width={32} height={32} /> */}
+          <TouchableOpacity onPress={()=> navigator.navigate('groupList')} className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
+        <Feather name="users" size={32} color="#048404" />
             <View className="ml-3 flex-1">
               <Text className="font-semibold text-gray-800">Group</Text>
               <Text className="text-sm text-gray-500">Join communities</Text>
@@ -138,8 +142,9 @@ const ProfileScreen = () => {
           </TouchableOpacity>
 
           {/* Card 6: Talk to Expert */}
-          <TouchableOpacity className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
+          <TouchableOpacity onPress={()=> navigator.navigate('TalkToExpert')} className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
             {/* <ExpertIcon width={32} height={32} /> */}
+            <Feather name="message-circle" size={32} color="#048404" />
             <View className="ml-3 flex-1">
               <Text className="font-semibold text-gray-800">
                 Talk to Expert

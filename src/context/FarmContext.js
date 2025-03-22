@@ -11,8 +11,6 @@ export const FarmProvider = ({ children }) => {
   const addFarm = async(farmData, user ) => {
     setFarms([...farms, farmData]);
     try {
-      console.log("13", farmData)
-      console.log("14", user)
       const response = await addFarmerFarms(farmData, user);
       if (response.success) {
         // Handle success

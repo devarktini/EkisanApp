@@ -1,16 +1,16 @@
-import React, { useContext, useState } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import React, { useContext } from "react";
+import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet, ImageBackground } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import styles from "../styles/styles";
 import { AppContext } from "../context/AppContext";
 
 const CustomDrawerContent = (props) => {
   const { userData, logout, loading } = useContext(AppContext);
   const { navigation } = props;
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      <ImageBackground source={require('../assets/agricultures.jpeg')} style={styles.header}>
         <View style={styles.avatar}>
           <Feather name="user" size={40} color="white" />
         </View>
@@ -18,7 +18,7 @@ const CustomDrawerContent = (props) => {
           <Text style={styles.userName}>{userData?.phoneNumber}</Text>
           <Text style={styles.userEmail}>{userData?.email}</Text>
         </View>
-      </View>
+      </ImageBackground>
 
       <View style={styles.drawerItems}>
         <TouchableOpacity style={styles.drawerItem} onPress={() => navigation.navigate("HomeTabs")}>
@@ -43,5 +43,88 @@ const CustomDrawerContent = (props) => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f8f8',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#4caf50',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#388e3c',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  userInfo: {
+    flex: 1,
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  userEmail: {
+    fontSize: 14,
+    color: '#fff',
+  },
+  drawerItems: {
+    flex: 1,
+    marginTop: 20,
+  },
+  drawerItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    backgroundColor: '#fff',
+    marginVertical: 5,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  drawerItemText: {
+    fontSize: 16,
+    marginLeft: 15,
+    color: '#333',
+  },
+  logoutButton: {
+    backgroundColor: '#d32f2f',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    margin: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});
 
 export default CustomDrawerContent;

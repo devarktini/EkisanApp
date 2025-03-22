@@ -1,154 +1,154 @@
-import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword, signOut, getIdToken, onIdTokenChanged, signInAnonymously } from 'firebase/auth';
+import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword, signOut, getIdToken, onIdTokenChanged, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, database } from '../../firebase.config';
 import { ref, set, get, onValue, update } from "firebase/database";
 import { saveAuthToken, saveUserData, getAuthToken, removeAuthToken, removeUserData } from '../asyncStorege/authStorage';
 
-export const signupAuthService = async (email, password, userData) => {
+// export const signupAuthService = async (email, password, userData) => {
 
-    try {
-        // Validate required fields
-        if (!email || !password || !userData.fullName) {
-            throw new Error('Please fill in all required fields.');
-        }
+//     try {
+//         // Validate required fields
+//         if (!email || !password || !userData.fullName) {
+//             throw new Error('Please fill in all required fields.');
+//         }
 
-        // Validate password length
-        if (password.length < 6) {
-            throw new Error('Password must be at least 6 characters long.');
-        }
+//         // Validate password length
+//         if (password.length < 6) {
+//             throw new Error('Password must be at least 6 characters long.');
+//         }
 
-        // Check if email already exists
-        const existingMethods = await fetchSignInMethodsForEmail(auth, email);
-        if (existingMethods.length > 0) {
-            return {
-                success: false,
-                error: 'Email already in use. Please log in instead.',
-            };
-        }
+//         // Check if email already exists
+//         const existingMethods = await fetchSignInMethodsForEmail(auth, email);
+//         if (existingMethods.length > 0) {
+//             return {
+//                 success: false,
+//                 error: 'Email already in use. Please log in instead.',
+//             };
+//         }
 
-        // Create user in Firebase Authentication
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
+//         // Create user in Firebase Authentication
+//         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+//         const user = userCredential.user;
 
-        // Store user in Realtime Database
-        const userRef = ref(database, `users/${user.uid}`);
-        await set(userRef, {
-            uid: user.uid,
-            email: email,
-            fullName: userData.fullName,
-            phoneNumber: userData.phoneNumber || '',
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-            isActive: true,
-        });
+//         // Store user in Realtime Database
+//         const userRef = ref(database, `users/${user.uid}`);
+//         await set(userRef, {
+//             uid: user.uid,
+//             email: email,
+//             fullName: userData.fullName,
+//             phoneNumber: userData.phoneNumber || '',
+//             createdAt: Date.now(),
+//             updatedAt: Date.now(),
+//             isActive: true,
+//         });
 
-        // Fetch and return saved user data
-        const userSnapshot = await get(userRef);
-        const savedUserData = userSnapshot.exists() ? userSnapshot.val() : null;
+//         // Fetch and return saved user data
+//         const userSnapshot = await get(userRef);
+//         const savedUserData = userSnapshot.exists() ? userSnapshot.val() : null;
 
-        return {
-            success: true,
-            user: user,
-            userData: savedUserData,
-            message: 'User registered successfully!',
-        };
-    } catch (error) {
-        console.error("Signup Error:", error);
+//         return {
+//             success: true,
+//             user: user,
+//             userData: savedUserData,
+//             message: 'User registered successfully!',
+//         };
+//     } catch (error) {
+//         console.error("Signup Error:", error);
 
-        // Error handling
-        let errorMessage = 'An error occurred during registration.';
-        if (error.code) {
-            switch (error.code) {
-                case 'auth/email-already-in-use':
-                    errorMessage = 'This email is already registered. Please log in.';
-                    break;
-                case 'auth/invalid-email':
-                    errorMessage = 'Invalid email address.';
-                    break;
-                case 'auth/operation-not-allowed':
-                    errorMessage = 'Email/password accounts are not enabled.';
-                    break;
-                case 'auth/weak-password':
-                    errorMessage = 'Password is too weak.';
-                    break;
-            }
-        } else if (error.message.includes('Email already in use')) {
-            errorMessage = 'This email is already registered. Please log in.';
-        }
+//         // Error handling
+//         let errorMessage = 'An error occurred during registration.';
+//         if (error.code) {
+//             switch (error.code) {
+//                 case 'auth/email-already-in-use':
+//                     errorMessage = 'This email is already registered. Please log in.';
+//                     break;
+//                 case 'auth/invalid-email':
+//                     errorMessage = 'Invalid email address.';
+//                     break;
+//                 case 'auth/operation-not-allowed':
+//                     errorMessage = 'Email/password accounts are not enabled.';
+//                     break;
+//                 case 'auth/weak-password':
+//                     errorMessage = 'Password is too weak.';
+//                     break;
+//             }
+//         } else if (error.message.includes('Email already in use')) {
+//             errorMessage = 'This email is already registered. Please log in.';
+//         }
 
-        return {
-            success: false,
-            error: errorMessage,
-        };
-    }
-};
+//         return {
+//             success: false,
+//             error: errorMessage,
+//         };
+//     }
+// };
 
-export const signinAuthService = async (email, password) => {
-    try {
-        // Validate required fields
-        if (!email || !password) {
-            throw new Error('Please enter email and password.');
-        }
+// export const signinAuthService = async (email, password) => {
+//     try {
+//         // Validate required fields
+//         if (!email || !password) {
+//             throw new Error('Please enter email and password.');
+//         }
 
-        // Check if the email exists
-        const existingMethods = await fetchSignInMethodsForEmail(auth, email);
-        if (existingMethods.length === 0) {
-            return {
-                success: false,
-                error: 'Email not found. Please sign up first.',
-            };
-        }
+//         // Check if the email exists
+//         const existingMethods = await fetchSignInMethodsForEmail(auth, email);
+//         if (existingMethods.length === 0) {
+//             return {
+//                 success: false,
+//                 error: 'Email not found. Please sign up first.',
+//             };
+//         }
 
-        // Authenticate user
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        const token = await getIdToken(user, true); // Get the ID token
-        const refreshToken = user.refreshToken; // Get the refresh token
+//         // Authenticate user
+//         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+//         const user = userCredential.user;
+//         const token = await getIdToken(user, true); // Get the ID token
+//         const refreshToken = user.refreshToken; // Get the refresh token
 
-        // Fetch user details from Realtime Database
-        const userRef = ref(database, `users/${user.uid}`);
-        const userSnapshot = await get(userRef);
-        const userData = userSnapshot.exists() ? userSnapshot.val() : null;
+//         // Fetch user details from Realtime Database
+//         const userRef = ref(database, `users/${user.uid}`);
+//         const userSnapshot = await get(userRef);
+//         const userData = userSnapshot.exists() ? userSnapshot.val() : null;
 
-        // Save tokens and user data to AsyncStorage
-        await saveAuthToken(token);
-        await saveUserData(JSON.stringify(userData));
+//         // Save tokens and user data to AsyncStorage
+//         await saveAuthToken(token);
+//         await saveUserData(JSON.stringify(userData));
 
-        return {
-            success: true,
-            tokenResponse: userCredential._tokenResponse,
-            user: user,
-            userData: userData,
-            message: 'Login successful!',
-        };
-    } catch (error) {
-        console.error("Login Error:", error);
+//         return {
+//             success: true,
+//             tokenResponse: userCredential._tokenResponse,
+//             user: user,
+//             userData: userData,
+//             message: 'Login successful!',
+//         };
+//     } catch (error) {
+//         console.error("Login Error:", error);
 
-        // Error handling
-        let errorMessage = 'An error occurred during login.';
-        if (error.code) {
-            switch (error.code) {
-                case 'auth/user-not-found':
-                    errorMessage = 'No user found with this email. Please sign up.';
-                    break;
-                case 'auth/wrong-password':
-                    errorMessage = 'Incorrect password. Please try again.';
-                    break;
-                case 'auth/invalid-email':
-                    errorMessage = 'Invalid email format.';
-                    break;
-                case 'auth/too-many-requests':
-                    errorMessage = 'Too many failed attempts. Try again later.';
-                    break;
-            }
-        }
+//         // Error handling
+//         let errorMessage = 'An error occurred during login.';
+//         if (error.code) {
+//             switch (error.code) {
+//                 case 'auth/user-not-found':
+//                     errorMessage = 'No user found with this email. Please sign up.';
+//                     break;
+//                 case 'auth/wrong-password':
+//                     errorMessage = 'Incorrect password. Please try again.';
+//                     break;
+//                 case 'auth/invalid-email':
+//                     errorMessage = 'Invalid email format.';
+//                     break;
+//                 case 'auth/too-many-requests':
+//                     errorMessage = 'Too many failed attempts. Try again later.';
+//                     break;
+//             }
+//         }
 
-        return {
-            success: false,
-            error: errorMessage,
-        };
-    }
-};
+//         return {
+//             success: false,
+//             error: errorMessage,
+//         };
+//     }
+// };
 
 export const signoutAuthService = async () => {
     try {
@@ -181,7 +181,6 @@ export const refreshAuthToken = async () => {
 export const autoLogin = async () => {
     try {
         const token = await getAuthToken();
-       
         if (token) {
             const user = auth.currentUser;
             if (user) {
@@ -220,120 +219,170 @@ export const fetchUser = ({ user }) => {
     })
 }
 
-
-export const signInAnonymouslyToFirebase = async () => {
+export const getCurrentUser = async () => {
     try {
-      const userCredential = await signInAnonymously(auth);
-      const user = userCredential.user;
-      const token = await getIdToken(user, true);
-  
-      const getUserData = async (uid) => {
-        try {
-          const userRef = ref(database, `users/${uid}`);
-          const userSnapshot = await get(userRef);
-          return userSnapshot.exists() ? userSnapshot.val() : null;
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-          return null;
+        const user = auth.currentUser;
+        if (!user) {
+            return { success: false, error: 'No user is currently logged in' };
         }
-      };
-  
-      let userData = await getUserData(user.uid);
-      let isFirstTimeUser = false;
-  
-      if (!userData) {
-        // This is a first-time user
-        isFirstTimeUser = true;
-        userData = {
-          uid: user.uid,
-          phoneNumber: "",
-          createdAt: new Date().toISOString(),
-          isAnonymous: true,
-          isProfileComplete: false,
-          isFirstTimeUser: true,
-        };
-  
-        const userRef = ref(database, `users/${user.uid}`);
-        await set(userRef, userData);
-      }
 
-      return {
-        success: true,
-        tokenResponse: userCredential._tokenResponse,
-        user,
-        token,
-        userData,
-        isFirstTimeUser,
-        message: "Login successful!",
-      };
+        const userRef = ref(database, `users/${user.uid}`);
+        const userSnapshot = await get(userRef);
+        const userData = userSnapshot.exists() ? userSnapshot.val() : null;
+
+        return {
+            success: true,
+            user,
+            userData,
+        };
     } catch (error) {
-      console.error("Error signing in anonymously:", error);
-      return { success: false, message: "Login failed!", error };
+        console.error("Error getting current user:", error);
+        return {
+            success: false,
+            error: 'Failed to fetch current user data'
+        };
     }
 };
 
-export const saveUserInDatabase = async (uid, phoneNumber) => {
-    try {
-      const userRef = ref(database, `users/${uid}`);
-      const userSnapshot = await get(userRef);
-      const existingData = userSnapshot.exists() ? userSnapshot.val() : {};
-  
-      await set(userRef, {
-        ...existingData, // Preserve existing data
-        uid,
-        phoneNumber,
-        updatedAt: new Date().toISOString(),
-      });
-  
-      console.log("User data saved successfully!");
-    } catch (error) {
-      console.error("Error saving user data:", error);
+
+export const signInAnonymouslyToFirebase = async (number) => {
+  try {
+    // Check if a user with the given phone number already exists
+    const existingUser = await getUserByPhoneNumber(number);
+    if (existingUser) {
+      // User exists, sign in with the existing user ID
+      return await signInWithExistingUser(existingUser);
+    } else {
+      // No user found, create a new anonymous user
+      return await createNewAnonymousUser(number);
     }
-  };
+  } catch (error) {
+    console.error("Error handling authentication:", error);
+    return { success: false, message: "Login failed!", error };
+  }
+};
 
-// export const updateUserProfile = async (userData) => {
-//     console.log("first", userData)
-//   try {
-//     const userRef = ref(database, `users/${userData.uid}`);
-//     await update(userRef, {
-//       ...userData,
-//       updatedAt: new Date().toISOString(),
-//     });
+const getUserByPhoneNumber = async (phoneNumber) => {
+  try {
+    const usersRef = ref(database, 'users');
+    const usersSnapshot = await get(usersRef);
+    if (usersSnapshot.exists()) {
+      const users = usersSnapshot.val();
+      for (const uid in users) {
+        if (users[uid].phoneNumber === phoneNumber) {
+          return users[uid];
+        }
+      }
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching user by phone number:", error);
+    return null;
+  }
+};
 
-//     return {
-//       success: true,
-//       userData: userData,
-//       message: 'Profile updated successfully!'
-//     };
-//   } catch (error) {
-//     console.error("Error updating profile:", error);
-//     return {
-//       success: false,
-//       error: 'Failed to update profile'
-//     };
-//   }
-// };
+const signInWithExistingUser = async (userData) => {
+  try {
+    const userCredential = await signInAnonymously(auth);
+    const user = userCredential.user;
+    const token = await getIdToken(user, true);
+    return {
+      success: true,
+      user,
+      token,
+      userData,
+      isFirstTimeUser: false,
+      message: "Reauthenticated successfully!",
+    };
+  } catch (error) {
+    console.error("Error signing in with existing user:", error);
+    return { success: false, message: "Login failed!", error };
+  }
+};
+
+const createNewAnonymousUser = async (number) => {
+  try {
+    const userCredential = await signInAnonymously(auth);
+    const user = userCredential.user;
+    const token = await getIdToken(user, true);
+
+    const userData = {
+      userId: user.uid,
+      uid: user.uid,
+      phoneNumber: number,
+      createdAt: new Date().toISOString(),
+      isAnonymous: true,
+      isProfileComplete: false,
+      isFirstTimeUser: true,
+    };
+
+    const userRef = ref(database, `users/${user.uid}`);
+    await set(userRef, userData);
+
+    return {
+      success: true,
+      user,
+      token,
+      userData,
+      isFirstTimeUser: true,
+      message: "New anonymous user created!",
+    };
+  } catch (error) {
+    console.error("Error signing in anonymously:", error);
+    return { success: false, message: "Login failed!", error };
+  }
+};
+
+export const getUserData = async (uid) => {
+  try {
+    const userRef = ref(database, `users/${uid}`);
+    const userSnapshot = await get(userRef);
+    return userSnapshot.exists() ? userSnapshot.val() : null;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    return null;
+  }
+};
+
+export const saveUserInDatabase = async (uid, phoneNumber) => {
+  try {
+    const userRef = ref(database, `users/${uid}`);
+    const userSnapshot = await get(userRef);
+    const existingData = userSnapshot.exists() ? userSnapshot.val() : {};
+
+    await set(userRef, {
+      ...existingData, // Preserve existing data
+      uid,
+      phoneNumber,
+      updatedAt: new Date().toISOString(),
+    });
+
+    console.log("User data saved successfully!");
+  } catch (error) {
+    console.error("Error saving user data:", error);
+  }
+};
 
 export const updateUserProfile = async (userData) => {
-    console.log("Updating user data:", userData);
-    try {
-      const userRef = ref(database, `users/${userData.uid}`);
-      
-      await update(userRef, {
-        ...userData,
-        updatedAt: new Date().toISOString(),
-      });
-  
-      return {
-        success: true,
-        userData,
-        message: 'Profile updated successfully!'
-      };
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      return {
-        success: false,
-        error: 'Failed to update profile'
-      };
-    }
-  };
+  console.log("Updating user data:", userData);
+  try {
+    const userRef = ref(database, `users/${userData.uid}`);
+    
+    await update(userRef, {
+      ...userData,
+      updatedAt: new Date().toISOString(),
+    });
+
+    return {
+      success: true,
+      userData,
+      message: 'Profile updated successfully!'
+    };
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    return {
+      success: false,
+      error: 'Failed to update profile'
+    };
+  }
+};

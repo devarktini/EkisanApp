@@ -2,9 +2,6 @@ import { auth, database } from '../../../firebase.config';
 import { ref, set, get, update, serverTimestamp } from "firebase/database";
 
 export const addFarmerFarms = async (data, user) => {
-  console.log("5", data);
-  console.log("6", user);
-
   try {
     const userRef = ref(database, `users/${user.uid}/farmerData`);
     const farmsRef = ref(database, `users/${user.uid}/farmerData/farms`);

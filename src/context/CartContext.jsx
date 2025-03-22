@@ -121,7 +121,6 @@ export const CartProvider = ({ children }) => {
 
   // Buy now
   const buyNow = () => {
-    console.log("Proceeding to checkout with items:", wishlistItems);
     setWishlistItems([]); // Clear wishlist after purchase
   };
 
@@ -147,7 +146,6 @@ export const CartProvider = ({ children }) => {
 
   // Buy now
   const buyNowCart = () => {
-    console.log("Proceeding to checkout with items:", cartItems);
     clearCart(); // Clear cart after purchase
   };
   // getCartItemCount

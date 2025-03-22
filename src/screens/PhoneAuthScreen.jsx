@@ -11,8 +11,6 @@ const PhoneAuthScreen = () => {
   const [error, setError] = useState('');
   const navigation = useNavigation();
 
-  
-
   const handleSendCode = async () => {
     setLoading(true);
     setError('');
@@ -24,12 +22,11 @@ const PhoneAuthScreen = () => {
       return;
     }
 
-     // Replace with your actual API key
+    // Replace with your actual API key
     const otpTemplateName = 'OTP1'; // Replace with your actual template name
     try {
       // Call the sendOtp function
-      const response = await sendOtp( `+91${phoneNumber}`, otpTemplateName);
-      console.log('OTP sent response:', response);  
+      await sendOtp(`+91${phoneNumber}`, otpTemplateName);
       // Navigate to OTP screen
       navigation.navigate('OtpVerify', { phoneNumber: `+91${phoneNumber}` });
     } catch (err) {
@@ -43,7 +40,7 @@ const PhoneAuthScreen = () => {
     <LinearGradient colors={['#4caf50', '#388e3c']} style={styles.container}>
       <View style={styles.innerContainer}>
         <Image source={require('../../assets/splashscreen_logo.png')} style={styles.logo} />
-        <Text style={styles.title}>WelCome To Ekisan</Text>
+        <Text style={styles.title}>Welcome To ekisan</Text>
         <Text style={styles.description}>Enter your phone number to receive a verification code.</Text>
         
         <View style={styles.inputContainer}>
@@ -121,11 +118,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#fff',
     marginBottom: 10,
+    paddingHorizontal: 10,
   },
   flag: {
     width: 30,
     height: 20,
-    marginLeft: 10,
     marginRight: 5,
   },
   countryCode: {
@@ -135,7 +132,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    padding: 15,
+    padding: 10,
     fontSize: 16,
   },
   error: {
@@ -148,6 +145,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
+    marginTop: 10,
   },
   buttonText: {
     color: '#fff',

@@ -18,7 +18,7 @@ const MyAccount = ({navigation}) => {
         <View className="flex-row justify-between items-center px-4 py-3 bg-white shadow-md">
           <TouchableOpacity
             className="flex-row items-center"
-            onPress={() =>  navigation.navigate("Main", { screen: "Profile" })}
+            onPress={() =>  navigation.navigate("Main")}
           >
             <Ionicons name="arrow-back" size={16} color="black" />
             <Text className="text-black ml-1">Back</Text>
@@ -83,7 +83,7 @@ const MyAccount = ({navigation}) => {
                   <Ionicons name="wallet-outline" size={24} color="#048404" />
                   <Text className="text-lg font-bold ml-2">Payment</Text>
                 </View>
-                <TouchableOpacity className="flex-row items-center justify-between py-4 border-b border-gray-100">
+                <TouchableOpacity onPress={()=>navigation.navigate('order')} className="flex-row items-center justify-between py-4 border-b border-gray-100">
                   <View className="flex-row items-center">
                     <Ionicons name="cart-outline" size={20} color="#666" />
                     <Text className="text-gray-700 ml-3 font-medium">My Orders</Text>

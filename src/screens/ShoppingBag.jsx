@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import AddressManager from '../components/AddressManager';
 import CartCard from '../components/CartCard';
+import { AppContext } from '../context/AppContext';
 
 const ShoppingBag = () => {
   const route = useRoute();
+  const {user, userData}= useContext(AppContext)
+  console.log("dddddddddd", userData)
   const navigation = useNavigation();
   const { cartItems: initialCartItems = [] } = route.params || {};
 
@@ -54,18 +57,20 @@ const ShoppingBag = () => {
     } else {
       navigation.navigate('ShoppingCart', { cartItems, selectedAddress: addresses[selectedAddressIndex] });
     }
+    console.log("cartItems", cartItems)
   };
 
   return (
-    <View className="flex-1 bg-white p-4">
+    <ScrollView className="flex-1 bg-white p-4">
       <AddressManager
+        user={userData}
         addresses={addresses}
         setAddresses={setAddresses}
         selectedAddressIndex={selectedAddressIndex}
         setSelectedAddressIndex={setSelectedAddressIndex}
       />
 
-      <ScrollView className="mt-6">
+      <View className="mt-6 mb-8">
         <Text className="text-lg font-semibold mb-4 text-[#048404]">Shopping List</Text>
         {cartItems.length > 0 ? (
           cartItems.map((item, index) => (
@@ -98,8 +103,8 @@ const ShoppingBag = () => {
             <Text className="text-center text-white font-semibold">Next Step</Text>
           </TouchableOpacity>
         )}
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 

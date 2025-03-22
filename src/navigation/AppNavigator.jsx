@@ -21,12 +21,14 @@ import PhoneAuthScreen from "../screens/PhoneAuthScreen";
 import AuthOtpScreen from "../screens/AuthOtpScreen";
 import UpdateProfileScreen from "../screens/UpdateProfileScreen";
 import MyAccount from "../screens/Account/MyAccount";
+import OrderScreen from "../screens/OrderScreen";
+import MessageGroup from "../screens/MessageGroup";
+import TalkToExpert from "../screens/TalkToExpert";
 
 const Stack = createStackNavigator();
 
 const AppNavigator = ({ isFirstLaunch }) => {
   const { isAuthenticated, setIsAuthenticated } = useContext(AppContext);
-
   useEffect(() => {
     const checkAuth = async () => {
       const result = await autoLogin();
@@ -39,6 +41,7 @@ const AppNavigator = ({ isFirstLaunch }) => {
     };
     checkAuth();
   }, []);
+  console.log("first", isFirstLaunch)
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {isFirstLaunch ? (
@@ -58,8 +61,6 @@ const AppNavigator = ({ isFirstLaunch }) => {
             }}
           />
           <Stack.Screen name="Main" component={DrawerNavigator} />
-          {/* <Stack.Screen name="SignIn" component={SignInScreen} />
-          <Stack.Screen name="SignUp" component={SignupScreen} /> */}
         </>
       ) : isAuthenticated ? (
         <>
@@ -75,6 +76,9 @@ const AppNavigator = ({ isFirstLaunch }) => {
           <Stack.Screen name="ShoppingCart" component={ShoppingCart} />
           <Stack.Screen name="AddFarm" component={AddFarm} />
           <Stack.Screen name='MyAccount' component={MyAccount} />
+          <Stack.Screen name ='order' component={OrderScreen} />
+          <Stack.Screen name ='groupList' component={MessageGroup} />
+          <Stack.Screen name ='TalkToExpert' component={TalkToExpert} />
           <Stack.Screen 
             name="UpdateProfile" 
             component={UpdateProfileScreen}
@@ -85,9 +89,6 @@ const AppNavigator = ({ isFirstLaunch }) => {
               gestureDirection: 'vertical',
             }}
           />
-          {/* ✅ Always include PhoneAuth */}
-      {/* <Stack.Screen name="PhoneAuth" component={PhoneAuthScreen} />
-      <Stack.Screen name="OtpVerify" component={AuthOtpScreen} /> */}
         </>
       ) : (
         <>
@@ -103,8 +104,7 @@ const AppNavigator = ({ isFirstLaunch }) => {
               gestureDirection: 'vertical',
             }}
           />
-          {/* <Stack.Screen name="SignIn" component={SignInScreen} />
-          <Stack.Screen name="SignUp" component={SignupScreen} /> */}
+        
         </>
       )}
     </Stack.Navigator>
