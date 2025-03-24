@@ -25,12 +25,13 @@ export const AppProvider = ({ children }) => {
             // console.log("mobile Number", mobileUser)
             if (token && user) {
                 console.log("dddd", userData)
-                if(userData.isFirstTimeUser){
-                    setShowUpdateProfile(true);
-                    navigation.navigate("UpdateProfile", { user: userData });
-                }else{
-                    navigation.navigate("Main",{user: userData })
-                }
+                // if(userData.isFirstTimeUser){
+                //     setShowUpdateProfile(true);
+                //     navigation.navigate("UpdateProfile", { user: userData });
+                // }else{
+                //     navigation.navigate("Main",{user: userData })
+                // }
+                navigation.navigate("Main",{user: userData })
                 setAuthToken(token);
                 setUserData(userData);
                 setIsAuthenticated(true);

@@ -1,8 +1,9 @@
 import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword, signOut, getIdToken, onIdTokenChanged, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, firestore } from 'firebase/firestore';
 import { auth, database } from '../../firebase.config';
-import { ref, set, get, onValue, update } from "firebase/database";
+import { ref, set, get, query, orderByChild, push, equalTo, onValue, update } from "firebase/database";
 import { saveAuthToken, saveUserData, getAuthToken, removeAuthToken, removeUserData } from '../asyncStorege/authStorage';
+import { Alert } from 'react-native';
 
 // export const signupAuthService = async (email, password, userData) => {
 
@@ -249,11 +250,12 @@ export const signInAnonymouslyToFirebase = async (number) => {
   try {
     // Check if a user with the given phone number already exists
     const existingUser = await getUserByPhoneNumber(number);
+    console.log("EXISTING USER", existingUser);
+    
     if (existingUser) {
-      // User exists, sign in with the existing user ID
       return await signInWithExistingUser(existingUser);
     } else {
-      // No user found, create a new anonymous user
+      console.log("stoppeddd")
       return await createNewAnonymousUser(number);
     }
   } catch (error) {
@@ -265,15 +267,18 @@ export const signInAnonymouslyToFirebase = async (number) => {
 const getUserByPhoneNumber = async (phoneNumber) => {
   try {
     const usersRef = ref(database, 'users');
-    const usersSnapshot = await get(usersRef);
-    if (usersSnapshot.exists()) {
-      const users = usersSnapshot.val();
-      for (const uid in users) {
-        if (users[uid].phoneNumber === phoneNumber) {
-          return users[uid];
-        }
-      }
+    
+    const phoneNumberQuery = query(
+        usersRef,
+        orderByChild('phoneNumber'),
+        equalTo(phoneNumber)
+    );
+    const snapshot = await get(phoneNumberQuery);
+    const data = snapshot.val();
+    if (data) {
+        return Object.keys(data)[0];
     }
+
     return null;
   } catch (error) {
     console.error("Error fetching user by phone number:", error);
@@ -302,27 +307,62 @@ const signInWithExistingUser = async (userData) => {
 
 const createNewAnonymousUser = async (number) => {
   try {
-    const userCredential = await signInAnonymously(auth);
-    const user = userCredential.user;
-    const token = await getIdToken(user, true);
+    console.log("===========================================")
+    console.log("Create new user with nnnphone number:", number);
+    // Reference to the 'users' node
+    const userRef = ref(database, 'user-temp');
+    console.log("step 1");
 
-    const userData = {
-      userId: user.uid,
-      uid: user.uid,
+    const newUserRef = push(userRef);
+    const key = newUserRef.key;
+    console.log(key);
+    console.log("User Ref", newUserRef);
+    const user = await set(newUserRef, {
+      uid: newUserRef.key,
       phoneNumber: number,
       createdAt: new Date().toISOString(),
-      isAnonymous: true,
+      // isAnonymous: true,
       isProfileComplete: false,
       isFirstTimeUser: true,
-    };
+    });
+    const userSnapshot = await get(ref(database, `user-temp/${key}`));
+    const userData = userSnapshot.val();
+    console.log("User", userData);
 
-    const userRef = ref(database, `users/${user.uid}`);
-    await set(userRef, userData);
+    const response = await fetch('https://sd.arktini.com/ekishan/api/auth/register', {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: number,
+        password: newUserRef.key
+      }),
+    });
+    const registerData = await response.json();
+    console.log("Register Data", registerData);
 
+    const loginResponse = await fetch('https://sd.arktini.com/ekishan/api/auth/login', {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: number,
+        password: newUserRef.key
+      }),
+    });
+    const loginData = await loginResponse.json();
+    console.log("Login Data", loginData);
+
+    console.log("===========================================")
     return {
       success: true,
       user,
-      token,
+      token : loginData["accessToken"],
+      refreshToken : loginData["refreshToken"],
       userData,
       isFirstTimeUser: true,
       message: "New anonymous user created!",
