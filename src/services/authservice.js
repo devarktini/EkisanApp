@@ -248,12 +248,40 @@ export const getCurrentUser = async () => {
 
 export const signInAnonymouslyToFirebase = async (number) => {
   try {
-    // Check if a user with the given phone number already exists
     const existingUser = await getUserByPhoneNumber(number);
     console.log("EXISTING USER", existingUser);
     
     if (existingUser) {
-      return await signInWithExistingUser(existingUser);
+      var loggedInUser = await loginUser(number,  Object.keys(existingUser)[0]);
+      console.log("Logged In User", loggedInUser);
+      if (loggedInUser['message'] === "Invalid credentials") {
+        console.log("Invalid username or password")
+        const registerData = await registerUser(number, Object.keys(existingUser)[0], existingUser);
+        console.log("Register Data", registerData);
+        if (registerData.status === "success") {
+          console.log("Registered successfully");
+          loggedInUser = await loginUser(number,  Object.keys(existingUser)[0]);
+          console.log("login ", loggedInUser);
+          return {
+            success: true,
+            existingUser,
+            token : loggedInUser["accessToken"],
+            refreshToken : loggedInUser["refreshToken"],
+            existingUser,
+            isFirstTimeUser: true,
+            message: "New anonymous user created!",
+          };
+        }
+      }
+      return {
+        success: true,
+        existingUser,
+        token : loggedInUser["accessToken"],
+        refreshToken : loggedInUser["refreshToken"],
+        existingUser,
+        isFirstTimeUser: true,
+        message: "New anonymous user created!",
+      };
     } else {
       console.log("stoppeddd")
       return await createNewAnonymousUser(number);
@@ -266,7 +294,7 @@ export const signInAnonymouslyToFirebase = async (number) => {
 
 const getUserByPhoneNumber = async (phoneNumber) => {
   try {
-    const usersRef = ref(database, 'users');
+    const usersRef = ref(database, 'user-temp');
     
     const phoneNumberQuery = query(
         usersRef,
@@ -275,8 +303,9 @@ const getUserByPhoneNumber = async (phoneNumber) => {
     );
     const snapshot = await get(phoneNumberQuery);
     const data = snapshot.val();
+    console.log("Data", data);
     if (data) {
-        return Object.keys(data)[0];
+        return data;
     }
 
     return null;
@@ -305,6 +334,51 @@ const signInWithExistingUser = async (userData) => {
   }
 };
 
+const loginUser = async (number, userId) => {
+  try {
+    const loginResponse = await fetch('https://sd.arktini.com/ekishan/api/auth/login', {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: number,
+        password: userId
+      }),
+    });
+    
+    const loginData = await loginResponse.json();
+
+    return loginData;
+  } catch (error) {
+    console.error("Error during login:", error);
+    throw error;
+  }
+};
+
+  const registerUser = async (number, userId, otherData) => {
+    try {
+      const response = await fetch('https://sd.arktini.com/ekishan/api/auth/register', {
+        method: 'POST',
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: number,
+          password: userId,
+          other: otherData
+        }),
+      });
+      const registerData = await response.json();
+      return registerData;
+    } catch (error) {
+      console.error("Error during registration:", error);
+      throw error;
+    }
+  };
+
 const createNewAnonymousUser = async (number) => {
   try {
     console.log("===========================================")
@@ -329,33 +403,21 @@ const createNewAnonymousUser = async (number) => {
     const userData = userSnapshot.val();
     console.log("User", userData);
 
-    const response = await fetch('https://sd.arktini.com/ekishan/api/auth/register', {
-      method: 'POST',
-      headers: {
-        accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: number,
-        password: newUserRef.key
-      }),
-    });
-    const registerData = await response.json();
-    console.log("Register Data", registerData);
-
-    const loginResponse = await fetch('https://sd.arktini.com/ekishan/api/auth/login', {
-      method: 'POST',
-      headers: {
-        accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: number,
-        password: newUserRef.key
-      }),
-    });
-    const loginData = await loginResponse.json();
-    console.log("Login Data", loginData);
+    const registerData = await registerUser(number, key, userData);
+    if (registerData.status === "success") {
+      console.log("Registered successfully");
+      const loggedInUser = await loginUser(number,  Object.keys(existingUser)[0]);
+      console.log("login ", loggedInUser);
+      return {
+        success: true,
+        user,
+        token : loginData["accessToken"],
+        refreshToken : loginData["refreshToken"],
+        userData,
+        isFirstTimeUser: true,
+        message: "New anonymous user created!",
+      };
+    }
 
     console.log("===========================================")
     return {
