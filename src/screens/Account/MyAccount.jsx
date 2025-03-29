@@ -34,7 +34,7 @@ const MyAccount = ({navigation}) => {
         </View>
         <ScrollView  className="space-y-4 mt-4">
         <View className="p-4 ">
-          <Text className="text-2xl font-bold mb-6">My Account</Text>
+          <Text className="text-2xl text-center font-bold mb-6">My Account</Text>
           
           <View className="space-y-4 mb-10 ">
             {/* User Information Section */}
@@ -50,9 +50,10 @@ const MyAccount = ({navigation}) => {
               <Text className="text-gray-500">{userData?.email || 'Email Address'}</Text>
               <TouchableOpacity 
                 onPress={() => setIsModalVisible(true)} // Show modal on button press
-                className="absolute bottom-0 p-4 right-0 bg-green-500 m-4 rounded-full shadow-lg"
+                className="absolute bottom-0 p-2 right-0 bg-green-500 m-4 rounded-lg shadow-lg"
               >
-                <Ionicons name="add" size={20} color="white" />
+                 <Text className="text-white text-lg">Add Product</Text>
+                {/* <Ionicons name="add" size={20} color="white" /> */}
                 {/* <View className="absolute top-10 right-0 bg-black p-2 rounded-md">
                   <Text className="text-white text-xs">Add New</Text>
                 </View> */}
@@ -101,13 +102,13 @@ const MyAccount = ({navigation}) => {
                   </View>
                   <Ionicons name="chevron-forward" size={20} color="#666" />
                 </TouchableOpacity>
-                <TouchableOpacity className="flex-row items-center justify-between py-4">
+                {/* <TouchableOpacity className="flex-row items-center justify-between py-4">
                   <View className="flex-row items-center">
                     <Ionicons name="time-outline" size={20} color="#666" />
                     <Text className="text-gray-700 ml-3 font-medium">Products History</Text>
                   </View>
                   <Ionicons name="chevron-forward" size={20} color="#666" />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
 
               {/* Help & Support Section */}
