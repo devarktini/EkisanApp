@@ -1,11 +1,12 @@
 import React, { useContext, useState } from 'react'
-import {View, Text, TouchableOpacity, Image, ScrollView, Modal, StyleSheet} from 'react-native'
+import {View, Text, TouchableOpacity, Image, ScrollView, Modal, StyleSheet, ActivityIndicator} from 'react-native'
 import { Ionicons } from "@expo/vector-icons";
 import { AppContext } from '../../context/AppContext';
 import AddProduct from '../AddProduct';
 
 const MyAccount = ({navigation}) => {
-    const {userData}= useContext(AppContext)
+  // const { userData, logout, loading } = useContext(AppContext);
+    const {userData, logout, loading}= useContext(AppContext)
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const onHandlerEditForms= () => {
@@ -141,10 +142,10 @@ const MyAccount = ({navigation}) => {
               </View>
 
               {/* Logout Button */}
-              <TouchableOpacity className="bg-red-500 p-4  rounded-xl mt-6 shadow-lg mb-10">
+              <TouchableOpacity onPress={() => logout(navigation)} className="bg-red-500 p-4  rounded-xl mt-6 shadow-lg mb-10">
                 <View className="flex-row items-center justify-center">
                   <Ionicons name="log-out-outline" size={24} color="white" />
-                  <Text className="text-white text-lg font-bold ml-2">Logout</Text>
+                   {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.logoutButtonText}>Logout</Text>}
                 </View>
               </TouchableOpacity>
             
@@ -217,6 +218,11 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     color: 'white',
+    fontWeight: 'bold',
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });
