@@ -27,6 +27,9 @@ import TalkToExpert from "../screens/TalkToExpert";
 import MyStore from "../screens/MyStore";
 import NotificationScreen from "../screens/NotificationScreen";
 import FQScreen from "../screens/FQScreen";
+import ContactSupport from "../screens/Contact/ContactSupport";
+import PrivicyPolicy from "../screens/PrivicyPolicy";
+import RentProductScreen from "../screens/RentProductScreen";
 
 const Stack = createStackNavigator();
 
@@ -85,6 +88,9 @@ const AppNavigator = ({ isFirstLaunch }) => {
           <Stack.Screen name="myStore" component={MyStore} />
           <Stack.Screen name="notification" component={NotificationScreen} />
           <Stack.Screen name="f&q" component={FQScreen} />
+          <Stack.Screen name="contactSupport" component={ContactSupport} />
+          <Stack.Screen name="privicyPolicy" component={PrivicyPolicy} />
+          <Stack.Screen name="rentProduct" component={RentProductScreen} />
           <Stack.Screen 
             name="UpdateProfile" 
             component={UpdateProfileScreen}

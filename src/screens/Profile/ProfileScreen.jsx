@@ -101,7 +101,7 @@ const ProfileScreen = () => {
           </TouchableOpacity>
 
           {/* Card 2: Rent Product */}
-          <TouchableOpacity className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
+          <TouchableOpacity onPress={()=> navigator.navigate('rentProduct')} className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
             {/* <RentIcon width={32} height={32} /> */}
             <Feather name="package" size={32} color="#048404" />
             <View className="ml-3 flex-1">

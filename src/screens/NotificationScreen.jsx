@@ -8,34 +8,44 @@ const notifications = [
     title: 'Order Confirmed',
     description: 'Your order #12345 has been confirmed.',
     time: '2 hours ago',
+    targetScreen: 'OrderDetails', // Target screen for navigation
   },
   {
     id: '2',
     title: 'Payment Successful',
     description: 'Your payment for order #12345 was successful.',
     time: '1 day ago',
+    targetScreen: 'PaymentHistory', // Target screen for navigation
   },
   {
     id: '3',
     title: 'Delivery Scheduled',
     description: 'Your order #12345 is scheduled for delivery tomorrow.',
     time: '2 days ago',
+    targetScreen: 'DeliveryDetails', // Target screen for navigation
   },
   {
     id: '4',
     title: 'New Offer Available',
     description: 'Check out our latest offers on fresh produce!',
     time: '3 days ago',
+    targetScreen: 'Offers', // Target screen for navigation
   },
 ];
 
 const NotificationScreen = ({ navigation }) => {
   const renderNotificationCard = ({ item }) => (
-    <TouchableOpacity style={styles.card}>
+    <View style={styles.card}>
       <Text style={styles.cardTitle}>{item.title}</Text>
       <Text style={styles.cardDescription}>{item.description}</Text>
       <Text style={styles.cardTime}>{item.time}</Text>
-    </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.cardButton}
+        onPress={() => navigation.navigate(item.targetScreen)}
+      >
+        <Text style={styles.cardButtonText}>View Details</Text>
+      </TouchableOpacity>
+    </View>
   );
 
   return (
@@ -65,7 +75,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f8f8',
-    
   },
   headerContainer: {
     flexDirection: 'row',
@@ -115,5 +124,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#888',
     textAlign: 'right',
+  },
+  cardButton: {
+    width:'40%',
+    marginTop: 8,
+    backgroundColor: '#048404',
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  cardButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });

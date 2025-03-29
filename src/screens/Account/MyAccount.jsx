@@ -123,14 +123,14 @@ const MyAccount = ({navigation}) => {
                   </View>
                   <Ionicons name="chevron-forward" size={20} color="#666" />
                 </TouchableOpacity>
-                <TouchableOpacity className="flex-row items-center justify-between py-4 border-b border-gray-100">
+                <TouchableOpacity  onPress={()=>navigation.navigate('contactSupport')} className="flex-row items-center justify-between py-4 border-b border-gray-100">
                   <View className="flex-row items-center">
                     <Ionicons name="chatbubble-ellipses-outline" size={20} color="#666" />
                     <Text className="text-gray-700 ml-3 font-medium">Contact Support</Text>
                   </View>
                   <Ionicons name="chevron-forward" size={20} color="#666" />
                 </TouchableOpacity>
-                <TouchableOpacity className="flex-row items-center justify-between py-4">
+                <TouchableOpacity onPress={()=>navigation.navigate('privicyPolicy')} className="flex-row items-center justify-between py-4">
                   <View className="flex-row items-center">
                     <Ionicons name="document-text-outline" size={20} color="#666" />
                     <Text className="text-gray-700 ml-3 font-medium">Terms & Privacy Policy</Text>
