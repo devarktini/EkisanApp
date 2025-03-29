@@ -61,9 +61,8 @@ const AuthOtpScreen = () => {
         setError("Invalid OTP. Please try again.");
         setLoading(false);
       } else {
-        const authResponse = await signInAnonymouslyToFirebase(phoneNumber);
-        console.log("Login Response:", authResponse);
-
+        var authResponse = await signInAnonymouslyToFirebase(phoneNumber);
+        console.log("firstsdd", authResponse);
         if (authResponse.success) {
           const userData = authResponse.userData;
           setUserData(authResponse.userData);

@@ -220,13 +220,15 @@ export const fetchUser = ({ user }) => {
     })
 }
 
-export const getCurrentUser = async () => {
+export const getCurrentUser = async (number) => {
+  console.log("nnnnnnnnn", number)
     try {
-        const user = auth.currentUser;
+      const user = await getUserByPhoneNumber(number);
         if (!user) {
             return { success: false, error: 'No user is currently logged in' };
         }
-
+      console.log("userid ", user)
+      
         const userRef = ref(database, `users/${user.uid}`);
         const userSnapshot = await get(userRef);
         const userData = userSnapshot.exists() ? userSnapshot.val() : null;
@@ -252,34 +254,36 @@ export const signInAnonymouslyToFirebase = async (number) => {
     console.log("EXISTING USER", existingUser);
     
     if (existingUser) {
-      var loggedInUser = await loginUser(number,  Object.keys(existingUser)[0]);
+      var loggedInUser = await loginUser(number,  existingUser['uid']);
       console.log("Logged In User", loggedInUser);
       if (loggedInUser['message'] === "Invalid credentials") {
         console.log("Invalid username or password")
-        const registerData = await registerUser(number, Object.keys(existingUser)[0], existingUser);
+        const registerData = await registerUser(number, existingUser['uid'], existingUser);
         console.log("Register Data", registerData);
         if (registerData.status === "success") {
           console.log("Registered successfully");
-          loggedInUser = await loginUser(number,  Object.keys(existingUser)[0]);
+          loggedInUser = await loginUser(number,  existingUser['uid']);
           console.log("login ", loggedInUser);
+          console.log("+++++++++++++++++++++++++++++++++++++++++++")
           return {
             success: true,
-            existingUser,
+            user: existingUser,
             token : loggedInUser["accessToken"],
             refreshToken : loggedInUser["refreshToken"],
-            existingUser,
-            isFirstTimeUser: true,
+            userData: existingUser,
+            isFirstTimeUser: existingUser.isFirstTimeUser === false ? existingUser.isFirstTimeUser : true,
             message: "New anonymous user created!",
           };
         }
       }
+      console.log("User already exists, signing in with existing user...", existingUser);
       return {
         success: true,
-        existingUser,
+        user:existingUser,
         token : loggedInUser["accessToken"],
         refreshToken : loggedInUser["refreshToken"],
-        existingUser,
-        isFirstTimeUser: true,
+        userData:existingUser,
+        isFirstTimeUser: existingUser.isFirstTimeUser === false ? existingUser.isFirstTimeUser : true,
         message: "New anonymous user created!",
       };
     } else {
@@ -294,7 +298,7 @@ export const signInAnonymouslyToFirebase = async (number) => {
 
 const getUserByPhoneNumber = async (phoneNumber) => {
   try {
-    const usersRef = ref(database, 'user-temp');
+    const usersRef = ref(database, 'users');
     
     const phoneNumberQuery = query(
         usersRef,
@@ -305,7 +309,7 @@ const getUserByPhoneNumber = async (phoneNumber) => {
     const data = snapshot.val();
     console.log("Data", data);
     if (data) {
-        return data;
+        return  data[Object.keys(data)[0]];
     }
 
     return null;
@@ -381,16 +385,11 @@ const loginUser = async (number, userId) => {
 
 const createNewAnonymousUser = async (number) => {
   try {
-    console.log("===========================================")
-    console.log("Create new user with nnnphone number:", number);
     // Reference to the 'users' node
-    const userRef = ref(database, 'user-temp');
-    console.log("step 1");
-
+    const userRef = ref(database, 'users');
+   
     const newUserRef = push(userRef);
     const key = newUserRef.key;
-    console.log(key);
-    console.log("User Ref", newUserRef);
     const user = await set(newUserRef, {
       uid: newUserRef.key,
       phoneNumber: number,
@@ -399,7 +398,7 @@ const createNewAnonymousUser = async (number) => {
       isProfileComplete: false,
       isFirstTimeUser: true,
     });
-    const userSnapshot = await get(ref(database, `user-temp/${key}`));
+    const userSnapshot = await get(ref(database, `users/${key}`));
     const userData = userSnapshot.val();
     console.log("User", userData);
 
@@ -410,11 +409,11 @@ const createNewAnonymousUser = async (number) => {
       console.log("login ", loggedInUser);
       return {
         success: true,
-        user,
+        user:userData,
         token : loggedInUser["accessToken"],
         refreshToken : loggedInUser["refreshToken"],
-        userData,
-        isFirstTimeUser: true,
+        userData: userData,
+        isFirstTimeUser: userData.isFirstTimeUser ===false ? userData.isFirstTimeUser : true,
         message: "New anonymous user created!",
       };
     }
