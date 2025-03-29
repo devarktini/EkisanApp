@@ -123,7 +123,7 @@ const ProfileScreen = () => {
           </TouchableOpacity>
 
           {/* Card 4: My Store */}
-          <TouchableOpacity className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
+          <TouchableOpacity onPress={() =>  navigator.navigate('myStore')} className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border">
             {/* <StoreIcon width={32} height={32} /> */}
             <Feather name="shopping-bag" size={32} color="#048404" />
             <View className="ml-3 flex-1">

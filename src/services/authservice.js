@@ -188,7 +188,7 @@ export const autoLogin = async () => {
                 const userRef = ref(database, `users/${user.uid}`);
                 const userSnapshot = await get(userRef);
                 const userData = userSnapshot.exists() ? userSnapshot.val() : null;
-                return { user, userData };
+                return { user, userData};
             }
         }
         return null;
@@ -406,13 +406,13 @@ const createNewAnonymousUser = async (number) => {
     const registerData = await registerUser(number, key, userData);
     if (registerData.status === "success") {
       console.log("Registered successfully");
-      const loggedInUser = await loginUser(number,  Object.keys(existingUser)[0]);
+      const loggedInUser = await loginUser(number,  key);
       console.log("login ", loggedInUser);
       return {
         success: true,
         user,
-        token : loginData["accessToken"],
-        refreshToken : loginData["refreshToken"],
+        token : loggedInUser["accessToken"],
+        refreshToken : loggedInUser["refreshToken"],
         userData,
         isFirstTimeUser: true,
         message: "New anonymous user created!",
@@ -421,13 +421,8 @@ const createNewAnonymousUser = async (number) => {
 
     console.log("===========================================")
     return {
-      success: true,
-      user,
-      token : loginData["accessToken"],
-      refreshToken : loginData["refreshToken"],
-      userData,
-      isFirstTimeUser: true,
-      message: "New anonymous user created!",
+      success: false,
+      message: "User not created Successfully!",
     };
   } catch (error) {
     console.error("Error signing in anonymously:", error);
