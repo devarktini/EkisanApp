@@ -30,6 +30,7 @@ import FQScreen from "../screens/FQScreen";
 import ContactSupport from "../screens/Contact/ContactSupport";
 import PrivicyPolicy from "../screens/PrivicyPolicy";
 import RentProductScreen from "../screens/RentProductScreen";
+import { getUserData } from "../asyncStorege/authStorage";
 
 const Stack = createStackNavigator();
 
@@ -37,10 +38,12 @@ const AppNavigator = ({ isFirstLaunch }) => {
   const { isAuthenticated, setIsAuthenticated } = useContext(AppContext);
   useEffect(() => {
     const checkAuth = async () => {
-      const result = await autoLogin();
+      const userList = JSON.parse(await getUserData());
+      const result = await autoLogin(userList.phoneNumber);
+      console.log("first, result", result)
       if (result) {
         setIsAuthenticated(true);
-        await refreshAuthToken();
+        // await refreshAuthToken(userList.phoneNumber);
       } else {
         setIsAuthenticated(false);
       }

@@ -55,14 +55,13 @@ const AuthOtpScreen = () => {
     }
     try {
       // Call the verifyOtp function
-      // const response = await verifyOtp(phoneNumber, otpString);
-      const response = { Status: true }; // Mock response for testing
+      const response = await verifyOtp(phoneNumber, otpString);
+      // const response = { Status: true }; // Mock response for testing
       if (!response.Status) {
         setError("Invalid OTP. Please try again.");
         setLoading(false);
       } else {
         var authResponse = await signInAnonymouslyToFirebase(phoneNumber);
-        console.log("firstsdd", authResponse);
         if (authResponse.success) {
           const userData = authResponse.userData;
           setUserData(authResponse.userData);
@@ -70,13 +69,9 @@ const AuthOtpScreen = () => {
           await login(
             authResponse.token,
             authResponse.user,
-            authResponse.userData
+            authResponse.userData,
+            authResponse.refreshToken,
           );
-
-          if (userData.phoneNumber) {
-            console.log("User Phone Number:", userData.phoneNumber);
-          }
-
           // Check if it's a first-time user or if profile is incomplete
           if (authResponse.isFirstTimeUser) {
             navigation.navigate("UpdateProfile", {

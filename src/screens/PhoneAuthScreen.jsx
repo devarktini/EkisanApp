@@ -6,7 +6,7 @@ import { sendOtp } from '../services/2FectorAuthService';
 import { getAuthToken, getUserData } from '../asyncStorege/authStorage';
 
 const PhoneAuthScreen = () => {
-  const [phoneNumber, setPhoneNumber] = useState('8514045400');
+  const [phoneNumber, setPhoneNumber] = useState();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigation = useNavigation();
@@ -27,7 +27,7 @@ const PhoneAuthScreen = () => {
     try {
       // console.log("EXISTING USER ", existingUser)
       // Call the sendOtp function
-      // await sendOtp(`+91${phoneNumber}`, otpTemplateName);
+      await sendOtp(`+91${phoneNumber}`, otpTemplateName);
       // Navigate to OTP screen
       navigation.navigate('OtpVerify', { phoneNumber: `+91${phoneNumber}` });
     } catch (err) {

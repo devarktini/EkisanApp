@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { getAuthToken, getUserData, saveAuthToken, saveUserData, removeAuthToken, removeUserData, removeAllData } from '../asyncStorege/authStorage';
+import { getAuthToken, getUserData, saveAuthToken, saveUserData, removeAuthToken, removeUserData, removeAllData, saveRefreshToken } from '../asyncStorege/authStorage';
 import { refreshAuthToken, autoLogin } from '../services/authservice';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,24 +18,21 @@ export const AppProvider = ({ children }) => {
 
     useEffect(() => {
         const initializeAuth = async () => {
+            const userList = JSON.parse(await getUserData());
             const token = await getAuthToken()
-            // const user = await getUserData();
-            const { user, userData } = await autoLogin()
-            // const mobileUser = await findUserByMobile('+919473883218')
-            // console.log("mobile Number", mobileUser)
+            const { user, userData } = await autoLogin(userList.phoneNumber);
             if (token && user) {
-                console.log("dddd", userData)
-                // if(userData.isFirstTimeUser){
-                //     setShowUpdateProfile(true);
-                //     navigation.navigate("UpdateProfile", { user: userData });
-                // }else{
-                //     navigation.navigate("Main",{user: userData })
-                // }
-                navigation.navigate("Main",{user: userData })
+                if(userData.isFirstTimeUser){
+                    setShowUpdateProfile(true);
+                    navigation.navigate("UpdateProfile", { user: userData });
+                }else{
+                    navigation.navigate("Main",{user: userData })
+                }
+                // navigation.navigate("Main",{user: userData })
                 setAuthToken(token);
                 setUserData(userData);
                 setIsAuthenticated(true);
-                await refreshAuthToken();
+                // await refreshAuthToken(userList.phoneNumber);
             } else {
                 setIsAuthenticated(false);
             }
@@ -44,9 +41,12 @@ export const AppProvider = ({ children }) => {
     }, []);
 
     useEffect(() => {
+        
         const interval = setInterval(async () => {
+            const userList = JSON.parse(await getUserData());
+            console.log("cccccccccc", userList)
             if (isAuthenticated) {
-                const newToken = await refreshAuthToken();
+                const newToken = await refreshAuthToken(userList.phoneNumber);
                 if (!newToken) {
                     await logout();
                 }
@@ -56,8 +56,7 @@ export const AppProvider = ({ children }) => {
         return () => clearInterval(interval);
     }, [isAuthenticated]);
 
-    const login = async (token, user, userData) => {
-        console.log("auto login ", userData)
+    const login = async (token, user, userData, refreshToken) => {
         if (!token) {
             console.error('Token or is missing');
             return;
@@ -65,6 +64,7 @@ export const AppProvider = ({ children }) => {
         try {
             await saveAuthToken(token);
             await saveUserData(JSON.stringify(user));
+            await saveRefreshToken(refreshToken)
             setAuthToken(token);
             setUserData(user);
             setIsAuthenticated(true);

@@ -45,6 +45,43 @@ export const removeAuthToken = async () => {
     }
 };
 
+
+/**
+ * Save refresh token
+ * @param {string} refreshToken - The refresh token
+ */
+export const saveRefreshToken = async (refreshToken) => {
+    try {
+        await AsyncStorage.setItem(AUTH_REFRESH_KEY, refreshToken);
+    } catch (error) {
+        console.error("Error saving refresh token:", error);
+    }
+};
+
+/**
+ * Get refresh token
+ * @returns {Promise<string | null>} The stored refresh token or null
+ */
+export const getRefreshToken = async () => {
+    try {
+        return await AsyncStorage.getItem(AUTH_REFRESH_KEY);
+    } catch (error) {
+        console.error("Error retrieving refresh token:", error);
+        return null;
+    }
+};
+
+/**
+ * Remove refresh token
+ */
+export const removeRefreshToken = async () => {
+    try {
+        await AsyncStorage.removeItem(AUTH_REFRESH_KEY);
+    } catch (error) {
+        console.error("Error removing refresh token:", error);
+    }
+};
+
 /**
  * Save user email
  * @param {string} email - The user's email

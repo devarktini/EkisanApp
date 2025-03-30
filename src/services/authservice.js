@@ -164,11 +164,14 @@ export const signoutAuthService = async () => {
     }
 };
 
-export const refreshAuthToken = async () => {
+export const refreshAuthToken = async (number) => {
+  console.log("number", number)
     try {
-        const user = auth.currentUser;
+      const user = await getUserByPhoneNumber(number);
+      console.log("bbbbbbbbbbbbb", user)
         if (user) {
-            const token = await getIdToken(user, true);
+          console.log("vvvvvvvvvvv", user)
+            const token = 'ddcdcdffcdcdcdcd'; // Replace with actual token retrieval logic
             await saveAuthToken(token);
             return token;
         }
@@ -179,11 +182,11 @@ export const refreshAuthToken = async () => {
     }
 };
 
-export const autoLogin = async () => {
+export const autoLogin = async (number) => {
     try {
         const token = await getAuthToken();
         if (token) {
-            const user = auth.currentUser;
+          const user = await getUserByPhoneNumber(number);
             if (user) {
                 const userRef = ref(database, `users/${user.uid}`);
                 const userSnapshot = await get(userRef);
@@ -199,15 +202,15 @@ export const autoLogin = async () => {
 };
 
 // Listen for token changes and refresh token if necessary
-onIdTokenChanged(auth, async (user) => {
-    if (user) {
-        const token = await getIdToken(user, true);
-        await saveAuthToken(token);
-    } else {
-        await removeAuthToken();
-        await removeUserData();
-    }
-});
+// onIdTokenChanged(auth, async (user) => {
+//     if (user) {
+//         const token = await getIdToken(user, true);
+//         await saveAuthToken(token);
+//     } else {
+//         await removeAuthToken();
+//         await removeUserData();
+//     }
+// });
 
 export const fetchUser = ({ user }) => {
 
@@ -221,7 +224,6 @@ export const fetchUser = ({ user }) => {
 }
 
 export const getCurrentUser = async (number) => {
-  console.log("nnnnnnnnn", number)
     try {
       const user = await getUserByPhoneNumber(number);
         if (!user) {
