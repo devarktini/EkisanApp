@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { getAuthToken, getUserData, saveAuthToken, saveUserData, removeAuthToken, removeUserData, removeAllData, saveRefreshToken } from '../asyncStorege/authStorage';
+import { getAuthToken, getUserData, saveAuthToken, saveUserData, removeAuthToken, removeUserData, removeAllData, saveRefreshToken, getRefreshToken } from '../asyncStorege/authStorage';
 import { refreshAuthToken, autoLogin } from '../services/authservice';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -26,6 +26,8 @@ export const AppProvider = ({ children }) => {
                     setShowUpdateProfile(true);
                     navigation.navigate("UpdateProfile", { user: userData });
                 }else{
+                    const refreshToken =  await getRefreshToken()
+                     console.log("dddddd", refreshToken)
                     navigation.navigate("Main",{user: userData })
                 }
                 // navigation.navigate("Main",{user: userData })
@@ -44,12 +46,11 @@ export const AppProvider = ({ children }) => {
         
         const interval = setInterval(async () => {
             const userList = JSON.parse(await getUserData());
-            console.log("cccccccccc", userList)
             if (isAuthenticated) {
-                const newToken = await refreshAuthToken(userList.phoneNumber);
-                if (!newToken) {
-                    await logout();
-                }
+                // const newToken = await refreshAuthToken(userList.phoneNumber);
+                // if (!newToken) {
+                //     await logout();
+                // }
             }
         }, 15 * 60 * 1000); // Refresh token every 15 minutes
 

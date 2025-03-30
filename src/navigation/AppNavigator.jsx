@@ -30,15 +30,18 @@ import FQScreen from "../screens/FQScreen";
 import ContactSupport from "../screens/Contact/ContactSupport";
 import PrivicyPolicy from "../screens/PrivicyPolicy";
 import RentProductScreen from "../screens/RentProductScreen";
-import { getUserData } from "../asyncStorege/authStorage";
+import { getAuthToken, getUserData } from "../asyncStorege/authStorage";
 
 const Stack = createStackNavigator();
 
 const AppNavigator = ({ isFirstLaunch }) => {
   const { isAuthenticated, setIsAuthenticated } = useContext(AppContext);
+ 
   useEffect(() => {
     const checkAuth = async () => {
+       const token = await getAuthToken()
       const userList = JSON.parse(await getUserData());
+      console.log("first, userListdddd", token)
       const result = await autoLogin(userList.phoneNumber);
       console.log("first, result", result)
       if (result) {
@@ -50,7 +53,7 @@ const AppNavigator = ({ isFirstLaunch }) => {
     };
     checkAuth();
   }, []);
-  console.log("first", isFirstLaunch)
+ 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {isFirstLaunch ? (

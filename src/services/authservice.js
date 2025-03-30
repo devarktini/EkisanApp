@@ -2,7 +2,7 @@ import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithE
 import { doc, setDoc, firestore } from 'firebase/firestore';
 import { auth, database } from '../../firebase.config';
 import { ref, set, get, query, orderByChild, push, equalTo, onValue, update } from "firebase/database";
-import { saveAuthToken, saveUserData, getAuthToken, removeAuthToken, removeUserData } from '../asyncStorege/authStorage';
+import { saveAuthToken, saveUserData, getAuthToken, removeAuthToken, removeUserData, getRefreshToken } from '../asyncStorege/authStorage';
 import { Alert } from 'react-native';
 
 // export const signupAuthService = async (email, password, userData) => {
@@ -165,7 +165,7 @@ export const signoutAuthService = async () => {
 };
 
 export const refreshAuthToken = async (number) => {
-  console.log("number", number)
+  
     try {
       const user = await getUserByPhoneNumber(number);
       console.log("bbbbbbbbbbbbb", user)
@@ -201,16 +201,6 @@ export const autoLogin = async (number) => {
     }
 };
 
-// Listen for token changes and refresh token if necessary
-// onIdTokenChanged(auth, async (user) => {
-//     if (user) {
-//         const token = await getIdToken(user, true);
-//         await saveAuthToken(token);
-//     } else {
-//         await removeAuthToken();
-//         await removeUserData();
-//     }
-// });
 
 export const fetchUser = ({ user }) => {
 
@@ -362,6 +352,66 @@ const loginUser = async (number, userId) => {
     throw error;
   }
 };
+
+ export const verifyAuthToken = async (token) => {
+  try {
+    const response = await fetch('https://sd.arktini.com/ekishan/api/auth/verify-token', {
+      method: 'POST',
+      headers: {
+        accept: '*/*',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to verify token');
+    }
+
+    const data = await response.json();
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    console.error("Error verifying token:", error);
+    return {
+      success: false,
+      error: 'Token verification failed',
+    };
+  }
+};
+
+export const refreshToken = async (refreshToken) => {
+  try {
+    const response = await fetch('https://sd.arktini.com/ekishan/api/auth/refresh-token', {
+      method: 'POST',
+      headers: {
+        accept: '*/*',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to refresh token');
+    }
+
+    const data = await response.json();
+    return {
+      success: true,
+      token: data.accessToken,
+      refreshToken: data.refreshToken,
+    };
+  } catch (error) {
+    console.error("Error refreshing token:", error);
+    return {
+      success: false,
+      error: 'Token refresh failed',
+    };
+  }
+};
+
+
 
   const registerUser = async (number, userId, otherData) => {
     try {
