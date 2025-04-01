@@ -288,29 +288,53 @@ export const signInAnonymouslyToFirebase = async (number) => {
   }
 };
 
-const getUserByPhoneNumber = async (phoneNumber) => {
+// const getUserByPhoneNumber = async (phoneNumber) => {
+//   try {
+//     const usersRef = ref(database, 'users');
+    
+//     const phoneNumberQuery = query(
+//         usersRef,
+//         orderByChild('phoneNumber'),
+//         equalTo(phoneNumber)
+//     );
+//     const snapshot = await get(phoneNumberQuery);
+//     const data = snapshot.val();
+//     console.log("Data", data);
+//     if (data) {
+//         return  data[Object.keys(data)[0]];
+//     }
+
+//     return null;
+//   } catch (error) {
+//     console.error("Error fetching user by phone number:", error);
+//     return null;
+//   }
+// };
+
+const getUserByPhoneNumber = async (phoneValue) => {
   try {
     const usersRef = ref(database, 'users');
-    
-    const phoneNumberQuery = query(
-        usersRef,
-        orderByChild('phoneNumber'),
-        equalTo(phoneNumber)
-    );
-    const snapshot = await get(phoneNumberQuery);
-    const data = snapshot.val();
-    console.log("Data", data);
-    if (data) {
-        return  data[Object.keys(data)[0]];
-    }
+
+    // Query for phoneNumber
+    const phoneNumberQuery = query(usersRef, orderByChild('phoneNumber'), equalTo(phoneValue));
+    const snapshot1 = await get(phoneNumberQuery);
+    const data1 = snapshot1.val();
+
+    // Query for phone
+    const phoneQuery = query(usersRef, orderByChild('phone'), equalTo(phoneValue));
+    const snapshot2 = await get(phoneQuery);
+    const data2 = snapshot2.val();
+
+    // Merge results: Return first non-null match
+    if (data1) return data1[Object.keys(data1)[0]];
+    if (data2) return data2[Object.keys(data2)[0]];
 
     return null;
   } catch (error) {
-    console.error("Error fetching user by phone number:", error);
+    console.error("Error fetching user by phone number or phone:", error);
     return null;
   }
 };
-
 const signInWithExistingUser = async (userData) => {
   try {
     const userCredential = await signInAnonymously(auth);
@@ -512,6 +536,8 @@ export const saveUserInDatabase = async (uid, phoneNumber) => {
 };
 
 export const updateUserProfile = async (userData) => {
+  console.log("first,", userData)
+
   try {
     const userRef = ref(database, `users/${userData.uid}`);
     

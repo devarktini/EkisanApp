@@ -130,3 +130,65 @@ export const fetchOrdersByUserId = async (userId) => {
     return [];
   }
 };
+
+export const fetchReceivedOrders = async (user) => {
+  const userId = user?.userId || user?.uid
+try {
+  if (!userId) {
+    console.error("User ID is required to fetch received orders.");
+    return [];
+  }
+
+  // Reference to the received_orders field in the user's store
+  const ordersRef = ref(database, `users/${userId}/store/received_orders`);
+
+  // Fetch data from Firebase
+  const snapshot = await get(ordersRef);
+
+  if (snapshot.exists()) {
+    const ordersData = snapshot.val();
+
+    // const ids = Object.keys(ordersData);
+    // const receivedOrders = ids.map((id, index) => {
+    //   const order = ordersData[id];
+    //   return order
+    // });
+
+    const receivedOrders = Object.entries(ordersData).map(([id, order]) => ({
+      id,
+      ...order,
+    }));
+
+    return receivedOrders;
+  } else {
+    console.warn("No received orders found for user:", userId);
+    return [];
+  }
+} catch (error) {
+  console.error("Error fetching received orders:", error);
+  throw error;
+}
+};
+
+export const deleteOrder = async (user, orderId) => {
+const userId = user?.userId || user?.uid;
+try {
+  if (!userId) {
+    console.error("User ID is required to delete an order.");
+    return false;
+  }
+
+  if (!orderId) {
+    console.error("Order ID is required to delete an order.");
+    return false;
+  }
+  const orderRef = ref(database, `users/${userId}/store/received_orders/${orderId}`);
+  await remove(orderRef);
+
+  console.log(`Order with ID ${orderId} has been successfully deleted.`);
+  return true;
+} catch (error) {
+  console.error("Error deleting the order:", error);
+  throw error;
+}
+};

@@ -162,7 +162,7 @@ const MyAccount = ({navigation}) => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-           <AddProduct />
+           <AddProduct setIsModalVisible={setIsModalVisible}/>
             <TouchableOpacity
               style={styles.closeButton}
               onPress={() => setIsModalVisible(false)} // Close modal on button press

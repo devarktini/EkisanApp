@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   Text,
   View,
@@ -7,93 +7,73 @@ import {
   SafeAreaView,
   FlatList,
   Image,
+  Dimensions,
+  ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // For back button icon
+import { AppContext } from '../context/AppContext';
+import { fetchRejectedProducts, fetchItemToVerify } from '../services/productService';
+import { fetchReceivedOrders } from '../services/OrderService';
 
-const tabs = ['Verified', 'Not Verified', 'Rejected'];
-
-const sampleProducts = {
-  Verified: [
-    {
-      id: '1',
-      image: 'https://via.placeholder.com/100',
-      title: 'Product 1',
-      description: 'This is a verified product.',
-      price: '$10',
-      createdDate: '2025-03-01',
-      status: 'Available',
-    },
-    {
-      id: '2',
-      image: 'https://via.placeholder.com/100',
-      title: 'Product 2',
-      description: 'This is another verified product.',
-      price: '$20',
-      createdDate: '2025-03-02',
-      status: 'Out of Stock',
-    },
-  ],
-  'Not Verified': [
-    {
-      id: '3',
-      image: 'https://via.placeholder.com/100',
-      title: 'Product 3',
-      description: 'This product is not verified.',
-      price: '$15',
-      createdDate: '2025-03-03',
-      status: 'Pending',
-    },
-    {
-      id: '4',
-      image: 'https://via.placeholder.com/100',
-      title: 'Product 4',
-      description: 'Another unverified product.',
-      price: '$25',
-      createdDate: '2025-03-04',
-      status: 'Pending',
-    },
-  ],
-  Rejected: [
-    {
-      id: '5',
-      image: 'https://via.placeholder.com/100',
-      title: 'Product 5',
-      description: 'This product was rejected.',
-      price: '$30',
-      createdDate: '2025-03-05',
-      status: 'Rejected',
-    },
-    {
-      id: '6',
-      image: 'https://via.placeholder.com/100',
-      title: 'Product 6',
-      description: 'Another rejected product.',
-      price: '$35',
-      createdDate: '2025-03-06',
-      status: 'Rejected',
-    },
-  ],
-};
+const { width } = Dimensions.get('window'); // Get screen width for responsive design
+const tabs = ['Received Order', 'Verified', 'Pending', 'Rejected'];
 
 const MyStore = ({ navigation }) => {
+  const { userData } = useContext(AppContext);
   const [activeTab, setActiveTab] = useState(tabs[0]);
+  const [verifiedProducts, setVerifiedProducts] = useState([]);
+  const [pendingProducts, setPendingProducts] = useState([]);
+  const [rejectedProducts, setRejectedProducts] = useState([]);
+  const [receivedOrders, setReceivedOrders] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        // Fetch rejected products
+        const rejectedResponse = await fetchRejectedProducts(userData.uid);
+        setRejectedProducts(rejectedResponse);
+
+        // Fetch pending and verified products
+        const verifyingResponse = await fetchItemToVerify(userData.uid);
+        const verified = verifyingResponse.filter((item) => item.status === 'verified');
+        const pending = verifyingResponse.filter((item) => item.status === 'pending');
+
+        // Fetch received orders
+        const receivedResponse = await fetchReceivedOrders(userData);
+        setReceivedOrders(receivedResponse);
+
+        setVerifiedProducts(verified);
+        setPendingProducts(pending);
+
+        console.log('Verified Products:', verified);
+        console.log('Pending Products:', pending);
+        console.log('Rejected Products:', rejectedResponse);
+        console.log('Received Orders:', receivedOrders);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   // Function to Render Product Cards
   const renderProductCard = ({ item }) => (
     <View style={styles.card}>
-      <Image source={{ uri: item.image }} style={styles.cardImage} />
+      <Image source={{ uri: item.imgUrl }} style={styles.cardImage} />
       <View style={styles.cardContent}>
         <Text style={styles.cardTitle}>{item.title}</Text>
-        <Text style={styles.cardDescription}>{item.description}</Text>
-        <Text style={styles.cardPrice}>{item.price}</Text>
+        <Text style={styles.cardDescription} numberOfLines={2}>
+          {item.description}
+        </Text>
+        <Text style={styles.cardPrice}>Price: ₹{item.price}</Text>
         <Text style={styles.cardDate}>Created: {item.createdDate}</Text>
         <Text
           style={[
             styles.cardStatus,
-            item.status === 'Available' && styles.statusAvailable,
-            item.status === 'Out of Stock' && styles.statusOutOfStock,
-            item.status === 'Pending' && styles.statusPending,
-            item.status === 'Rejected' && styles.statusRejected,
+            item.status === 'verified' && styles.statusAvailable,
+            item.status === 'pending' && styles.statusPending,
+            item.status === 'rejected' && styles.statusRejected,
           ]}
         >
           {item.status}
@@ -101,6 +81,22 @@ const MyStore = ({ navigation }) => {
       </View>
     </View>
   );
+
+  // Determine which data to display based on the active tab
+  const getTabData = () => {
+    switch (activeTab) {
+      case 'Received Order':
+        return receivedOrders;
+      case 'Verified':
+        return verifiedProducts;
+      case 'Pending':
+        return pendingProducts;
+      case 'Rejected':
+        return rejectedProducts;
+      default:
+        return [];
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -113,6 +109,7 @@ const MyStore = ({ navigation }) => {
       </View>
 
       {/* Tab Bar */}
+      <ScrollView>
       <View style={styles.tabContainer}>
         {tabs.map((tab) => (
           <TouchableOpacity
@@ -123,20 +120,24 @@ const MyStore = ({ navigation }) => {
               activeTab === tab && styles.activeTabButton, // Active Tab Style
             ]}
           >
-            <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
+            <Text className=" whitespace-nowrap" style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
               {tab}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
+      </ScrollView>
 
       {/* Tab Content */}
       <FlatList
         key={activeTab} // Force re-render when the active tab changes
-        data={sampleProducts[activeTab]}
-        keyExtractor={(item) => item.id}
+        data={getTabData()}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={renderProductCard}
         contentContainerStyle={styles.cardList}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>No products available in this category.</Text>
+        }
       />
     </SafeAreaView>
   );
@@ -147,14 +148,19 @@ export default MyStore;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f9f9f9',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     paddingVertical: 10,
     paddingHorizontal: 15,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   backButton: {
     marginRight: 10,
@@ -164,31 +170,36 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'black',
+    color: '#333',
   },
   tabContainer: {
     flexDirection: 'row',
-    backgroundColor: '#f0f0f0',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    backgroundColor: '#fff',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   tabButton: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 12,
-    backgroundColor: '#f0f0f0', // Default background for inactive tabs
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
   },
   activeTabButton: {
-    backgroundColor: '#38a169', // Background for active tab
+    borderBottomColor: '#38a169',
   },
   tabText: {
+    
     fontSize: 16,
-    color: '#a0aec0', // Default text color for inactive tabs
+    color: '#888',
     fontWeight: '500',
   },
   activeTabText: {
-    color: '#fff', // Text color for active tab
+    color: '#38a169',
     fontWeight: 'bold',
   },
   cardList: {
@@ -205,12 +216,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    borderColor: 'gray',
-    borderWidth: 2,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   cardImage: {
     width: '100%',
-    height: 100,
+    height: width * 0.4, // Responsive height based on screen width
   },
   cardContent: {
     padding: 10,
@@ -219,21 +230,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
+    marginBottom: 5,
   },
   cardDescription: {
     fontSize: 14,
     color: '#666',
-    marginVertical: 5,
+    marginBottom: 5,
   },
   cardPrice: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#38a169',
+    marginBottom: 5,
   },
   cardDate: {
     fontSize: 12,
     color: '#888',
-    marginTop: 5,
+    marginBottom: 5,
   },
   cardStatus: {
     fontSize: 12,
@@ -243,13 +256,16 @@ const styles = StyleSheet.create({
   statusAvailable: {
     color: '#38a169',
   },
-  statusOutOfStock: {
-    color: '#e53e3e',
-  },
   statusPending: {
     color: '#d69e2e',
   },
   statusRejected: {
     color: '#e53e3e',
+  },
+  emptyText: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#888',
+    marginTop: 20,
   },
 });
