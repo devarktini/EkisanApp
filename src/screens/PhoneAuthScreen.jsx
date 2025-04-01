@@ -25,9 +25,9 @@ const PhoneAuthScreen = () => {
     // Replace with your actual API key
     const otpTemplateName = 'OTP1'; // Replace with your actual template name
     try {
-      // console.log("EXISTING USER ", existingUser)
+      console.log("EXISTING USER ", existingUser)
       // Call the sendOtp function
-      await sendOtp(`+91${phoneNumber}`, otpTemplateName);
+      // await sendOtp(`+91${phoneNumber}`, otpTemplateName);
       // Navigate to OTP screen
       navigation.navigate('OtpVerify', { phoneNumber: `+91${phoneNumber}` });
     } catch (err) {

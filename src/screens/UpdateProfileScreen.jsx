@@ -23,10 +23,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const { width, height } = Dimensions.get('window');
 
 // Mock data for dropdowns (replace with your actual data)
-const roles = ['Select Role', 'Farmer', 'Buyer', 'Agent'];
-const states = ['Select State', 'Maharashtra', 'Gujarat', 'Karnataka']; // Add your states
-const districts = ['Select District', 'District 1', 'District 2', 'District 3']; // Add your districts
-const blocks = ['Select Block', 'Block 1', 'Block 2', 'Block 3']; // Add your blocks
+const userType = ['Select Role', 'farmer', 'corporate', 'consumer'];
 
 const CustomCheckbox = ({ value, onValueChange }) => (
   <TouchableOpacity 
@@ -49,7 +46,7 @@ const UpdateProfileScreen = ({ navigation }) => {
   const object = {
     fullName: '',
     email: '',
-    role: '',
+    userType: '',
     state: '',
     district: '',
     block: '',
@@ -66,7 +63,7 @@ const UpdateProfileScreen = ({ navigation }) => {
       setFormData({
         fullName: user.fullName || '',
         email: user.email || '',
-        role: user.role || '',
+        userType: user.userType || '',
         state: user.state || '',
         district: user.district || '',
         block: user.block || '',
@@ -137,8 +134,8 @@ const UpdateProfileScreen = ({ navigation }) => {
         setError('Please enter your full name');
         return;
       }
-      if (!formData.role || formData.role === 'Select Role') {
-        setError('Please select a role');
+      if (!formData.userType || formData.userType === 'Select userType') {
+        setError('Please select a userType');
         return;
       }
       if (!formData.state || formData.state === 'Select State') {
@@ -257,10 +254,10 @@ const UpdateProfileScreen = ({ navigation }) => {
                 <View style={styles.inputContainer}>
                   <Text style={styles.label}>Role*</Text>
                   {renderDropdown(
-                    roles,
-                    formData.role,
-                    (value) => handleFormChanges('role', value),
-                    'Select Role'
+                    userType,
+                    formData.userType,
+                    (value) => handleFormChanges('userType', value),
+                    'Select userType'
                   )}
                 </View>
 

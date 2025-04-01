@@ -55,8 +55,8 @@ const AuthOtpScreen = () => {
     }
     try {
       // Call the verifyOtp function
-      const response = await verifyOtp(phoneNumber, otpString);
-      // const response = { Status: true }; // Mock response for testing
+      // const response = await verifyOtp(phoneNumber, otpString);
+      const response = { Status: true }; // Mock response for testing
       if (!response.Status) {
         setError("Invalid OTP. Please try again.");
         setLoading(false);

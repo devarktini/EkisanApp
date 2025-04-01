@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -10,51 +10,100 @@ import {
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { AppContext } from '../context/AppContext';
+import fetchCrops from '../services/fetchCrops';
+import { fetchCategories } from '../services/productService';
 
 const AddProduct = () => {
+  const [cropType, setCropType] = useState("");
+  const {user, userData} = useContext(AppContext)
   const [isOrganic, setIsOrganic] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedProduct, setSelectedProduct] = useState('');
   const [selectedUnit, setSelectedUnit] = useState('');
   const [selectedImages, setSelectedImages] = useState([]);
+  const [crops, setCrops] = useState([]);
+    const [categories, setCategories] = useState([]);
+     const [cropGrown, setCropGrown] = useState("");
 
   const toggleSwitch = () => setIsOrganic((previousState) => !previousState);
+
+
+
+  const filteredCrops = crops.filter(crop => crop.category === cropType);
+
+
+  const getCropsForCategory = () => {
+    if (!cropType) return [];
+    return filteredCrops.map(crop => ({
+      label: crop.cropName,
+      value: crop.cropName,
+      unit: crop.unit
+    }));
+  };
+
 
   const handleSingleImagePick = () => {
     const options = {
       mediaType: 'photo',
       selectionLimit: 1, // Limit to a single image
     };
-
+  
     launchImageLibrary(options, (response) => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.errorCode) {
         console.error('ImagePicker Error: ', response.errorMessage);
-      } else {
+      } else if (response.assets && response.assets.length > 0) {
         console.log('Selected Image: ', response.assets[0]);
-        setSelectedImages([response.assets[0]]);
+        setSelectedImages([response.assets[0]]); // Set single image
       }
     });
   };
-
+  
   const handleMultipleImagePick = () => {
     const options = {
       mediaType: 'photo',
       selectionLimit: 0, // Allow multiple images
     };
-
+  
     launchImageLibrary(options, (response) => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.errorCode) {
         console.error('ImagePicker Error: ', response.errorMessage);
-      } else {
+      } else if (response.assets && response.assets.length > 0) {
         console.log('Selected Images: ', response.assets);
-        setSelectedImages(response.assets);
+        setSelectedImages(response.assets); // Set multiple images
       }
     });
   };
+
+
+  
+  useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const cropsData = await fetchCrops();
+          const categoriesData = await fetchCategories({});
+          setCrops(cropsData);
+          setCategories(categoriesData);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          Swal.fire("Error", "Failed to fetch data. Please try again.", "error");
+        }
+      };
+      fetchData();
+    }, []);
+
+      useEffect(() => {
+        setCropGrown(''); // Reset crop selection when category changes
+      }, [cropType]);
+    
+
+  const HandleAddProduct = () => {
+    console.log("first", userData)
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -67,9 +116,59 @@ const AddProduct = () => {
       <TouchableOpacity onPress={handleMultipleImagePick} style={styles.uploadButton}>
         <Text style={styles.uploadButtonText}>Upload Multiple Images</Text>
       </TouchableOpacity>
+      <View style={styles.imageContainer}>
+  {selectedImages.map((image, index) => (
+    <Image
+      key={index}
+      source={{ uri: image.uri }}
+      style={styles.imagePreview}
+    />
+  ))}
+</View>
 
       {/* Product Category Dropdown */}
-      <Text style={styles.label}>Product Category *</Text>
+
+      <View className="mb-6">
+                        <Text className="text-lg font-semibold mb-2 text-gray-700">
+                          What kind of crop do you grow?
+                        </Text>
+                        <View className="border-2 border-gray-200 rounded-xl overflow-hidden">
+                          <Picker
+                            selectedValue={cropType}
+                            onValueChange={(itemValue) => setCropType(itemValue)}
+                            className="bg-gray-50"
+                          >
+                            <Picker.Item label="Select Crop Type" value="" />
+                            {categories.map((type, index) => (
+                              <Picker.Item 
+                                key={index} 
+                                label={type.categorieName} 
+                                value={type.categorieName}
+                              />
+                            ))}
+                          </Picker>
+                        </View>
+                      </View>
+      
+                      {/* 2. Crop you grow in this farm (Dropdown) */}
+                      <View className="mb-6">
+                        <Text className="text-lg font-semibold mb-2 text-gray-700">
+                          Specific crop grown in this farm
+                        </Text>
+                        <View className="border-2 border-gray-200 rounded-xl overflow-hidden">
+                          <Picker
+                            selectedValue={cropGrown}
+                            onValueChange={(itemValue) => setCropGrown(itemValue)}
+                            className="bg-gray-50"
+                          >
+                            <Picker.Item label="Select Crop Grown" value="" />
+                            {getCropsForCategory().map((crop, index) => (
+                              <Picker.Item key={index} label={crop.label} value={crop.label} />
+                            ))}
+                          </Picker>
+                        </View>
+                      </View>
+      {/* <Text style={styles.label}>Product Category *</Text>
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={selectedCategory}
@@ -81,10 +180,10 @@ const AddProduct = () => {
           <Picker.Item label="Vegetables" value="vegetables" />
           <Picker.Item label="Grains" value="grains" />
         </Picker>
-      </View>
+      </View> */}
 
       {/* Product Name Dropdown */}
-      <Text style={styles.label}>Product Name *</Text>
+      {/* <Text style={styles.label}>Product Name *</Text>
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={selectedProduct}
@@ -96,7 +195,7 @@ const AddProduct = () => {
           <Picker.Item label="Banana" value="banana" />
           <Picker.Item label="Carrot" value="carrot" />
         </Picker>
-      </View>
+      </View> */}
 
       {/* Quantity */}
       <Text style={styles.label}>Quantity *</Text>
@@ -166,7 +265,7 @@ const AddProduct = () => {
       </View>
 
       {/* Submit Button */}
-      <TouchableOpacity style={styles.submitButton}>
+      <TouchableOpacity onPress={() => HandleAddProduct()} style={styles.submitButton}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -187,6 +286,18 @@ const styles = StyleSheet.create({
     color: '#048404',
     marginBottom: 16,
     textAlign: 'center',
+  },
+  imageContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 16,
+  },
+  imagePreview: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    marginRight: 8,
+    marginBottom: 8,
   },
   uploadButton: {
     backgroundColor: '#048404',
