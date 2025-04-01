@@ -7,6 +7,7 @@ import { AppContext } from "../../context/AppContext";
 const ProfileScreen = () => {
   const navigator = useNavigation();
   const {userData}= useContext(AppContext)
+  console.log("UserData:  ", userData);
   return (
     <ScrollView className="flex-1 bg-white">
       {/* Header Image */}
@@ -27,7 +28,7 @@ const ProfileScreen = () => {
       </View>
       {/* Profile Section */}
       <View className="px-4 -mt-12">
-        <View className="flex-row items-center">
+        <View className="flex-row items-start">
           <View className="items-center">
             <Image
               source={{
@@ -35,8 +36,8 @@ const ProfileScreen = () => {
               }}
               className="w-20 h-20 rounded-full border-2 border-white"
             />
-            <Text className="text-lg font-bold mt-2">{userData?.fullName}</Text>
-            <Text className="text-md font-bold ">{userData?.phoneNumber}</Text>
+            <Text className="text-lg font-bold mt-2">{userData?.fullName !== undefined ? userData?.fullName : userData?.name}</Text>
+            <Text className="text-md font-bold ">{userData?.phoneNumber !== undefined ? userData?.phoneNumber : userData?.phone}</Text>
             <Text className="text-sm text-gray-500">{userData?.block + ' '+  userData?.district + ' '+  userData?.state}</Text>
           </View>
           <TouchableOpacity className="bg-[#048404] px-4 py-2 rounded-full ml-20">
@@ -44,16 +45,16 @@ const ProfileScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <Text className="mt-4 text-sm text-gray-900">
+        <Text className="mt-4 text-sm text-gray-900 font-italic p-2 border-2 border-blue-500">
           Marketplace farmer page where you can see all the info related to the
           farmer itself, like location, products he can plant and harvest for
           you.
         </Text>
 
-        <Text className="mt-2 text-gray-500">
+        {/* <Text className="mt-2 text-gray-500">
           <Text className="font-bold">12 members</Text> ·{" "}
           <Text className="font-bold">642 plants</Text> in GrowthByYou
-        </Text>
+        </Text> */}
       </View>
       {/* Products Section */}
       <View className="mt-4 px-4">

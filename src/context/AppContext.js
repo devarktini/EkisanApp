@@ -20,7 +20,7 @@ export const AppProvider = ({ children }) => {
         const initializeAuth = async () => {
             const userList = JSON.parse(await getUserData());
             const token = await getAuthToken()
-            const { user, userData } = await autoLogin(userList.phoneNumber);
+            const { user, userData } = await autoLogin(userList.phoneNumber !== undefined ? userList.phoneNumber : userList.phone);
             if (token && user) {
                 if(userData.isFirstTimeUser){
                     setShowUpdateProfile(true);
@@ -32,7 +32,7 @@ export const AppProvider = ({ children }) => {
                 }
                 // navigation.navigate("Main",{user: userData })
                 setAuthToken(token);
-                setUserData(userData);
+                setUserData(user);
                 setIsAuthenticated(true);
                 // await refreshAuthToken(userList.phoneNumber);
             } else {

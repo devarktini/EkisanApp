@@ -42,7 +42,7 @@ const AppNavigator = ({ isFirstLaunch }) => {
        const token = await getAuthToken()
       const userList = JSON.parse(await getUserData());
       console.log("first, userListdddd", token)
-      const result = await autoLogin(userList.phoneNumber);
+      const result = await autoLogin(userList.phoneNumber !== undefined ? userList.phoneNumber : userList.phone);
       console.log("first, result", result)
       if (result) {
         setIsAuthenticated(true);

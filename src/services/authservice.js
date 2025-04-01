@@ -246,15 +246,16 @@ export const signInAnonymouslyToFirebase = async (number) => {
     console.log("EXISTING USER", existingUser);
     
     if (existingUser) {
-      var loggedInUser = await loginUser(number,  existingUser['uid']);
+      
+      var loggedInUser = await loginUser(number,  existingUser['uid'] !== undefined ? existingUser['uid'] : existingUser['userId']);
       console.log("Logged In User", loggedInUser);
       if (loggedInUser['message'] === "Invalid credentials") {
         console.log("Invalid username or password")
-        const registerData = await registerUser(number, existingUser['uid'], existingUser);
+        const registerData = await registerUser(number,  existingUser['uid'] !== undefined ? existingUser['uid'] : existingUser['userId'], existingUser);
         console.log("Register Data", registerData);
         if (registerData.status === "success") {
           console.log("Registered successfully");
-          loggedInUser = await loginUser(number,  existingUser['uid']);
+          loggedInUser = await loginUser(number,  existingUser['uid'] !== undefined ? existingUser['uid'] : existingUser['userId']);
           console.log("login ", loggedInUser);
           console.log("+++++++++++++++++++++++++++++++++++++++++++")
           return {
@@ -313,6 +314,8 @@ export const signInAnonymouslyToFirebase = async (number) => {
 
 const getUserByPhoneNumber = async (phoneValue) => {
   try {
+    console.log("=============== ")
+    console.log(phoneValue)
     const usersRef = ref(database, 'users');
 
     // Query for phoneNumber
@@ -326,8 +329,27 @@ const getUserByPhoneNumber = async (phoneValue) => {
     const data2 = snapshot2.val();
 
     // Merge results: Return first non-null match
-    if (data1) return data1[Object.keys(data1)[0]];
-    if (data2) return data2[Object.keys(data2)[0]];
+    if (data1) {
+      if (data1 && data1[Object.keys(data1)[0]] && !data1[Object.keys(data1)[0]].isFirstTimeUser && !data1[Object.keys(data1)[0]].isProfileComplete) {
+        const userRef = ref(database, `users/${Object.keys(data1)[0]}`);
+        await update(userRef, {
+          isFirstTimeUser: false,
+          isProfileComplete: true,
+        });
+      }
+      return (await get(ref(database, `users/${Object.keys(data1)[0]}`))).val();
+    }
+       
+    if (data2) {
+      if (data2 && data2[Object.keys(data2)[0]] && !data2[Object.keys(data2)[0]].isFirstTimeUser && !data2[Object.keys(data2)[0]].isProfileComplete) {
+        const userRef = ref(database, `users/${Object.keys(data2)[0]}`);
+        await update(userRef, {
+          isFirstTimeUser: false,
+          isProfileComplete: true,
+        });
+      }
+      return (await get(ref(database, `users/${Object.keys(data2)[0]}`))).val();
+    } 
 
     return null;
   } catch (error) {
@@ -468,6 +490,7 @@ const createNewAnonymousUser = async (number) => {
     const key = newUserRef.key;
     const user = await set(newUserRef, {
       uid: newUserRef.key,
+      userId: newUserRef.key,
       phoneNumber: number,
       createdAt: new Date().toISOString(),
       // isAnonymous: true,
