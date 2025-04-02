@@ -11,6 +11,8 @@ export const AppProvider = ({ children }) => {
     const navigation = useNavigation()
     const [authToken, setAuthToken] = useState(null);
     const [userData, setUserData] = useState(null);
+    const [notifications, setNotifications] = useState([]);
+    const [groups, setGroups] = useState([]);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(false);
     const [showUpdateProfile, setShowUpdateProfile]= useState(false)

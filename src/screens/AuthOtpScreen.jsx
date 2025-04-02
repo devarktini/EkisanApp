@@ -62,16 +62,10 @@ const AuthOtpScreen = () => {
         setLoading(false);
       } else {
         var authResponse = await signInAnonymouslyToFirebase(phoneNumber);
-        console.log("tesssssssssssssssssssssssssssssss")
-        console.log(authResponse.token);
-        console.log("tesssssssssssssssssssssssssssssss")
-        console.log(authResponse.refreshToken)
-        console.log("tesssssssssssssssssssssssssssssss")
-        console.log(authResponse.user)
-        console.log("tesssssssssssssssssssssssssssssss")
         if (authResponse.success) {
           const userData = authResponse.userData;
           setUserData(authResponse.userData);
+          saveToStorage("notifications", authResponse.user.notifications);
           // await saveUserInDatabase(authResponse.user.uid, phoneNumber);
           await login(
             authResponse.token,

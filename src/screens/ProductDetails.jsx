@@ -34,7 +34,6 @@ const ProductDetails = ({}) => {
     };
 
     addToCart(updatedProduct);
-
     // Navigate to the CartScreen
     navigation.navigate("Cart");
   };

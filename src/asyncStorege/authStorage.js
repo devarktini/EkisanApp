@@ -136,9 +136,26 @@ export const removeAllData = async () => {
     try {
         const allKeys = await AsyncStorage.getAllKeys();
         await AsyncStorage.multiRemove(allKeys);
-        console.log('All data cleared from AsyncStorage');
+        // console.log('All data cleared from AsyncStorage');
     } catch (error) {
         console.error('Error clearing all data from AsyncStorage:', error);
     }
 };
 
+export const saveToStorage = (key, value) => {
+    try {
+        AsyncStorage.setItem(key, value);
+    } catch (error) {
+        console.error('Error saving data to AsyncStorage:', error);
+    }
+}
+
+export const getFromStorage = async (key) => {
+    try {
+        const value = await AsyncStorage.getItem(key);
+        return value;
+    } catch (error) {
+        console.error('Error retrieving data from AsyncStorage:', error);
+        return null;
+    }
+}

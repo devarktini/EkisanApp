@@ -89,3 +89,32 @@ export const deleteUserByMobile = async (mobileNumber) => {
     throw error;
   }
 };
+
+
+export const getUserNotifications = (userId) => {
+  const notificationsRef = ref(database, `users/${userId}/notifications`);
+  
+  return new Promise((resolve, reject) => {
+    onValue(notificationsRef, (snapshot) => {
+      const notifications = snapshot.val() || {};
+      const convertedNotifications = Object.entries(notifications).map(([notificationId, notification]) => ({
+        id: notificationId,
+        ...notification
+      }));
+      resolve(convertedNotifications);
+    }, {
+      onlyOnce: true
+    });
+  });
+};
+
+export const removeUserNotification = async (userId, notificationId) => {
+  try {
+    const notificationRef = ref(database, `users/${userId}/notifications/${notificationId}`);
+    await remove(notificationRef);
+    return true;
+  } catch (error) {
+    console.error('Error deleting notification:', error);
+    throw error;
+  }
+};

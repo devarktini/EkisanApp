@@ -20,7 +20,7 @@ console.log("invitedby", invitedBy.fullName)
     const groupRef = ref(database, `groups/${groupId}`);
     const groupSnapshot = await get(groupRef);
     const groupData = groupSnapshot.val();
-    console.log("first", groupData)
+    // console.log("first", groupData)
     if (!groupData) {
       throw new Error('Group not found');
     }
@@ -57,7 +57,7 @@ console.log("invitedby", invitedBy.fullName)
       invitedUserId,
       invitedUserName: invitedUserData.name,
       invitedBy: {
-        uid: invitedBy.uid,
+        uid: invitedBy.uid || invitedBy.userId,
         name: invitedBy.name || invitedBy.fullName,
         photoURL: invitedBy.photoURL || null
       },
@@ -74,7 +74,7 @@ console.log("invitedby", invitedBy.fullName)
     const invitationId = newInvitationRef.key;
     
     updates[`invitations/${invitationId}`] = invitationData;
-     console.log("groupdata", groupData)
+    //  console.log("groupdata", groupData)
     // Add to user's notifications
     updates[`users/${invitedUserId}/notifications/${invitationId}`] = {
       type: 'group_invitation',
@@ -94,7 +94,7 @@ console.log("invitedby", invitedBy.fullName)
     };
 
     // Add to inviter's sent invitations
-    updates[`users/${invitedBy.uid}/sentInvitations/${invitationId}`] = {
+    updates[`users/${invitedBy.uid || invitedBy.userId}/sentInvitations/${invitationId}`] = {
       groupId,
       groupName: groupData.name,
       invitedUserId,

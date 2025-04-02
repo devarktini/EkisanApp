@@ -10,6 +10,8 @@ import { ActivityIndicator, View } from "react-native"; // Import ActivityIndica
 import "./global.css";
 import Toast from 'react-native-toast-message';
 import { AppProvider } from "./src/context/AppContext";
+import { ProgressProvider } from "./src/context/ProgressContext";
+import GlobalProgressBar from "./src/components/GlobalProgressBar";
 
 export default function App() {
   const [isSplashVisible, setSplashVisible] = useState(true);
@@ -50,16 +52,19 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
-        <AppProvider>
-          <FarmProvider>
-            <CartProvider>
-              <AppNavigator isFirstLaunch={isFirstLaunch} />
-            </CartProvider>
-          </FarmProvider>
-        </AppProvider>
-        <Toast />
-      </NavigationContainer>
+      <ProgressProvider>
+        <GlobalProgressBar />
+        <NavigationContainer>
+          <AppProvider>
+            <FarmProvider>
+              <CartProvider>
+                <AppNavigator isFirstLaunch={isFirstLaunch} />
+              </CartProvider>
+            </FarmProvider>
+          </AppProvider>
+          <Toast />
+        </NavigationContainer>
+      </ProgressProvider>
     </SafeAreaProvider>
   );
 }

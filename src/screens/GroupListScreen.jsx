@@ -19,6 +19,7 @@ import { AppContext } from "../context/AppContext";
 import fetchAllUsers, { deleteUserByMobile, findUserByMobile } from "../services/userService";
 import AddMemberUI from "./AddMemberUI";
 import { fetchGroupById } from "../services/Message/fetchGroupById";
+import { set } from "firebase/database";
 
 const GroupListScreen = ({ onCreateGroup }) => {
   const { user, userData } = useContext(AppContext);
@@ -33,6 +34,7 @@ const GroupListScreen = ({ onCreateGroup }) => {
   const [groups, setGroups] = useState([]);
   const [tempAllUsers, setTempAllUsers] = useState([]);
   const [selectedOption, setSelectedOption] = useState("");
+  const [isAllowedToCreateGroup, setIsAllowedToCreateGroup] = useState(false);
 
   const fetchGroups = async () => {
     const list = await Promise.all(
@@ -49,6 +51,7 @@ const GroupListScreen = ({ onCreateGroup }) => {
     // console.log("GROUP DATA")
     // console.log(list)
     // console.log("GROUP DATA")
+    
     // const fetchedGroups = await fetchUserGroups(userData.uid !== undefined ? userData.uid : userData.userId);
     setGroups(list);
   };
@@ -134,12 +137,14 @@ const GroupListScreen = ({ onCreateGroup }) => {
           )}
         />
       </Animated.View>
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => setModalVisible(true)}
-      >
-        <Ionicons name="add" size={24} color="white" />
-      </TouchableOpacity>
+      {isAllowedToCreateGroup && (
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => setModalVisible(true)}
+        >
+          <Ionicons name="add" size={24} color="white" />
+        </TouchableOpacity>
+      )}
 
       <Modal
         animationType="slide"

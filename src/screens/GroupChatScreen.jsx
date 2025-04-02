@@ -32,13 +32,10 @@ const GroupChatScreen = ({ route }) => {
   useEffect(() => {
     if (route.params && route.params.groupId) {
       const { groupId } = route.params;
-      console.log("Fetching group data for groupId:", groupId);
       fetchGroupData(groupId);
-
-      // Polling mechanism (Optional)
       const interval = setInterval(() => {
         fetchGroupData(groupId);
-      }, 5000); // Fetch messages every 5 seconds
+      }, 1000); // Fetch messages every 5 seconds
 
       return () => clearInterval(interval);
     } else {
@@ -82,7 +79,7 @@ const GroupChatScreen = ({ route }) => {
               key={messageId} 
               style={[
                 styles.messageItem, 
-                message.sender.uid === admin.uid ? styles.otherMessage: styles.selfMessage 
+                message.sender.uid === admin.uid ?styles.selfMessage : styles.otherMessage
               ]}
             >
               <View style={styles.messageHeader}>

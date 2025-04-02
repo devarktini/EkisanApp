@@ -14,7 +14,6 @@ export default function ProductCard({ item }) {
     if (isInWishlist(item.id)) {
       removeFromWishlist(item.id);
     } else {
-      console.log("Item to add:", item); // Debugging
       addToWishlist(item, userData);
     }
   };

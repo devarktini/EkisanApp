@@ -1,28 +1,33 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { DrawerActions, useRoute } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import logo from '../../assets/splashscreen_logo.png';
+import { AppContext } from '../context/AppContext';
+import { getUserData } from '../asyncStorege/authStorage';
+import { get } from 'firebase/database';
 
 const Header = () => {
-  const [show, setShow] = React.useState(false);
+  const {userData } = useContext(AppContext);
+  const [notificationCount, setNotificationCount] = useState(0);
+  const [show, setShow] = useState(false);
   const navigation = useNavigation();
   const route = useRoute();
 
-  // Use useEffect to update the state based on the route name
   useEffect(() => {
+    if (userData !== null) {
+      setNotificationCount(Object.keys(userData.notifications).length);
+    }
     if (route.name === 'HomeTab') {
       setShow(true);
     } else if (route.name === 'Search') {
       setShow(true);
     }
-  }, [route.name]); // Only run this effect when route.name changes
+  }, [route.name]);
 
   return (
     <View className="bg-white px-4 py-2 flex-row items-center justify-between">
-    
-
       {show ? (
          <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}>
          <Ionicons name="menu" size={35} color="#048404" />
@@ -39,14 +44,24 @@ const Header = () => {
           className="w-10 h-10"
           resizeMode="contain"
         />
-        <Text className="text-[15px] font-semibold text-[#048404] ml-1">EKrishan Darshan</Text>
+        <Text className="text-[15px] font-semibold text-[#048404] ml-1">EKishan Darshan</Text>
+        
+
+      </View>
+      <View>
+        <TouchableOpacity onPress={() => navigation.navigate('notification')} style={{ position: 'relative' }}>
+          <Ionicons name="notifications-outline" size={24} color="#048404" style={{ marginLeft: 10 }} />
+          <View style={{ position: 'absolute', top: -5, right: -5, backgroundColor: 'red', borderRadius: 10, width: 20, height: 20, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ color: 'white', fontSize: 12 }}>{notificationCount}</Text>
+          </View>
+        </TouchableOpacity>
       </View>
    {
       <TouchableOpacity>
       <Image 
         source={{ uri: 'https://i.imgur.com/profile.jpg' }}
         
-        className={`w-14 h-14 rounded-full border-2 border-[#048404] ${show ? '' : 'hidden'}`}
+        className={`w-12 h-12 rounded-full border-2 border-[#048404] ${show ? '' : 'hidden'}`}
 
 
         resizeMode="cover"
