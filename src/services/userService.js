@@ -3,7 +3,7 @@ import { onValue, ref, query, limitToFirst, remove } from 'firebase/database';
 
 const fetchAllUsers = () => {
   const usersRef = query(ref(database, 'users'));
-
+   
   return new Promise(resolve => {
     onValue(usersRef, (snapshot) => {
       const users = snapshot.val();

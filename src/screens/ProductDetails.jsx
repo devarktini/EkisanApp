@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { useCart } from '../context/CartContext';
+import { useCart } from "../context/CartContext";
 
 const ProductDetails = ({}) => {
   const navigation = useNavigation();
@@ -36,7 +36,7 @@ const ProductDetails = ({}) => {
     addToCart(updatedProduct);
 
     // Navigate to the CartScreen
-    navigation.navigate('Cart');
+    navigation.navigate("Cart");
   };
 
   const handleAddToCheckout = () => {
@@ -98,9 +98,16 @@ const ProductDetails = ({}) => {
         </ScrollView>
 
         {/* Image Thumbnails */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-4 py-2">
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          className="px-4 py-2"
+        >
           {product.productImages?.map((image, index) => (
-            <TouchableOpacity key={index} onPress={() => handleImagePress(image.url)}>
+            <TouchableOpacity
+              key={index}
+              onPress={() => handleImagePress(image.url)}
+            >
               <Image
                 source={{ uri: image.url }}
                 className="w-20 rounded-lg border border-green-400 h-20 mr-2"
@@ -112,32 +119,51 @@ const ProductDetails = ({}) => {
 
         {/* Size Selection */}
         <View className="px-4 py-3">
-          <View className =" flex flex-wrap items-center justify-start flex-row">
-          <Text className="text-base mb-2">SellerName: </Text>
-          <View className='border rounded-full text-center my-auto bg-green-300  border-gray-400'>
-            <Text className="px-3 text-center text-sm">{product.sellerName}</Text></View>
-          </View>
-          <View className="flex-row">
-            {product.availableSizes?.map((size, index) => (
-              <TouchableOpacity
-                key={index}
-                className={`mr-3 px-6 py-2 rounded-full border ${
-                  selectedSize === size ? "bg-black" : "bg-white"
-                }`}
-                onPress={() => setSelectedSize(size)}
-              >
-                <Text
-                  className={
-                    selectedSize === size ? "text-white" : "text-black"
-                  }
-                >
-                  {size}
+          <View className=" flex flex-wrap items-center justify-start flex-row">
+            <Text className="text-base mb-2">SellerName: </Text>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("FarmerViewDetails", {
+                  seller: product.sellerUID,
+                })
+              }
+            >
+              <View className="border rounded-full text-center my-auto bg-green-300 border-gray-400">
+                <Text className="px-3 text-center text-sm">
+                  {product.sellerName}
                 </Text>
-              </TouchableOpacity>
-            ))}
+              </View>
+            </TouchableOpacity>
+            <Text className="mr-2 px-2 border rounded-full text-center my-auto bg-green-300 border-gray-400">
+              Farmer
+            </Text>
+
+            <View className="flex-row">
+              {product.availableSizes?.map((size, index) => (
+                <TouchableOpacity
+                  key={index}
+                  className={`mr-3 px-6 py-2 rounded-full border ${
+                    selectedSize === size ? "bg-black" : "bg-white"
+                  }`}
+                  onPress={() => setSelectedSize(size)}
+                >
+                  <Text
+                    className={
+                      selectedSize === size ? "text-white" : "text-black"
+                    }
+                  >
+                    {size}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
         </View>
-
+        <View className="px-4 py-3 border-t border-gray-200">
+          <Text className="text-base font-semibold">
+            Category: {product.category || "N/A"}
+          </Text>
+        </View>
         {/* Product Details */}
         <View className="px-4">
           <Text className="text-xl font-semibold">{product.name}</Text>
@@ -145,14 +171,14 @@ const ProductDetails = ({}) => {
             {product.description || "No description available."}
           </Text>
 
-          <View className="flex-row items-center mt-2">
+          {/* <View className="flex-row items-center mt-2">
             {[...Array(Math.floor(product.rating || 0))].map((_, i) => (
               <Text key={i}>★</Text>
             ))}
             <Text className="ml-2 text-gray-500 text-sm">
               {product.reviews || "0"} Reviews
             </Text>
-          </View>
+          </View> */}
 
           <View className="flex-row items-center mt-2">
             <Text className="text-xl font-bold">₹{product.price}</Text>
@@ -169,30 +195,25 @@ const ProductDetails = ({}) => {
             )}
           </View>
 
-          <View className="mt-3">
+          {/* <View className="mt-3">
             <Text className="text-gray-600 text-sm">
               {product.longDescription || "No detailed description available."}
             </Text>
             <TouchableOpacity>
               <Text className="text-blue-600 text-sm mt-1">Read more</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
 
         {/* Delivery Info */}
-        <View className="px-4 py-3 mt-3 border-t border-gray-200">
+        {/* <View className="px-4 py-3 mt-3 border-t border-gray-200">
           <Text className="text-base">Delivery in</Text>
           <Text className="text-lg font-bold">
             {product.deliveryTime || "N/A"}
           </Text>
-        </View>
+        </View> */}
 
         {/* Product Category */}
-        <View className="px-4 py-3 border-t border-gray-200">
-          <Text className="text-base font-semibold">
-            Category: {product.category || "N/A"}
-          </Text>
-        </View>
       </ScrollView>
 
       {/* Bottom Buttons */}

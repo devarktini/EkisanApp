@@ -5,7 +5,7 @@ export const addFarmerFarms = async (data, user) => {
   try {
     const userRef = ref(database, `users/${user.uid}/farmerData`);
     const farmsRef = ref(database, `users/${user.uid}/farmerData/farms`);
-
+  
     const snapshot = await get(farmsRef);
     let existingFarms = snapshot.exists() ? snapshot.val() : [];
 
