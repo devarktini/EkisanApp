@@ -6,24 +6,22 @@ export const sendMessage = async (groupId, message, sender) => {
     const messageData = {
       text: message,
       sender: {
-        uid: sender.uid,
+        uid: sender.uid || sender.userId,
         name: sender.name,
         photoURL: sender.photoURL || null
       },
       createdAt: serverTimestamp(),
       status: 'sent'
     };
-
     // Create reference for new message
     const messagesRef = ref(database, `groups/${groupId}/messages`);
     const newMessageRef = await push(messagesRef, messageData);
     const messageId = newMessageRef.key;
-
     // Update group's lastMessage
     const updates = {};
     updates[`groups/${groupId}/lastMessage`] = {
       text: message,
-      senderId: sender.uid,
+      senderId: sender.uid || sender.userId,
       senderName: sender.name,
       createdAt: serverTimestamp()
     };

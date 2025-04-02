@@ -10,6 +10,7 @@ export const fetchUserGroups = async (userId) => {
       const groups = [];
       snapshot.forEach((childSnapshot) => {
         const group = childSnapshot.val();
+        console.log("object", group)
         // Check if user is a member of this group
         if (group.members && group.members[userId]) {
           groups.push({

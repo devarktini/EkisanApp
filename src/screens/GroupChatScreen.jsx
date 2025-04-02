@@ -1,49 +1,110 @@
-import React from 'react';
-import { View, Text, TextInput, FlatList, StyleSheet, Image, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { 
+  View, Text, TextInput, FlatList, StyleSheet, Image, TouchableOpacity, 
+  KeyboardAvoidingView, Platform 
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import image from '../assets/userProfile.png'
-
-const messages = [
-  { id: '1', sender: 'Pete Martell', text: 'I do not think you could find a mammoth. They have long been extinct.', timestamp: '12:09 AM', senderType: 'other' },
-  { id: '2', sender: 'Misha Kazancev', text: 'I think she can.', timestamp: '12:09 AM', senderType: 'self' },
-  // Add more messages here
-];
+import logo from "../assets/icon.png";
+import { fetchGroupById } from '../services/Message/fetchGroupById';
+import { sendMessage } from '../services/Message/sendMessage';
+import { AppContext } from '../context/AppContext';
 
 const GroupChatScreen = ({ route }) => {
+  const { userData } = useContext(AppContext);
+  const [groupChatData, setGroupChatData] = useState([]);
+  const [admin, setAdmin] = useState({});
+  const [messageText, setMessageText] = useState('');
+
   const navigation = useNavigation();
-  const { groupId } = route.params;
+
+  // Fetch group chat data
+  const fetchGroupData = async (groupId) => {
+    try {
+      const groupDetails = await fetchGroupById(groupId);
+      setAdmin(groupDetails.createdBy);
+      setGroupChatData(groupDetails);
+    } catch (error) {
+      console.error("Error fetching group data:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (route.params && route.params.groupId) {
+      const { groupId } = route.params;
+      console.log("Fetching group data for groupId:", groupId);
+      fetchGroupData(groupId);
+
+      // Polling mechanism (Optional)
+      const interval = setInterval(() => {
+        fetchGroupData(groupId);
+      }, 5000); // Fetch messages every 5 seconds
+
+      return () => clearInterval(interval);
+    } else {
+      console.warn("No groupId found in route params");
+    }
+  }, [route.params]);
+
+  // Handle sending message (Dummy function for now)
+  const handleSendMessage = async () => {
+    if (messageText.trim()) {
+      await sendMessage(groupChatData.id, messageText, userData);
+      setMessageText('');
+    }
+  };
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <KeyboardAvoidingView 
+      style={styles.container} 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <Image source={image} style={styles.groupAvatar} />
+        <Image source={logo} style={styles.groupAvatar} />
         <View style={styles.headerInfo}>
-          <Text style={styles.groupName}>Group Name</Text>
-          <Text style={styles.members}>Members: John Doe, Jane Smith, Bob Johnson</Text>
+          <Text style={styles.groupName}>{groupChatData.name}</Text>
+          <Text style={styles.members}>{groupChatData.description}</Text>
         </View>
       </View>
+
+      {/* Message List */}
       <FlatList
-        data={messages}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={[styles.messageItem, item.senderType === 'self' ? styles.selfMessage : styles.otherMessage]}>
-            <View style={styles.messageHeader}>
-              <Image source={{ uri: 'https://via.placeholder.com/40' }} style={styles.avatar} />
-              <Text style={styles.sender}>{item.sender}</Text>
+        data={groupChatData.messages ? Object.entries(groupChatData.messages) : []}
+        keyExtractor={([messageId]) => messageId}
+        renderItem={({ item }) => {
+          const [messageId, message] = item;
+          return (
+            <View 
+              key={messageId} 
+              style={[
+                styles.messageItem, 
+                message.sender.uid === admin.uid ? styles.otherMessage: styles.selfMessage 
+              ]}
+            >
+              <View style={styles.messageHeader}>
+                <Text style={styles.sender}>{message.sender.name}</Text>
+              </View>
+              <Text style={styles.messageText}>{message.text}</Text>
+              <Text style={styles.timestamp}>{new Date(message.createdAt).toLocaleString()}</Text>
             </View>
-            <Text style={styles.messageText}>{item.text}</Text>
-            <Text style={styles.timestamp}>{item.timestamp}</Text>
-          </View>
-        )}
-        contentContainerStyle={styles.messageList}
+          );
+        }}
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }} 
       />
+
+      {/* Input Field (Fixed at Bottom) */}
       <View style={styles.inputContainer}>
-        <TextInput style={styles.input} placeholder="Enter message..." />
-        <TouchableOpacity style={styles.sendButton}>
+        <TextInput 
+          style={styles.input} 
+          placeholder="Enter message..." 
+          value={messageText} 
+          onChangeText={setMessageText} 
+        />
+        <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
           <Ionicons name="send" size={24} color="white" />
         </TouchableOpacity>
       </View>
@@ -54,7 +115,7 @@ const GroupChatScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f7e6', // Light green background color
+    backgroundColor: '#f0f7e6', // Light green background
   },
   header: {
     flexDirection: 'row',
@@ -68,7 +129,6 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   groupAvatar: {
-
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -87,12 +147,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginTop: 2,
   },
-  messageList: {
-    paddingVertical: 10,
-  },
   messageItem: {
-    padding: 10,
-    marginVertical: 8,
+    paddingTop: 2,
+    paddingLeft: 10,
+    paddingRight: 10,
+    marginVertical: 2,
     marginHorizontal: 10,
     borderRadius: 8,
     maxWidth: '75%',
@@ -104,29 +163,23 @@ const styles = StyleSheet.create({
   },
   selfMessage: {
     alignSelf: 'flex-end',
-    backgroundColor: '#c8e6c9', // Lighter green for self messages
+    backgroundColor: '#c8e6c9', // Light green for self messages
   },
   otherMessage: {
     alignSelf: 'flex-start',
     backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#a5d6a7', // Green border
+    borderColor: '#a5d6a7',
   },
   messageHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 5,
   },
-  avatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    marginRight: 8,
-  },
   sender: {
     fontWeight: 'bold',
     fontSize: 14,
-    color: '#2e7d32', // Dark green color for sender name
+    color: '#2e7d32',
   },
   messageText: {
     fontSize: 16,
@@ -134,7 +187,7 @@ const styles = StyleSheet.create({
   timestamp: {
     marginTop: 5,
     fontSize: 12,
-    color: '#689f38', // Olive green for timestamp
+    color: '#689f38',
     alignSelf: 'flex-end',
   },
   inputContainer: {
@@ -155,7 +208,7 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     marginLeft: 10,
-    backgroundColor: '#4caf50', // Fresh green color
+    backgroundColor: '#4caf50',
     borderRadius: 25,
     padding: 15,
     elevation: 4,
@@ -163,7 +216,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    transform: [{ scale: 1.02 }], // Slightly larger button
   },
 });
 

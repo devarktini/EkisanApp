@@ -13,10 +13,12 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import image from "../assets/userProfile.png";
+import logo from "../assets/icon.png";
 import { fetchUserGroups } from "../services/Message/fetchGroups";
 import { AppContext } from "../context/AppContext";
 import fetchAllUsers, { deleteUserByMobile, findUserByMobile } from "../services/userService";
 import AddMemberUI from "./AddMemberUI";
+import { fetchGroupById } from "../services/Message/fetchGroupById";
 
 const GroupListScreen = ({ onCreateGroup }) => {
   const { user, userData } = useContext(AppContext);
@@ -33,8 +35,22 @@ const GroupListScreen = ({ onCreateGroup }) => {
   const [selectedOption, setSelectedOption] = useState("");
 
   const fetchGroups = async () => {
-    const fetchedGroups = await fetchUserGroups(userData.uid);
-    setGroups(fetchedGroups);
+    const list = await Promise.all(
+      Object.entries(userData.groups).map(async ([id, value]) => {
+        const groupDetails = await fetchGroupById(id);
+        return {
+          id,
+          ...value,
+          ...groupDetails
+        };
+      })
+    );
+
+    // console.log("GROUP DATA")
+    // console.log(list)
+    // console.log("GROUP DATA")
+    // const fetchedGroups = await fetchUserGroups(userData.uid !== undefined ? userData.uid : userData.userId);
+    setGroups(list);
   };
 
   useEffect(() => {
@@ -89,15 +105,16 @@ const GroupListScreen = ({ onCreateGroup }) => {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <TouchableOpacity
+              key={item.id}
               style={styles.groupItem}
               onPress={() =>
                 navigation.navigate("GroupChat", { groupId: item.id })
               }
             >
-              <Image source={image} style={styles.groupImage} />
+              <Image source={logo} style={styles.groupImage} />
               <View style={styles.groupInfo}>
                 <Text style={styles.groupName}>{item.name}</Text>
-                <Text style={styles.groupDetails}>{item.lastMessage}</Text>
+                {/* <Text style={styles.groupDetails}>{item.lastMessage}</Text> */}
                 <Text style={styles.status}>
                   • {item.members ? Object.keys(item.members).length : 0} members •{" "}
                   <Text style={{ color: "red", fontWeight: "bold" }}>
