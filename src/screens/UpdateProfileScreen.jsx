@@ -157,7 +157,7 @@ const UpdateProfileScreen = ({ navigation }) => {
       console.log("userData", userData)
       const result = await updateUserProfile({
         ...formData,
-        uid: userData.uid,
+        uid: userData.uid || userData.userId,
         phoneNumber: userPhone,
         isProfileComplete: true,
         isFirstTimeUser: false,

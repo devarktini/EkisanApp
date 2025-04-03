@@ -34,28 +34,35 @@ import { getAuthToken, getUserData } from "../asyncStorege/authStorage";
 import FarmerViewDetails from "../screens/FarmerViewDetails";
 import ReceivedOrder from "../screens/ReceivedOrder";
 import TrackOrderScreen from "../screens/TrackOrderScreen";
+import SplashScreen from "../components/SplashScreen";
+import ProfileScreen from "../screens/Profile/ProfileScreen";
 
 const Stack = createStackNavigator();
 
 const AppNavigator = ({ isFirstLaunch }) => {
   const { isAuthenticated, setIsAuthenticated } = useContext(AppContext);
+  const [isLoading, setIsLoading] = useState(true);
  
   useEffect(() => {
     const checkAuth = async () => {
-       const token = await getAuthToken()
+      //  const token = await getAuthToken()
       const userList = JSON.parse(await getUserData());
-      console.log("first, userListdddd", token)
       const result = await autoLogin(userList.phoneNumber !== undefined ? userList.phoneNumber : userList.phone);
-      console.log("first, result", result)
       if (result) {
         setIsAuthenticated(true);
+        setIsLoading(false);
         // await refreshAuthToken(userList.phoneNumber);
       } else {
         setIsAuthenticated(false);
+        setIsLoading(false);
       }
     };
     checkAuth();
   }, []);
+
+  if (isLoading) {
+    return <SplashScreen />;
+  }
  
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -86,6 +93,7 @@ const AppNavigator = ({ isFirstLaunch }) => {
           <Stack.Screen name="Product" component={ProductAddress} />
           <Stack.Screen name="ShoppingBag" component={ShoppingBag} />
           <Stack.Screen name="UserProfile" component={UserProfile} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="ProductDetails" component={ProductDetails} />
           <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="ShoppingCart" component={ShoppingCart} />

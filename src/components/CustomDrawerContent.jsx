@@ -7,7 +7,7 @@ import { AppContext } from "../context/AppContext";
 const CustomDrawerContent = (props) => {
   const { userData, logout, loading } = useContext(AppContext);
   const { navigation } = props;
-
+console.log("first, ", userData)
   return (
     <SafeAreaView style={styles.container}>
       <ImageBackground source={require('../assets/agricultures.jpeg')} style={styles.header}>
@@ -15,7 +15,7 @@ const CustomDrawerContent = (props) => {
           <Feather name="user" size={40} color="white" />
         </View>
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>{userData?.phoneNumber}</Text>
+          <Text style={styles.userName}>{userData?.phoneNumber || userData?.phone}</Text>
           <Text style={styles.userEmail}>{userData?.email}</Text>
         </View>
       </ImageBackground>

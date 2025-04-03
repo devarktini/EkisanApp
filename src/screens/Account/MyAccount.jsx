@@ -20,7 +20,7 @@ const MyAccount = ({ navigation }) => {
     <View className="flex-1 bg-gray-100">
       {/* Header */}
       <View className="flex-row justify-between items-center px-4 py-3 bg-white shadow-md">
-        <TouchableOpacity className="flex-row items-center" onPress={() => navigation.navigate("Main")}>
+        <TouchableOpacity className="flex-row items-center" onPress={() => navigation.navigate("Profile")}>
           <Ionicons name="arrow-back" size={20} color="black" />
           <Text className="text-black ml-2">Back</Text>
         </TouchableOpacity>
@@ -39,8 +39,8 @@ const MyAccount = ({ navigation }) => {
               />
             </View>
             <View className="flex-1">
-              <Text className="text-xl font-bold">{userData?.fullName || 'User Name'}</Text>
-              <Text className="text-gray-500">{userData?.phoneNumber || 'Phone Number'}</Text>
+              <Text className="text-xl font-bold">{userData?.fullName || userData?.name || 'User Name'}</Text>
+              <Text className="text-gray-500">{userData?.phoneNumber||userData?.phone || 'Phone Number'}</Text>
               <Text className="text-gray-500">{userData?.email || 'Email Address'}</Text>
             </View>
             <TouchableOpacity onPress={() => setIsModalVisible(true)} className="bg-green-500 p-3 rounded-lg shadow-lg">

@@ -559,7 +559,6 @@ export const saveUserInDatabase = async (uid, phoneNumber) => {
 };
 
 export const updateUserProfile = async (userData) => {
-  console.log("first,", userData)
 
   try {
     const userRef = ref(database, `users/${userData.uid}`);

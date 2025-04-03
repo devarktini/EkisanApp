@@ -7,7 +7,7 @@ export const sendMessage = async (groupId, message, sender) => {
       text: message,
       sender: {
         uid: sender.uid || sender.userId,
-        name: sender.name,
+        name: sender.name || sender.fullName,
         photoURL: sender.photoURL || null
       },
       createdAt: serverTimestamp(),
@@ -22,7 +22,7 @@ export const sendMessage = async (groupId, message, sender) => {
     updates[`groups/${groupId}/lastMessage`] = {
       text: message,
       senderId: sender.uid || sender.userId,
-      senderName: sender.name,
+      senderName: sender.name || sender.fullName,
       createdAt: serverTimestamp()
     };
     updates[`groups/${groupId}/updatedAt`] = serverTimestamp();

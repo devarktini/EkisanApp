@@ -36,7 +36,7 @@ const ProfileScreen = () => {
               className="w-20 h-20 rounded-full border-2 border-white"
             />
             <Text className="text-lg font-bold mt-2">{userData?.fullName !== undefined ? userData?.fullName : userData?.name}</Text>
-            <Text className="text-md font-bold ">{userData?.phoneNumber !== undefined ? userData?.phoneNumber : userData?.phone}</Text>
+            <Text className="text-md font-bold ">{userData?.phoneNumber === undefined ? userData?.phoneNumber : userData?.phone}</Text>
             <Text className="text-sm text-gray-500">{userData?.block + ' '+  userData?.district + ' '+  userData?.state}</Text>
           </View>
           <TouchableOpacity className="bg-[#048404] px-4 py-2 rounded-full ml-20">
