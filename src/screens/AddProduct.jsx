@@ -134,7 +134,6 @@ const AddProduct = ({ setIsModalVisible }) => {
       const result = await sendItemToVerification({
         user: userData,
         itemData: completeItemData,
-        productImage: selectedImages,
         productImages: selectedImages,
       });
 

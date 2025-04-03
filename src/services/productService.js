@@ -22,6 +22,7 @@ import sendNotifiation, {
 } from "./notification/sendNotifiation";
 import Toast from "react-native-toast-message";
 import { useDerivedValue } from "react-native-reanimated";
+import * as FileSystem from "expo-file-system";
 
 
 const fetchCategories = ({
@@ -187,7 +188,6 @@ const uploadImage = async ({ user, itemData, productImage, productImages }) => {
 const sendItemToVerification = async ({
   user,
   itemData,
-  productImage,
   productImages,
 }) => {
   try {
@@ -279,6 +279,71 @@ const sendItemToVerification = async ({
     throw new Error("Failed to save product and images: " + error.message);
   }
 };
+
+const uploadImageToFirebase = async (imageUri, userId) => {
+  console.log("dddddddddddddd");
+  const productImageURLs = [];
+
+  if (productImages && productImages.length > 0) {
+    for (const image of productImages) {
+      const imageName = image.split("/").pop(); // Extract the image name from the URI
+      console.log("Image Name:", imageName);
+      // const compressedImage = await compressImage(image);
+      const imageRef = storageRef(
+        storage,
+        `products/${user.uid}/${Date.now()}-${imageName}`
+      );
+      const response = await fetch(image);
+      const blob = await response.blob();
+      await uploadBytes(imageRef, blob);
+      const imageUrl = await getDownloadURL(imageRef);
+
+      productImageURLs.push({
+        url: imageUrl,
+        path: imageRef.fullPath,
+      });
+    }
+    console.log("product Image", productImageURLs);
+  }
+};
+
+export const sendRentItemForVerification = async ({ user, itemData, productImage }) => {
+  try {
+    if (!user || !user.uid) {
+      throw new Error("User is not authenticated");
+    }
+
+    // Upload Image
+    const uploadedImage = await uploadImageToFirebase(productImage?.uri, user.uid);
+
+    // Prepare Data for Firebase
+    const completeItemData = {
+      ...itemData,
+      imgUrl: uploadedImage?.url || null,
+      imagePath: uploadedImage?.path || null,
+      sellerUID: user.uid,
+      timeStamp: Date.now(),
+      block: user.block || null,
+      district: user.district,
+      state: user.state,
+      userType: user.userType,
+    };
+
+    // Save Data in Firebase
+    const verificationRef = databaseRef(database, "item-to-verify");
+    const newItemRef = await push(verificationRef, completeItemData);
+
+    return {
+      success: true,
+      productId: newItemRef.key,
+      imageUrl: uploadedImage?.url || null,
+    };
+  } catch (error) {
+    console.error("Error in sendItemToVerification:", error);
+    throw new Error("Failed to save product and images: " + error.message);
+  }
+};
+
 
  const deleteItemById = async (user, itemId) => {
     try {

@@ -187,20 +187,39 @@ const NotificationScreen = ({ navigation }) => {
     }
   };
 
+  // useEffect(() => {
+  //   if (userData !== null) {
+  //     const uid = userData.userId || userData.uid;
+  //     setUserId(userData.userId || userData.uid);
+  //     fetchNotifications(uid);
+  //     const convertedArray = Object.keys(userData.notifications).map(key => ({
+  //       id: key,
+  //       ...userData.notifications[key]
+  //     }));
+      
+  //     const sortedArray = convertedArray.sort(
+  //       (a, b) => new Date(b.timestamp || b.createdAt) - new Date(a.timestamp || a.createdAt)
+  //     );
+      
+  //     setNotifications(sortedArray);
+  //     setFilteredNotifications(sortedArray);
+  //   }
+  // }, [userData]);
+
   useEffect(() => {
-    if (userData !== null) {
+    if (userData && userData.notifications) {
       const uid = userData.userId || userData.uid;
       setUserId(userData.userId || userData.uid);
       fetchNotifications(uid);
-      const convertedArray = Object.keys(userData.notifications).map(key => ({
+      const convertedArray = Object.keys(userData.notifications).map((key) => ({
         id: key,
-        ...userData.notifications[key]
+        ...userData.notifications[key],
       }));
-      
+  
       const sortedArray = convertedArray.sort(
         (a, b) => new Date(b.timestamp || b.createdAt) - new Date(a.timestamp || a.createdAt)
       );
-      
+  
       setNotifications(sortedArray);
       setFilteredNotifications(sortedArray);
     }
@@ -369,6 +388,7 @@ const NotificationScreen = ({ navigation }) => {
       </View>
 
       {/* Filter Dropdown */}
+
       <View style={styles.filterContainer}>
         <Text style={styles.filterLabel}>Filter by:</Text>
         <Picker

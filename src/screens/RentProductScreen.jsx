@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   View,
   Text,
@@ -6,30 +6,142 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Image,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // For back button icon
 import { Picker } from '@react-native-picker/picker'; // For dropdown picker
+import * as ImagePicker from 'expo-image-picker'; // For image selection
+import { AppContext } from '../context/AppContext';
+import { sendItemToVerification, sendRentItemForVerification } from '../services/productService';
 
 const RentProductScreen = ({ navigation }) => {
+  const {userData}= useContext(AppContext)
   const [category, setCategory] = useState('');
   const [productName, setProductName] = useState('');
   const [description, setDescription] = useState('');
   const [rentPrice, setRentPrice] = useState('');
   const [quantity, setQuantity] = useState('');
   const [rentDuration, setRentDuration] = useState('');
+  const [image, setImage] = useState(null);
 
-  const handleSubmit = () => {
-    console.log({
-      category,
-      productName,
-      description,
-      rentPrice,
-      quantity,
-      rentDuration,
+  const handleImageUpload = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission Denied', 'We need access to your gallery to upload an image.');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
     });
-    // Add form submission logic here
+
+    if (!result.canceled) {
+      setImage(result.assets[0]);
+    }
   };
 
+  // const handleSubmit = async() => {
+  //   if (!productName || !rentPrice || !quantity || !rentDuration || !category) {
+  //     Alert.alert('Error', 'Please fill in all required fields.');
+  //     return;
+  //   }
+
+  //   const formData = {
+  //     category,
+  //     productName,
+  //     description,
+  //     rentPrice,
+  //     quantity,
+  //     rentDuration,
+  //     image,
+  //   };
+  //   const rentProductData = {
+  //     ...formData,
+  //     rentPrice: Number(formData.rentPrice),
+  //     quantity: Number(formData.quantity),
+  //     createdAt: Date.now(),
+  //     isRented: userData?.userType === 'farmer' ? true : false,
+  //     userType: userData?.userType,
+  //   };
+
+  //   const result = await sendItemToVerification({
+  //     user: userData,
+  //     itemData: rentProductData,
+  //     productImage: image
+  //   });
+
+  //   console.log("prent product screen", result)
+
+
+  //   console.log('Form Data:', formData);
+  //   Alert.alert('Success', 'Product submitted successfully!');
+  //   // Add form submission logic here
+  // };
+
+  const handleSubmit = async () => {
+    try {
+      // Validate required fields
+      if (!productName || !rentPrice || !quantity || !rentDuration || !category) {
+        Alert.alert('Error', 'Please fill in all required fields.');
+        return;
+      }
+  
+      // Ensure the productName field is properly set
+      if (!productName) {
+        Alert.alert('Error', 'Product name is required.');
+        return;
+      }
+  
+      const formData = {
+        category,
+        productName,
+        description,
+        rentPrice,
+        quantity,
+        rentDuration,
+        image,
+      };
+  
+      const rentProductData = {
+        ...formData,
+        rentPrice: Number(formData.rentPrice),
+        quantity: Number(formData.quantity),
+        createdAt: Date.now(),
+        isRented: userData?.userType === 'farmer' ? true : false,
+        userType: userData?.userType,
+      };
+  
+      console.log('Form Data:', formData);
+      console.log('Rent Product Data:', rentProductData);
+  
+      // Send data to verification
+      const result = await sendRentItemForVerification({
+        user: userData,
+        itemData: rentProductData,
+        productImage: image,
+      });
+      console.log("result", result)
+  
+      if (result?.success) {
+        Alert.alert('Success', 'Product submitted successfully!');
+        // Reset the form
+        setCategory('');
+        setProductName('');
+        setDescription('');
+        setRentPrice('');
+        setQuantity('');
+        setRentDuration('');
+        setImage(null);
+      } else {
+        Alert.alert('Error', result?.message || 'Failed to submit the product. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error in sendItemToVerification:', error);
+      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+    }
+  };
   return (
     <View style={styles.container}>
       {/* Header with Back Button */}
@@ -43,15 +155,21 @@ const RentProductScreen = ({ navigation }) => {
       {/* Form Content */}
       <ScrollView style={styles.content}>
         {/* Product Image Section */}
-        <TouchableOpacity style={styles.imageButton}>
-          <Ionicons name="camera-outline" size={40} color="#048404" />
-          <Text style={styles.imageButtonText}>Add Product Image</Text>
+        <TouchableOpacity style={styles.imageButton} onPress={handleImageUpload}>
+          {image ? (
+            <Image source={{ uri: image.uri }} style={styles.imagePreview} />
+          ) : (
+            <>
+              <Ionicons name="camera-outline" size={40} color="#048404" />
+              <Text style={styles.imageButtonText}>Add Product Image</Text>
+            </>
+          )}
         </TouchableOpacity>
 
         {/* Form Fields */}
         <View style={styles.formContainer}>
           {/* Category */}
-          <Text style={styles.label}>Category</Text>
+          <Text style={styles.label}>Category *</Text>
           <View style={styles.pickerContainer}>
             <Picker
               selectedValue={category}
@@ -59,9 +177,7 @@ const RentProductScreen = ({ navigation }) => {
               style={styles.picker}
             >
               <Picker.Item label="Select Category" value="" />
-              <Picker.Item label="Tractors" value="tractors" />
-              <Picker.Item label="Harvesters" value="harvesters" />
-              <Picker.Item label="Ploughs" value="ploughs" />
+              <Picker.Item label="Farm Machinery" value="Farm Machinery" />
             </Picker>
           </View>
 
@@ -114,9 +230,10 @@ const RentProductScreen = ({ navigation }) => {
               style={styles.picker}
             >
               <Picker.Item label="Select Rent Duration" value="" />
-              <Picker.Item label="1 Day" value="1_day" />
-              <Picker.Item label="1 Week" value="1_week" />
-              <Picker.Item label="1 Month" value="1_month" />
+              <Picker.Item label="Hours" value="hour" />
+              <Picker.Item label="Day" value="day" />
+              <Picker.Item label="Week" value="week" />
+              <Picker.Item label="Month" value="month" />
             </Picker>
           </View>
 
@@ -167,6 +284,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#048404',
+  },
+  imagePreview: {
+    width: 150,
+    height: 150,
+    borderRadius: 10,
+    marginBottom: 8,
   },
   formContainer: {
     backgroundColor: '#fff',
