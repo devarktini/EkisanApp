@@ -19,6 +19,7 @@ import {
   saveUserInDatabase,
   signInAnonymouslyToFirebase,
 } from "../services/authservice";
+import { saveToStorage } from "../asyncStorege/authStorage";
 
 const AuthOtpScreen = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
