@@ -32,6 +32,8 @@ import PrivicyPolicy from "../screens/PrivicyPolicy";
 import RentProductScreen from "../screens/RentProductScreen";
 import { getAuthToken, getUserData } from "../asyncStorege/authStorage";
 import FarmerViewDetails from "../screens/FarmerViewDetails";
+import ReceivedOrder from "../screens/ReceivedOrder";
+import TrackOrderScreen from "../screens/TrackOrderScreen";
 
 const Stack = createStackNavigator();
 
@@ -99,6 +101,8 @@ const AppNavigator = ({ isFirstLaunch }) => {
           <Stack.Screen name="privicyPolicy" component={PrivicyPolicy} />
           <Stack.Screen name="rentProduct" component={RentProductScreen} />
           <Stack.Screen name="FarmerViewDetails" component={FarmerViewDetails} />
+          <Stack.Screen name="recivedOrder" component={ReceivedOrder} />
+          <Stack.Screen name="trackorder" component={TrackOrderScreen} />
           <Stack.Screen 
             name="UpdateProfile" 
             component={UpdateProfileScreen}

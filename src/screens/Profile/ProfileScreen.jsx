@@ -7,7 +7,6 @@ import { AppContext } from "../../context/AppContext";
 const ProfileScreen = () => {
   const navigator = useNavigation();
   const {userData}= useContext(AppContext)
-  console.log("UserData:  ", userData);
   return (
     <ScrollView className="flex-1 bg-white">
       {/* Header Image */}

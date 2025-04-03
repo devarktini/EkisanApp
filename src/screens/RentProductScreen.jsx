@@ -102,6 +102,7 @@ const RentProductScreen = ({ navigation }) => {
         quantity,
         rentDuration,
         image,
+        
       };
   
       const rentProductData = {

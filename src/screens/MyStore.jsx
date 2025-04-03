@@ -13,10 +13,9 @@ import {
 import { Ionicons } from '@expo/vector-icons'; // For back button icon
 import { AppContext } from '../context/AppContext';
 import { fetchRejectedProducts, fetchItemToVerify } from '../services/productService';
-import { fetchReceivedOrders } from '../services/OrderService';
 
 const { width } = Dimensions.get('window'); // Get screen width for responsive design
-const tabs = ['Received Order', 'Verified', 'Pending', 'Rejected'];
+const tabs = [ 'Verified', 'Pending', 'Rejected'];
 
 const MyStore = ({ navigation }) => {
   const { userData } = useContext(AppContext);
@@ -24,23 +23,23 @@ const MyStore = ({ navigation }) => {
   const [verifiedProducts, setVerifiedProducts] = useState([]);
   const [pendingProducts, setPendingProducts] = useState([]);
   const [rejectedProducts, setRejectedProducts] = useState([]);
-  const [receivedOrders, setReceivedOrders] = useState([]);
+ 
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         // Fetch rejected products
-        const rejectedResponse = await fetchRejectedProducts(userData.uid);
+        const rejectedResponse = await fetchRejectedProducts(userData.uid || userData.userId);
         setRejectedProducts(rejectedResponse);
+        console.log("firstvvvvvvvvvvvvv", rejectedResponse)
 
         // Fetch pending and verified products
-        const verifyingResponse = await fetchItemToVerify(userData.uid);
+        const verifyingResponse = await fetchItemToVerify(userData.uid || userData.uiId);
+        console.log("xxxxxxxxxxxxx", verifyingResponse)
         const verified = verifyingResponse.filter((item) => item.status === 'verified');
         const pending = verifyingResponse.filter((item) => item.status === 'pending');
 
         // Fetch received orders
-        const receivedResponse = await fetchReceivedOrders(userData);
-        setReceivedOrders(receivedResponse);
 
         setVerifiedProducts(verified);
         setPendingProducts(pending);
@@ -48,7 +47,7 @@ const MyStore = ({ navigation }) => {
         console.log('Verified Products:', verified);
         console.log('Pending Products:', pending);
         console.log('Rejected Products:', rejectedResponse);
-        console.log('Received Orders:', receivedOrders);
+        
       } catch (error) {
         console.error('Error fetching products:', error);
       }
@@ -85,8 +84,6 @@ const MyStore = ({ navigation }) => {
   // Determine which data to display based on the active tab
   const getTabData = () => {
     switch (activeTab) {
-      case 'Received Order':
-        return receivedOrders;
       case 'Verified':
         return verifiedProducts;
       case 'Pending':

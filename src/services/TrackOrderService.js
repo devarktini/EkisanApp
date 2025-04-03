@@ -87,6 +87,7 @@ export const getOrderTrackDetails = async (orderId) => {
 
 
 export const sendMessage = async (orderId, message) => {
+    console.log("dddddd", orderId)
     const messagesRef = ref(database, `order-track/${orderId}/requests/0/messages`);
 
     try {

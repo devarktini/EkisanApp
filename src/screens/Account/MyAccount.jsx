@@ -86,6 +86,13 @@ const MyAccount = ({ navigation }) => {
               </View>
               <Ionicons name="chevron-forward" size={20} color="#666" />
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('recivedOrder')} className="flex-row items-center justify-between py-4">
+              <View className="flex-row items-center">
+                <Ionicons name="cart-outline" size={28} color="#048404" />
+                <Text className="text-gray-700 ml-3 font-medium">Received Orders</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="#666" />
+            </TouchableOpacity>
           </View>
 
           {/* Help & Support */}
