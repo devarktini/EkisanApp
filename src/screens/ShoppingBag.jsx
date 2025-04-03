@@ -91,7 +91,7 @@ const ShoppingBag = () => {
         {cartItems.length > 0 && (
           <View className="mt-6 border-t border-gray-200 pt-4">
             <Text className="text-lg font-semibold text-[#048404]">Total Cart Value:</Text>
-            <Text className="text-xl font-bold">${calculateCartTotal()}</Text>
+            <Text className="text-xl font-bold">₹{calculateCartTotal()}</Text>
           </View>
         )}
 

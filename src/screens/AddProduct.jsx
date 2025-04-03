@@ -20,12 +20,11 @@ import {
   uploadImage,
 } from "../services/productService";
 
-const AddProduct = ({setIsModalVisible}) => {
+const AddProduct = ({ setIsModalVisible }) => {
   const { userData } = useContext(AppContext);
   const [categories, setCategories] = useState([]);
   const [crops, setCrops] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);
-  const [images, setImages] = useState([]);
   const [formValue, setFormValue] = useState({
     category: "",
     organic: "no",
@@ -35,7 +34,7 @@ const AddProduct = ({setIsModalVisible}) => {
     variety: "",
     description: "",
     price: "",
-    unit: "Not Selected",
+    unit: "",
     marketPrice: "",
     certificateNo: "",
     isRented: false,
@@ -61,7 +60,7 @@ const AddProduct = ({setIsModalVisible}) => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
-      quality: 1,
+      quality: 0.7, // Adjust quality as needed
     });
 
     if (!result.canceled) {
@@ -100,8 +99,15 @@ const AddProduct = ({setIsModalVisible}) => {
       console.log("Selected Images:", selectedImages);
 
       // Validate required fields
-      if (!formValue.category || !formValue.name || !formValue.quantity || !formValue.price || !formValue.unit) {
-        Alert.alert("Error", "Please fill in all required fields.");
+      if (
+        !formValue.category ||
+        !formValue.name ||
+        !formValue.quantity ||
+        !formValue.price ||
+        !formValue.unit ||
+        !formValue.marketPrice
+      ) {
+        Alert.alert("Error", "Please fill in all required fields marked with an asterisk (*).");
         return;
       }
 
@@ -114,9 +120,7 @@ const AddProduct = ({setIsModalVisible}) => {
         ...formValue,
         price: Number(formValue.price) || 0,
         quantity: Number(formValue.quantity) || 0,
-        certificateNo: formValue.certificateNo
-          ? Number(formValue.certificateNo)
-          : null,
+        certificateNo: formValue.certificateNo ? String(formValue.certificateNo) : null,
         status: "pending",
         createdAt: Date.now(),
         isRented: userData?.userType === "farmer" ? formValue.isRented : false,
@@ -146,13 +150,13 @@ const AddProduct = ({setIsModalVisible}) => {
           variety: "",
           description: "",
           price: "",
-          unit: "Not Selected",
+          unit: "",
           marketPrice: "",
           certificateNo: "",
           isRented: false,
         });
         setSelectedImages([]);
-        setIsModalVisible(false)
+        setIsModalVisible(false);
       } else {
         Alert.alert("Error", result?.message || "Failed to submit the product. Please try again.");
       }
@@ -163,8 +167,8 @@ const AddProduct = ({setIsModalVisible}) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Add Product</Text>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <Text style={styles.title}>Add New Product</Text>
 
       {/* Image Picker */}
       <TouchableOpacity onPress={handleImagePick} style={styles.uploadButton}>
@@ -177,38 +181,37 @@ const AddProduct = ({setIsModalVisible}) => {
       </View>
 
       {/* Category Dropdown */}
-      <Text style={styles.label}>Category *</Text>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={formValue.category}
-          onValueChange={(value) => handleInputChange("category", value)}
-          style={styles.picker}
-        >
-          <Picker.Item label="Select Category" value="" />
-          {categories.map((category, index) => (
-            <Picker.Item
-              key={index}
-              label={category.categorieName}
-              value={category.categorieName}
-            />
-          ))}
-        </Picker>
+      <View style={styles.inputBox}>
+        <Text style={styles.label}>Category *</Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={formValue.category}
+            onValueChange={(value) => handleInputChange("category", value)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Select Category" value="" />
+            {categories.map((category, index) => (
+              <Picker.Item
+                key={index}
+                label={category.categorieName}
+                value={category.categorieName}
+              />
+            ))}
+          </Picker>
+        </View>
       </View>
 
       {/* Second Dropdown or Custom Input */}
-      {formValue.category === "Farm Machinery" ? (
-        <View>
-          <Text style={styles.label}>Product Name *</Text>
+      <View style={styles.inputBox}>
+        <Text style={styles.label}>Product Name *</Text>
+        {formValue.category === "Farm Machinery" ? (
           <TextInput
             style={styles.input}
             placeholder="Enter the machine name"
             value={formValue.name}
             onChangeText={(value) => handleInputChange("name", value)}
           />
-        </View>
-      ) : (
-        <View>
-          <Text style={styles.label}>Product Name *</Text>
+        ) : (
           <View style={styles.pickerContainer}>
             <Picker
               selectedValue={formValue.name}
@@ -216,7 +219,7 @@ const AddProduct = ({setIsModalVisible}) => {
               style={styles.picker}
               enabled={formValue.category !== ""}
             >
-              <Picker.Item label="Which Crop you grow" value="" />
+              <Picker.Item label="Select Product Name" value="" />
               {userData.userType === "corporate" && (
                 <Picker.Item label="Custom" value="custom" />
               )}
@@ -234,16 +237,16 @@ const AddProduct = ({setIsModalVisible}) => {
               })}
             </Picker>
           </View>
-        </View>
-      )}
+        )}
+      </View>
 
       {/* Custom Name Input */}
       {formValue.name === "custom" && (
-        <View>
-          <Text style={styles.label}>Item Name *</Text>
+        <View style={styles.inputBox}>
+          <Text style={styles.label}>Custom Product Name *</Text>
           <TextInput
             style={styles.input}
-            placeholder="Enter custom name"
+            placeholder="Enter custom product name"
             value={formValue.custom_name}
             onChangeText={(value) => handleInputChange("custom_name", value)}
           />
@@ -251,43 +254,44 @@ const AddProduct = ({setIsModalVisible}) => {
       )}
 
       {/* Quantity */}
-      <Text style={styles.label}>Quantity *</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter quantity"
-        keyboardType="numeric"
-        value={formValue.quantity}
-        onChangeText={(value) => handleInputChange("quantity", value)}
-      />
+      <View style={styles.inputBox}>
+        <Text style={styles.label}>Quantity *</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter quantity"
+          keyboardType="numeric"
+          value={formValue.quantity}
+          onChangeText={(value) => handleInputChange("quantity", value)}
+        />
+      </View>
 
       {/* Variety */}
-      <Text style={styles.label}>Variety</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter variety"
-        value={formValue.variety}
-        onChangeText={(value) => handleInputChange("variety", value)}
-      />
+      <View style={styles.inputBox}>
+        <Text style={styles.label}>Variety</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter variety (optional)"
+          value={formValue.variety}
+          onChangeText={(value) => handleInputChange("variety", value)}
+        />
+      </View>
 
-      <Text style={styles.label}>Description</Text>
-      <TextInput
-        style={[styles.input, styles.textArea]}
-        placeholder="Enter product description"
-        multiline
-        numberOfLines={4}
-        value={formValue.description}
-        onChangeText={(value) => handleInputChange("description", value)}
-      />
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: 16,
-        }}
-      >
+      {/* Description */}
+      <View style={styles.inputBox}>
+        <Text style={styles.label}>Description</Text>
+        <TextInput
+          style={[styles.input, styles.textArea]}
+          placeholder="Enter product description (optional)"
+          multiline
+          numberOfLines={4}
+          value={formValue.description}
+          onChangeText={(value) => handleInputChange("description", value)}
+        />
+      </View>
+
+      <View style={styles.rowInput}>
         {/* Price */}
-        <View style={{ flex: 1, marginRight: 8 }}>
+        <View style={[styles.inputBox, { flex: 1, marginRight: 10 }]} >
           <Text style={styles.label}>Price *</Text>
           <TextInput
             style={styles.input}
@@ -298,7 +302,7 @@ const AddProduct = ({setIsModalVisible}) => {
           />
         </View>
         {/* Unit Picker */}
-        <View style={{ flex: 1 }}>
+        <View style={[styles.inputBox, { flex: 1 }]}>
           <Text style={styles.label}>Unit *</Text>
           <View style={styles.pickerContainer}>
             <Picker
@@ -306,25 +310,30 @@ const AddProduct = ({setIsModalVisible}) => {
               onValueChange={(value) => handleInputChange("unit", value)}
               style={styles.picker}
             >
-              <Picker.Item label="Select a unit" value="" />
+              <Picker.Item label="Select Unit" value="" />
               <Picker.Item label="Kg" value="kg" />
               <Picker.Item label="Litre" value="litre" />
               <Picker.Item label="Dozen" value="dozen" />
+              <Picker.Item label="Unit" value="unit" />
+              <Picker.Item label="Bag" value="bag" />
+              <Picker.Item label="Box" value="box" />
+              {/* Add more units as needed */}
             </Picker>
           </View>
         </View>
       </View>
 
-      <Text style={styles.label}>Market Price *</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Add market price or maximum retail price"
-        keyboardType="numeric"
-        value={formValue.marketPrice}
-        onChangeText={(value) => handleInputChange("marketPrice", value)}
-      />
-
-      {/* Organic Switch */}
+      {/* Market Price */}
+      <View style={styles.inputBox}>
+        <Text style={styles.label}>Market Price / MRP *</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter market price or MRP"
+          keyboardType="numeric"
+          value={formValue.marketPrice}
+          onChangeText={(value) => handleInputChange("marketPrice", value)}
+        />
+      </View>
 
       {/* Organic Switch */}
       <View style={styles.switchContainer}>
@@ -339,7 +348,7 @@ const AddProduct = ({setIsModalVisible}) => {
 
       {/* Certificate Number Input */}
       {formValue.organic === "yes" && (
-        <View>
+        <View style={styles.inputBox}>
           <Text style={styles.label}>Certificate Number *</Text>
           <TextInput
             style={styles.input}
@@ -351,9 +360,8 @@ const AddProduct = ({setIsModalVisible}) => {
       )}
 
       {/* Submit Button */}
-
       <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
-        <Text style={styles.submitButtonText}>Submit</Text>
+        <Text style={styles.submitButtonText}>Submit Product for Verification</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -364,42 +372,47 @@ export default AddProduct;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f8f8",
-    padding: 16,
+    backgroundColor: "#f7f7f7",
+    padding: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "bold",
-    color: "#048404",
-    marginBottom: 16,
+    color: "#28a745",
+    marginBottom: 30,
     textAlign: "center",
   },
   uploadButton: {
-    backgroundColor: "#048404",
-    paddingVertical: 12,
-    borderRadius: 8,
-    marginBottom: 16,
+    backgroundColor: "#28a745",
+    paddingVertical: 14,
+    borderRadius: 10,
+    marginBottom: 20,
     alignItems: "center",
   },
   uploadButtonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
   },
   imageContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginBottom: 16,
+    marginBottom: 20,
   },
   imagePreview: {
-    width: 100,
-    height: 100,
-    borderRadius: 8,
-    marginRight: 8,
-    marginBottom: 8,
+    width: 120,
+    height: 120,
+    borderRadius: 10,
+    marginRight: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  inputBox: {
+    marginBottom: 20,
   },
   label: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#333",
     marginBottom: 8,
@@ -407,23 +420,24 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: "#fff",
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#ccc",
     borderRadius: 8,
-    padding: 12,
-    marginBottom: 8,
-    fontSize: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    fontSize: 16,
     color: "#333",
   },
   textArea: {
-    height: 100,
+    minHeight: 120,
     textAlignVertical: "top",
   },
   pickerContainer: {
     backgroundColor: "#fff",
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#ccc",
     borderRadius: 8,
-    marginBottom: 16,
+    marginBottom: 0,
+    color: "#333",
   },
   picker: {
     height: 50,
@@ -433,18 +447,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 16,
+    marginBottom: 20,
   },
   submitButton: {
-    backgroundColor: "#048404",
-    paddingVertical: 12,
-    borderRadius: 8,
-    marginBottom: 40,
+    backgroundColor: "#28a745",
+    paddingVertical: 16,
+    borderRadius: 10,
+    marginBottom: 30,
     alignItems: "center",
   },
   submitButtonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
+  },
+  rowInput: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 20,
   },
 });

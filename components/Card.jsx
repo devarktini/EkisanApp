@@ -22,7 +22,7 @@ export default function Card({ item }) {
           {item.description}
         </Text>
         <View className="flex-row items-center justify-between mt-1">
-          <Text className="text-sm font-bold text-gray-900">${item.price}</Text>
+          <Text className="text-sm font-bold text-gray-900">₹{item.price}</Text>
           <View className="flex-row items-center">
             <Ionicons name="star" size={12} color="#FFD700" />
             <Text className="text-xs text-gray-500 ml-1">{item.rating}</Text>

@@ -16,6 +16,8 @@ const CartScreen = () => {
 
   const navigation = useNavigation(); // Initialize navigation
 
+  console.log("Cart Items:", cartItems); // Debugging cart items
+
   const handleBuyNow = () => {
     buyNow(); // Perform any necessary logic before navigation
     navigation.navigate('ShoppingBag', { cartItems }); // Navigate to ShoppingBag with cartItems
@@ -34,7 +36,7 @@ const CartScreen = () => {
             renderItem={({ item }) => (
               <View style={styles.card}>
                 <Image
-                  source={{ uri: item.image }}
+                  source={{ uri: item.imgUrl }} // Use imgUrl instead of image
                   style={styles.image}
                   resizeMode="cover"
                 />
@@ -42,7 +44,7 @@ const CartScreen = () => {
                   <Text style={styles.name} numberOfLines={1}>
                     {item.name}
                   </Text>
-                  <Text style={styles.price}>${item?.price}</Text>
+                  <Text style={styles.price}>₹{item?.price}</Text>
                   <View style={styles.quantityContainer}>
                     <TouchableOpacity
                       onPress={() => decrementCartQuantity(item.id)}
@@ -70,7 +72,7 @@ const CartScreen = () => {
           />
           <View style={styles.totalContainer}>
             <Text style={styles.totalText}>Total:</Text>
-            <Text style={styles.totalAmount}>${getCartTotal()}</Text>
+            <Text style={styles.totalAmount}>₹{getCartTotal()}</Text>
           </View>
           <TouchableOpacity style={styles.buyNowButton} onPress={handleBuyNow}>
             <Text style={styles.buyNowText}>Buy Now</Text>

@@ -16,10 +16,10 @@ const CartCard = ({ item, index, handleQuantityChange, handleDeleteCartItem }) =
             <Text className="text-gray-500 text-sm ml-1">{item.rating || 'N/A'}</Text>
           </View>
           <View className="flex-row items-center mt-2">
-            <Text className="text-lg font-bold">${item.price}</Text>
+            <Text className="text-lg font-bold">₹{item.price}</Text>
             {item.originalPrice && (
               <Text className="text-gray-500 line-through text-sm ml-2">
-                ${item.originalPrice}
+                ₹{item.originalPrice}
               </Text>
             )}
             {item.discount && (
@@ -48,7 +48,7 @@ const CartCard = ({ item, index, handleQuantityChange, handleDeleteCartItem }) =
       </View>
       <View className="mt-4 flex-row justify-between">
         <Text className="text-gray-500">Total Order ({item.quantity}):</Text>
-        <Text className="text-lg font-bold">${calculateTotalPrice(item.price, item.quantity)}</Text>
+        <Text className="text-lg font-bold">₹{calculateTotalPrice(item.price, item.quantity)}</Text>
       </View>
       <TouchableOpacity
         className="bg-red-200 rounded-full py-2 px-4 mt-4"

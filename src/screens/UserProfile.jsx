@@ -80,9 +80,9 @@ const UserProfile = () => {
         />
         <View className="flex-1">
           <Text className="font-bold text-gray-700">Apple iPhone...</Text>
-          <Text className="text-gray-500">$799</Text>
+          <Text className="text-gray-500">₹799</Text>
         </View>
-        <Text className="font-bold text-blue-400">$799</Text>
+        <Text className="font-bold text-blue-400">₹799</Text>
       </View>
 
       <View className="mb-4 flex-row items-center border border-gray-300 rounded-lg p-3 bg-gray-50">
@@ -92,9 +92,9 @@ const UserProfile = () => {
         />
         <View className="flex-1">
           <Text className="font-bold text-gray-700">Sony...</Text>
-          <Text className="text-gray-500">$349</Text>
+          <Text className="text-gray-500">₹349</Text>
         </View>
-        <Text className="font-bold text-blue-400">$349</Text>
+        <Text className="font-bold text-blue-400">₹349</Text>
       </View>
 
       <View className="mb-4 flex-row items-center border border-gray-300 rounded-lg p-3 bg-gray-50">
@@ -104,9 +104,9 @@ const UserProfile = () => {
         />
         <View className="flex-1">
           <Text className="font-bold text-gray-700">Kindle...</Text>
-          <Text className="text-gray-500">$129</Text>
+          <Text className="text-gray-500">₹129</Text>
         </View>
-        <Text className="font-bold text-blue-400">$129</Text>
+        <Text className="font-bold text-blue-400">₹129</Text>
       </View>
     </ScrollView>
   );

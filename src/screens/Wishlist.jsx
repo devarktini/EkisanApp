@@ -61,7 +61,7 @@ const WishlistScreen = () => {
             renderItem={({ item }) => (
               <View style={styles.card}>
                 <Image
-                  source={{ uri: item.image }}
+                  source={{ uri: item.imgUrl }}
                   style={styles.image}
                   resizeMode="cover"
                 />
@@ -69,7 +69,7 @@ const WishlistScreen = () => {
                   <Text style={styles.name} numberOfLines={1}>
                     {item.name}
                   </Text>
-                  <Text style={styles.price}>${item.price}</Text>
+                  <Text style={styles.price}>₹{item.price}</Text>
                   <View style={styles.quantityContainer}>
                     <TouchableOpacity
                       onPress={() => decrementWishlistQuantity(item.id)}
@@ -103,7 +103,7 @@ const WishlistScreen = () => {
           />
           <View style={styles.totalContainer}>
             <Text style={styles.totalText}>Total:</Text>
-            <Text style={styles.totalAmount}>${getWishlistTotal()}</Text>
+            <Text style={styles.totalAmount}>₹{getWishlistTotal()}</Text>
           </View>
           <TouchableOpacity style={styles.buyNowButton} onPress={handleBuyNow}>
             <Text style={styles.buyNowText}>Buy Now</Text>
