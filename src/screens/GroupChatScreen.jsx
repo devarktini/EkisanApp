@@ -74,19 +74,36 @@ const GroupChatScreen = ({ route }) => {
         keyExtractor={([messageId]) => messageId}
         renderItem={({ item }) => {
           const [messageId, message] = item;
+          const isCurrentUser = message.sender.uid === userData.uid; // Changed condition here
+
           return (
             <View 
               key={messageId} 
               style={[
                 styles.messageItem, 
-                message.sender.uid === admin.uid ?styles.selfMessage : styles.otherMessage
+                isCurrentUser ? styles.selfMessage : styles.otherMessage
               ]}
             >
               <View style={styles.messageHeader}>
-                <Text style={styles.sender}>{message.sender.name}</Text>
+                <Text style={[
+                  styles.sender,
+                  isCurrentUser ? styles.selfSender : styles.otherSender
+                ]}>
+                  {message.sender.name}
+                </Text>
               </View>
-              <Text style={styles.messageText}>{message.text}</Text>
-              <Text style={styles.timestamp}>{new Date(message.createdAt).toLocaleString()}</Text>
+              <Text style={[
+                styles.messageText,
+                isCurrentUser ? styles.selfMessageText : styles.otherMessageText
+              ]}>
+                {message.text}
+              </Text>
+              <Text style={[
+                styles.timestamp,
+                isCurrentUser ? styles.selfTimestamp : styles.otherTimestamp
+              ]}>
+                {new Date(message.createdAt).toLocaleString()}
+              </Text>
             </View>
           );
         }}
