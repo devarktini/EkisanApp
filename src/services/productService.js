@@ -280,30 +280,42 @@ const sendItemToVerification = async ({
   }
 };
 
-const uploadImageToFirebase = async (imageUri, userId) => {
-  console.log("dddddddddddddd");
-  const productImageURLs = [];
-
-  if (productImages && productImages.length > 0) {
-    for (const image of productImages) {
-      const imageName = image.split("/").pop(); // Extract the image name from the URI
-      console.log("Image Name:", imageName);
-      // const compressedImage = await compressImage(image);
-      const imageRef = storageRef(
-        storage,
-        `products/${user.uid}/${Date.now()}-${imageName}`
-      );
-      const response = await fetch(image);
-      const blob = await response.blob();
-      await uploadBytes(imageRef, blob);
-      const imageUrl = await getDownloadURL(imageRef);
-
-      productImageURLs.push({
-        url: imageUrl,
-        path: imageRef.fullPath,
-      });
+const uploadImageToFirebase = async (imageUri, user) => {
+  console.log("imageUir", imageUri)
+  console.log("user", user)
+  try {
+    if (!imageUri || !user) {
+      console.error("Missing image URI or user data");
+      return null;
     }
-    console.log("product Image", productImageURLs);
+
+    // Extract image name from the URI
+    const imageName = imageUri.split("/").pop();
+    console.log("Uploading Image:", imageName);
+
+    // Create a reference to Firebase Storage
+    const imageRef = storageRef(
+      storage,
+      `products/${user}/${Date.now()}-${imageName}`
+    );
+
+    // Convert image to Blob
+    const response = await fetch(imageUri);
+    const blob = await response.blob();
+
+    // Upload the image
+    await uploadBytes(imageRef, blob);
+    const downloadURL = await getDownloadURL(imageRef);
+
+    console.log("Image uploaded:", downloadURL);
+
+    return {
+      url: downloadURL,
+      path: imageRef.fullPath,
+    };
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    return null;
   }
 };
 
