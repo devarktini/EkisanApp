@@ -80,13 +80,13 @@ export const clearUserCart = async (userId) => {
   };
 
 export const fetchOrders = (user) => {
-  console.log("userccc0", user)
+
     return new Promise(async (resolve) => {
         if (user?.orders) {
             // Handle if orderId is a key
             const orders = await Promise.all(
                 Object.entries(user.orders).map(async ([orderId, order]) => {
-                    console.log("orderId", orderId)
+              
                     return {
                         orderId, // Add the key as orderId
                         ...order.item,
@@ -97,7 +97,7 @@ export const fetchOrders = (user) => {
                     };
                 })
             );
-            console.log('orders', orders)
+            
             resolve(orders);
         } else {
             console.warn("No orders found for user.");
@@ -185,7 +185,7 @@ try {
   const orderRef = ref(database, `users/${userId}/store/received_orders/${orderId}`);
   await remove(orderRef);
 
-  console.log(`Order with ID ${orderId} has been successfully deleted.`);
+ 
   return true;
 } catch (error) {
   console.error("Error deleting the order:", error);

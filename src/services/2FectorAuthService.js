@@ -18,7 +18,7 @@ export const sendOtp = async (phoneNumber, otpTemplateName) => {
     }
 
     const data = await response.json();
-    console.log("OTP sent successfully:", data);
+  
     return data; // Return the response data for further processing
   } catch (error) {
     console.error("Error sending OTP:", error.message);
@@ -31,7 +31,7 @@ export const handleResendOtp = async (phoneNumbers, otpTemplateName) => {
     const phoneNumber = `+91${phoneNumbers}`; // Format the phone number as needed
 
     const response = await sendOtp(phoneNumber, otpTemplateName);
-    console.log("OTP resend response:", response);
+   
     return response;
   } catch (error) {
     console.error("Error resending OTP:", error);
@@ -41,7 +41,7 @@ export const handleResendOtp = async (phoneNumbers, otpTemplateName) => {
 
 // Function to verify OTP via SMS
 export const verifyOtp = async (phoneNumber, otpEnteredByUser) => {
-  console.log("first", phoneNumber, otpEnteredByUser);
+ 
   const url = `https://2factor.in/API/V1/${YOUR_API_KEY}/SMS/VERIFY3/${phoneNumber}/${otpEnteredByUser}`;
 
   try {
@@ -59,7 +59,7 @@ export const verifyOtp = async (phoneNumber, otpEnteredByUser) => {
     }
 
     const data = await response.json();
-    console.log("OTP verified successfully:", data);
+    
     return data; // Return the response data for further processing
   } catch (error) {
     console.error("Error verifying OTP:", error.message);

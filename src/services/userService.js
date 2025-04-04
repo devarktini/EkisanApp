@@ -53,7 +53,7 @@ export const fetchUserCounts = () => {
 
 
 export const findUserByMobile = (mobileNumber) => {
-  console.log("mobile?", mobileNumber)
+ 
   const usersRef = query(ref(database, 'users'));
   
   return new Promise((resolve, reject) => {
@@ -80,7 +80,7 @@ export const deleteUserByMobile = async (mobileNumber) => {
     if (!user) {
       throw new Error('User not found');
     }
-     console.log("userid", user.uid)
+    
     const userRef = ref(database, `users/${user.uid}`);
     await remove(userRef);
     return true;

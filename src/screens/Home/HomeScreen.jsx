@@ -48,7 +48,8 @@ const CategoryCircle = ({coverUrl, coverImage, categorieName }) => {
 };
 
 
-const HomeScreen = ({ navigation, route }) => {
+const HomeScreen = ({ route }) => {
+  const navigation = useNavigation();
   const user = route?.params?.user;
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
@@ -128,7 +129,7 @@ const HomeScreen = ({ navigation, route }) => {
   ];
 
   const ViewAllProductList = (searchQuery) => {
-    console.log("searchQuery", searchQuery)
+   
     navigation.navigate("ProductList", { searchQuery: searchQuery });
   }
 
@@ -140,15 +141,19 @@ const HomeScreen = ({ navigation, route }) => {
    
       <Header/>
 
-      {/* Search Bar */}
+      {/* shopping search bar */}
       <View className="bg-white px-4 py-2 border-b border-gray-100">
         <View className="flex-row items-center bg-[#F5F5F5] rounded-full px-4 py-1 border-2 border-[#048404]">
           <Ionicons name="search-outline" size={20} color="#048404" />
           <TextInput
             className="flex-1 ml-2 text-base font-medium text-gray-700"
             placeholder="Search any Product.."
-            placeholderTextColor="#048404 "
-            
+            placeholderTextColor="#048404"
+           
+            onChange={(event) => {
+              const searchQuery = event.nativeEvent.text;
+              navigation.navigate("ProductList", { categoryName: searchQuery });
+            }}
           />
           <TouchableOpacity>
             <Ionicons name="mic-outline" size={20} color="#048404" />

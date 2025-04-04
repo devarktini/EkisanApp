@@ -13,7 +13,7 @@ const OrderScreen = () => {
   useEffect(() => {
     const fetchOrdersList = async () => {
       const userOrders = await fetchOrdersByUserId(userData.uid || userData.userId);
-      console.log("sssssss", userOrders)
+  
 
       setOrders(userOrders);
     };
@@ -39,7 +39,7 @@ const OrderScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {console.log("order", orders)}
+     
       <ScrollView style={styles.orderList}>
         {orders?.length > 0 ? (
           orders?.map((order, index) => (

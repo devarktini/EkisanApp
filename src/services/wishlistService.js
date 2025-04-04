@@ -92,7 +92,7 @@ export const getUserWishlist = async (userId) => {
             const wishlistItems = snapshot.val();
             return wishlistItems; // Returns an object with the user's wishlist items
         } else {
-            console.log("No items found in the wishlist for this user.");
+            
             return []; // Return an empty array if no items found
         }
     } catch (error) {

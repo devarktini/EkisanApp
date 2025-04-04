@@ -28,7 +28,7 @@ const TrackOrderScreen = ({ navigation, route }) => {
   const fetchOrderTrack = async () => {
     try {
       const response = await getOrderTrackDetails(orderDetails.id);
-      console.log('Track Details:', response);
+    
       setOrderTrackData(response);
 
       // Check if response has requests array with messages
@@ -44,7 +44,7 @@ const TrackOrderScreen = ({ navigation, route }) => {
           })).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
           setMessages(messagesArray);
-          console.log('Processed Messages:', messagesArray);
+         
         }
       }
     } catch (error) {
@@ -65,8 +65,7 @@ const TrackOrderScreen = ({ navigation, route }) => {
         admin: false,
         userId: orderDetails.item.sellerUID
       };
-      console.log("messageData", messageData)
-      console.log("orderDetails", orderDetails)
+    
       await sendMessage(orderTrackData?.orderTrackId, messageData);
       setNewMessage(''); // Clear input after successful send
       fetchOrderTrack();

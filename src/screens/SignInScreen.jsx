@@ -34,7 +34,7 @@ const SignInScreen = () => {
         setLoading(true);
         const response = await signinAuthService(email, password);
         setLoading(false);
-        console.log("35", response);
+      
         if (response.success) {
             Toast.show({
                 type: "success",

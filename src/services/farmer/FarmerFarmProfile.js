@@ -14,7 +14,7 @@ export const addFarmerFarms = async (data, user) => {
 
     const updatedFarms = [...existingFarms, ...newFarm];
 
-    console.log("123", updatedFarms);
+   
 
     await update(userRef, {
       farms: updatedFarms,
@@ -75,7 +75,7 @@ export const getFarms = async (user) => {
 
 // export const updateFarmByIndex = async (user, index, updatedFarmData) => {
 //   const id = user?.userId || user?.uid;
-//   console.log("sddd", id)
+
 //   try {
 //     const farmsRef = ref(database, `users/${id}/farmerData/farms`);
 //     const snapshot = await get(farmsRef);
@@ -99,7 +99,7 @@ export const getFarms = async (user) => {
 //       };
 //     }
 //     farms[index] = { ...farms[index], ...updatedFarmData };
-//     console.log("vvvvvv", farms)
+
 //     await update(ref(database, `users/${id}/farmerData`), {
 //       farms,
 //       lastUpdate: serverTimestamp(),
@@ -125,7 +125,7 @@ export const getFarms = async (user) => {
 
 export const updateFarmByIndex = async (user, index, updatedFarmData) => {
   const id = user?.userId || user?.uid;
-  console.log("User ID:", id);
+
 
   try {
     const farmsRef = ref(database, `users/${id}/farmerData/farms`);

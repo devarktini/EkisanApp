@@ -19,8 +19,7 @@ export const FarmProvider = ({ children }) => {
           text1: response.message,
           position: "top",
         });
-        console.log(response.message);
-        console.log(response.data); // Updated farms data
+      
       } else {
         // Handle error
         Toast.show({
@@ -52,7 +51,7 @@ export const FarmProvider = ({ children }) => {
       if (response.success) {
         // Update local state on success
         // setFarms(response.data);
-        console.log(response.message);
+    
         Toast.show({
           type: "success",
           text1: response.message,

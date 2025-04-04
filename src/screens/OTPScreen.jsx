@@ -17,15 +17,14 @@
 //     if (otp.length === 6) {
 //       setLoading(true);
 //       try {
-//         console.log("verificationId:", verificationId); // Debugging: Log the verificationId
-//         console.log("otp:", otp);
+//     
 //         // Create the phone Auth credential with the verificationId and the OTP
 //         const credential = PhoneAuthProvider.credential(verificationId.verificationId, otp);
         
 //         // Sign in with the credential
 //         const userCredential = await signInWithCredential(auth, credential);
 //         setLoading(false);
-//         console.log("User signed in successfully:", userCredential.user);
+//        
         
 //         // Navigate to the home screen or wherever you want after successful login
 //         navigation.navigate("HomeScreen"); // Replace "HomeScreen" with your desired screen

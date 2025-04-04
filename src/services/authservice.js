@@ -156,7 +156,7 @@ export const signoutAuthService = async () => {
         await signOut(auth);
         await removeAuthToken();
         await removeUserData();
-        console.log("User successfully logged out");
+       
         return { success: true, message: "Logout successful!" };
     } catch (error) {
         console.error("Logout Error:", error);
@@ -168,9 +168,9 @@ export const refreshAuthToken = async (number) => {
   
     try {
       const user = await getUserByPhoneNumber(number);
-      console.log("bbbbbbbbbbbbb", user)
+    
         if (user) {
-          console.log("vvvvvvvvvvv", user)
+          
             const token = 'ddcdcdffcdcdcdcd'; // Replace with actual token retrieval logic
             await saveAuthToken(token);
             return token;
@@ -219,7 +219,7 @@ export const getCurrentUser = async (number) => {
         if (!user) {
             return { success: false, error: 'No user is currently logged in' };
         }
-      console.log("userid ", user)
+      
       
         const userRef = ref(database, `users/${user.uid}`);
         const userSnapshot = await get(userRef);
@@ -243,21 +243,21 @@ export const getCurrentUser = async (number) => {
 export const signInAnonymouslyToFirebase = async (number) => {
   try {
     const existingUser = await getUserByPhoneNumber(number);
-    console.log("EXISTING USER", existingUser);
+ 
     
     if (existingUser) {
       
       var loggedInUser = await loginUser(number,  existingUser['uid'] !== undefined ? existingUser['uid'] : existingUser['userId']);
-      console.log("Logged In User", loggedInUser);
+     
       if (loggedInUser['message'] === "Invalid credentials") {
-        console.log("Invalid username or password")
+       
         const registerData = await registerUser(number,  existingUser['uid'] !== undefined ? existingUser['uid'] : existingUser['userId'], existingUser);
-        console.log("Register Data", registerData);
+      
         if (registerData.status === "success") {
-          console.log("Registered successfully");
+          
           loggedInUser = await loginUser(number,  existingUser['uid'] !== undefined ? existingUser['uid'] : existingUser['userId']);
-          console.log("login ", loggedInUser);
-          console.log("+++++++++++++++++++++++++++++++++++++++++++")
+         
+          
           return {
             success: true,
             user: existingUser,
@@ -269,7 +269,7 @@ export const signInAnonymouslyToFirebase = async (number) => {
           };
         }
       }
-      console.log("User already exists, signing in with existing user...", existingUser);
+     
       return {
         success: true,
         user:existingUser,
@@ -280,7 +280,7 @@ export const signInAnonymouslyToFirebase = async (number) => {
         message: "New anonymous user created!",
       };
     } else {
-      console.log("stoppeddd")
+      
       return await createNewAnonymousUser(number);
     }
   } catch (error) {
@@ -300,7 +300,7 @@ export const signInAnonymouslyToFirebase = async (number) => {
 //     );
 //     const snapshot = await get(phoneNumberQuery);
 //     const data = snapshot.val();
-//     console.log("Data", data);
+
 //     if (data) {
 //         return  data[Object.keys(data)[0]];
 //     }
@@ -369,7 +369,7 @@ const signInWithExistingUser = async (userData) => {
       message: "Reauthenticated successfully!",
     };
   } catch (error) {
-    console.error("Error signing in with existing user:", error);
+  
     return { success: false, message: "Login failed!", error };
   }
 };
@@ -497,13 +497,13 @@ const createNewAnonymousUser = async (number) => {
     });
     const userSnapshot = await get(ref(database, `users/${key}`));
     const userData = userSnapshot.val();
-    console.log("User", userData);
+  
 
     const registerData = await registerUser(number, key, userData);
     if (registerData.status === "success") {
-      console.log("Registered successfully");
+     
       const loggedInUser = await loginUser(number,  key);
-      console.log("login ", loggedInUser);
+  
       return {
         success: true,
         user:userData,
@@ -549,7 +549,7 @@ export const saveUserInDatabase = async (uid, phoneNumber) => {
       updatedAt: new Date().toISOString(),
     });
 
-    console.log("User data saved successfully!");
+   
   } catch (error) {
     console.error("Error saving user data:", error);
   }

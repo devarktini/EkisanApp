@@ -27,9 +27,8 @@ const imgExtRemover = (uri) => {
 
 // Submit a new user query
 export const submitUserQuery = async (user, userQuery, image) => {
-    console.log("User:", user);
-    console.log("User Query:", userQuery);
-    console.log("Image:", image);
+
+  
   
   
     if (!userQuery) return { success: false, message: "Query cannot be empty" };

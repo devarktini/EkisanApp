@@ -71,7 +71,7 @@ const NotificationScreen = ({ navigation }) => {
 
   const handleNotificationClick = async (item) => {
     if (item.type.toLowerCase() === 'product') {
-      console.log("objectddd " , item)
+     
     } else if (item.type.toLowerCase() === 'order') {
       navigation.navigate('order', { orderId: item.orderId });
     } else if (item.type.toLowerCase() === 'group_invitation') {

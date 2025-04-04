@@ -31,11 +31,11 @@ const MyStore = ({ navigation }) => {
         // Fetch rejected products
         const rejectedResponse = await fetchRejectedProducts(userData.uid || userData.userId);
         setRejectedProducts(rejectedResponse);
-        console.log("firstvvvvvvvvvvvvv", rejectedResponse)
+    
 
         // Fetch pending and verified products
         const verifyingResponse = await fetchItemToVerify(userData.uid || userData.uiId);
-        console.log("xxxxxxxxxxxxx", verifyingResponse)
+       
         const verified = verifyingResponse.filter((item) => item.status === 'verified');
         const pending = verifyingResponse.filter((item) => item.status === 'pending');
 
@@ -44,9 +44,7 @@ const MyStore = ({ navigation }) => {
         setVerifiedProducts(verified);
         setPendingProducts(pending);
 
-        console.log('Verified Products:', verified);
-        console.log('Pending Products:', pending);
-        console.log('Rejected Products:', rejectedResponse);
+    
         
       } catch (error) {
         console.error('Error fetching products:', error);

@@ -24,9 +24,9 @@
 //       try {
 //         const formattedPhoneNumber = `+91${phoneNumber}`; // Adjust country code as needed
 //         const verificationId = await signInWithPhoneNumber(auth, formattedPhoneNumber, recaptchaVerifier.current);
-//         console.log("verificationId:", verificationId);
+//        
 //          setLoading(false);
-//         console.log("Confirmation object:", verificationId); // Debugging: Log the confirmation object
+//         Debugging: Log the confirmation object
 //         navigation.navigate("OtpScreen", { verificationId });
 //       } catch (error) {
 //         if (error.code === "auth/too-many-requests") {

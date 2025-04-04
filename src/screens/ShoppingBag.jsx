@@ -8,7 +8,7 @@ import { AppContext } from '../context/AppContext';
 const ShoppingBag = () => {
   const route = useRoute();
   const {user, userData}= useContext(AppContext)
-  console.log("dddddddddd", userData)
+
   const navigation = useNavigation();
   const { cartItems: initialCartItems = [] } = route.params || {};
 
@@ -57,7 +57,7 @@ const ShoppingBag = () => {
     } else {
       navigation.navigate('ShoppingCart', { cartItems, selectedAddress: addresses[selectedAddressIndex] });
     }
-    console.log("cartItems", cartItems)
+  
   };
 
   return (

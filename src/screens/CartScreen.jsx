@@ -16,7 +16,7 @@ const CartScreen = () => {
 
   const navigation = useNavigation(); // Initialize navigation
 
-  console.log("Cart Items:", cartItems); // Debugging cart items
+
 
   const handleBuyNow = () => {
     buyNow(); // Perform any necessary logic before navigation

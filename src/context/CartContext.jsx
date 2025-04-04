@@ -28,7 +28,7 @@ export const CartProvider = ({ children }) => {
   //     position: "top",
   // });
      const cartData = await addToCarts(userData, item)
-     console.log("cartData", cartData)
+ 
     Toast.show({
       type: "success",
       text1: "Success!",
@@ -57,10 +57,9 @@ export const CartProvider = ({ children }) => {
   const addToWishlist = async(item, userData) => {
     if (!wishlistItems.find((wishlistItem) => wishlistItem.id === item.id)) {
       setWishlistItems((prevItems) => [...prevItems, { ...item, quantity: 1 }]);
-      console.log("firstdddd", item)
-      console.log("userDataddd", userData)
+   
      const wishListResponse = await  AddToWishlist(item, userData )
-     console.log("wishListResponse", wishListResponse)
+   
     }
     // Show toast message
     Toast.show({

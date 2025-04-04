@@ -72,10 +72,10 @@ const RentProductScreen = ({ navigation }) => {
   //     productImage: image
   //   });
 
-  //   console.log("prent product screen", result)
+  
 
 
-  //   console.log('Form Data:', formData);
+ 
   //   Alert.alert('Success', 'Product submitted successfully!');
   //   // Add form submission logic here
   // };
@@ -114,8 +114,7 @@ const RentProductScreen = ({ navigation }) => {
         userType: userData?.userType,
       };
   
-      console.log('Form Data:', formData);
-      console.log('Rent Product Data:', rentProductData);
+   
   
       // Send data to verification
       const result = await sendRentItemForVerification({
@@ -123,7 +122,7 @@ const RentProductScreen = ({ navigation }) => {
         itemData: rentProductData,
         productImage: image,
       });
-      console.log("result", result)
+     
   
       if (result?.success) {
         Alert.alert('Success', 'Product submitted successfully!');

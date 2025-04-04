@@ -38,10 +38,10 @@ const AddMemberUI = ({ setPopupVisible, tempAllUsers, selectedGroup }) => {
   const toggleSelectContact = async (contact) => {
     try {
       if (selectedContacts.some((item) => item.uid === contact.uid)) {
-        console.log("ddddddddddddddddddddddddddd")
+     
         setSelectedContacts(selectedContacts.filter((item) => item.uid !== contact.uid));
       } else {
-        console.log("vvvvvvvvvvvvvvvvvvvvvvvvvvv")
+      
         simulateLoading();
         setSelectedContacts([...selectedContacts, contact]);
 

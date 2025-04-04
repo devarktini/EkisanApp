@@ -77,7 +77,7 @@ const UpdateProfileScreen = ({ navigation }) => {
         const response = await getCurrentUser(user);
         if (response.success) {
           setUserData(response.userData);
-          console.log("response", response)
+         
           setUserPhone(response.userData.phoneNumber);
         }
       } catch (error) {
@@ -152,7 +152,7 @@ const UpdateProfileScreen = ({ navigation }) => {
         setError('Please agree to the terms and conditions');
         return;
       }
-      console.log("userData", userData)
+    
       const result = await updateUserProfile({
         ...formData,
         uid: userData.uid || userData.userId,

@@ -11,7 +11,7 @@ const MessageGroup = () => {
     try {
         // Call the createGroup method
        const response =  await createGroup(groupName, groupDescription, userData);
-       console.log("response", response);
+   
     } catch (error) {
         console.error('Error creating group:', error);
     } 

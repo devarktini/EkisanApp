@@ -136,7 +136,7 @@ export const removeAllData = async () => {
     try {
         const allKeys = await AsyncStorage.getAllKeys();
         await AsyncStorage.multiRemove(allKeys);
-        // console.log('All data cleared from AsyncStorage');
+       
     } catch (error) {
         console.error('Error clearing all data from AsyncStorage:', error);
     }

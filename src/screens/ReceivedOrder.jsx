@@ -21,7 +21,7 @@ const ReceivedOrder = ({ navigation }) => {
         // Fetch received orders
         const receivedResponse = await fetchReceivedOrders(userData);
         setReceivedOrders(receivedResponse);
-        console.log('Received Orders:', receivedResponse);
+       
       } catch (error) {
         console.error('Error fetching products:', error);
       }

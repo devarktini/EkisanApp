@@ -95,8 +95,7 @@ const AddProduct = ({ setIsModalVisible }) => {
 
   const handleSubmit = async () => {
     try {
-      console.log("Form Submitted:", formValue);
-      console.log("Selected Images:", selectedImages);
+  
 
       // Validate required fields
       if (
@@ -128,7 +127,7 @@ const AddProduct = ({ setIsModalVisible }) => {
         userType: userData?.userType,
       };
 
-      console.log("Complete Item Data:", completeItemData);
+  
 
       // Send data to verification
       const result = await sendItemToVerification({

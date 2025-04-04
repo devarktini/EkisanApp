@@ -98,7 +98,7 @@ const SignupScreen = () => {
     
         try {
             const results = await signupAuthService(formData.email, formData.password, userData);
-            console.log("Signup Response: ", results);
+          
     
             if (results.success) {
                 // User created successfully

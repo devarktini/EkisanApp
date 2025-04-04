@@ -3,9 +3,7 @@ import { ref, push, serverTimestamp, get, update } from "firebase/database";
 import { Alert } from "react-native";
 
 export const sendGroupInvitation = async (groupId, invitedUserId, invitedBy) => {
-console.log("group id", groupId)
-console.log("invited user id", invitedUserId)
-console.log("invitedby", invitedBy)
+
   try {
     // Get invited user's data
     const userRef = ref(database, `users/${invitedUserId}`);
@@ -20,7 +18,7 @@ console.log("invitedby", invitedBy)
     const groupRef = ref(database, `groups/${groupId}`);
     const groupSnapshot = await get(groupRef);
     const groupData = groupSnapshot.val();
-    // console.log("first", groupData)
+    
     if (!groupData) {
       throw new Error('Group not found');
     }
@@ -74,8 +72,7 @@ console.log("invitedby", invitedBy)
     const invitationId = newInvitationRef.key;
     
     updates[`invitations/${invitationId}`] = invitationData;
-    //  console.log("groupdata", groupData)
-    // Add to user's notifications
+   
     updates[`users/${invitedUserId}/notifications/${invitationId}`] = {
       type: 'group_invitation',
       groupId,
@@ -85,7 +82,7 @@ console.log("invitedby", invitedBy)
       createdAt: serverTimestamp()
     };
 
-    console.log("firstcccc0", invitedUserData)
+  
     // Add to group's pending invitations
     updates[`groups/${groupId}/pendingInvitations/${invitationId}`] = {
       invitedUserId,

@@ -30,7 +30,7 @@ export const AppProvider = ({ children }) => {
                     navigation.navigate("UpdateProfile", { user: userData });
                 }else{
                     const refreshToken =  await getRefreshToken()
-                     console.log("dddddd", refreshToken)
+                   
                     navigation.navigate("Main",{user: userData })
                 }
                 // navigation.navigate("Main",{user: userData })

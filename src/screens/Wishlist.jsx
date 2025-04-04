@@ -31,7 +31,7 @@ const WishlistScreen = () => {
   };
 
   // const  wishListData =  getUserWishlist(userData.uid)
-  // console.log("dddddddd",wishListData)
+ 
   useEffect(() => {
     const fetchWishlistProducts = async () => {
       const wishListData = await getUserWishlist(userData.uid);
@@ -42,7 +42,7 @@ const WishlistScreen = () => {
         // Fetch product details for each itemId
         const products = await Promise.all(itemIds.map(id => fetchProductDatabyId(id)));
         setWishlistItems(products)
-        console.log("Fetched Products:", products);
+     
       }
     };
   

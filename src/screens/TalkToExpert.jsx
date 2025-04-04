@@ -48,7 +48,7 @@ const TalkToExpert = ({ navigation }) => {
     }
 
     const response = await submitUserQuery(userData, description, image);
-    console.log('Response:', response);
+ 
 
     if (response.success) {
       Alert.alert('Request Submitted Successfully');

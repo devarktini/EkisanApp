@@ -160,13 +160,13 @@ const fetchProductDatabyId = (id) => {
 
 
 const uploadImage = async ({ user, itemData, productImage, productImages }) => {
-  console.log("dddddddddddddd");
+  
   const productImageURLs = [];
 
   if (productImages && productImages.length > 0) {
     for (const image of productImages) {
       const imageName = image.split("/").pop(); // Extract the image name from the URI
-      console.log("Image Name:", imageName);
+  
       // const compressedImage = await compressImage(image);
       const imageRef = storageRef(
         storage,
@@ -182,7 +182,7 @@ const uploadImage = async ({ user, itemData, productImage, productImages }) => {
         path: imageRef.fullPath,
       });
     }
-    console.log("product Image", productImageURLs);
+   
   }
 };
 const sendItemToVerification = async ({
@@ -206,7 +206,7 @@ const sendItemToVerification = async ({
 
     if (productImages && productImages.length > 0) {
       for (const image of productImages) {
-        console.log(image.name);
+      
         const imageName = image.split("/").pop(); // Extract the image name from the URI
         // const compressedImage = await compressImage(image);
         const imageRef = storageRef(
@@ -281,8 +281,7 @@ const sendItemToVerification = async ({
 };
 
 const uploadImageToFirebase = async (imageUri, user) => {
-  console.log("imageUir", imageUri)
-  console.log("user", user)
+
   try {
     if (!imageUri || !user) {
       console.error("Missing image URI or user data");
@@ -291,7 +290,7 @@ const uploadImageToFirebase = async (imageUri, user) => {
 
     // Extract image name from the URI
     const imageName = imageUri.split("/").pop();
-    console.log("Uploading Image:", imageName);
+  
 
     // Create a reference to Firebase Storage
     const imageRef = storageRef(
@@ -307,7 +306,7 @@ const uploadImageToFirebase = async (imageUri, user) => {
     await uploadBytes(imageRef, blob);
     const downloadURL = await getDownloadURL(imageRef);
 
-    console.log("Image uploaded:", downloadURL);
+ 
 
     return {
       url: downloadURL,
@@ -389,7 +388,7 @@ export const sendRentItemForVerification = async ({ user, itemData, productImage
 };
 
 const fetchRejectedProducts = (uid) => {
-    console.log("uid", uid)
+
     const itemsRef = ref(database, `/users/${uid}/item_rejected`);
     return new Promise(resolve => {
         onValue(itemsRef, (snapshot) => {

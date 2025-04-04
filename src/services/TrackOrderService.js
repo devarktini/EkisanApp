@@ -3,9 +3,7 @@ import { database } from "../../firebase.config";
 
 
 export const orderTrack = async (itemData, user, orderId) => {
-    console.log("first",itemData)
-    console.log("second",user)
-    console.log("third",orderId)
+   
     if(!user){
         console.log("you are not register")
     }
@@ -37,7 +35,7 @@ export const orderTrack = async (itemData, user, orderId) => {
 
             resolve(true);
         } catch (error) {
-            console.error("Error sending item to verification:", error);
+          
             reject(error); 
         }
     });
@@ -51,7 +49,7 @@ export const updateRequestStatus = async (orderTrackId, newStatus) => {
             status: newStatus,
             updatedAt: Date.now(),
         });
-        console.log("Request status updated successfully");
+       
     } catch (error) {
         console.error("Error updating request status:", error);
     }
@@ -61,7 +59,7 @@ export const updateRequestStatus = async (orderTrackId, newStatus) => {
 
 
 export const getOrderTrackDetails = async (orderId) => {
-    console.log(orderId)
+ 
     try {
         const orderTrackRef = ref(database, `order-track`);
         const snapshot = await get(orderTrackRef);
@@ -87,7 +85,7 @@ export const getOrderTrackDetails = async (orderId) => {
 
 
 export const sendMessage = async (orderId, message) => {
-    console.log("dddddd", orderId)
+    
     const messagesRef = ref(database, `order-track/${orderId}/requests/0/messages`);
 
     try {

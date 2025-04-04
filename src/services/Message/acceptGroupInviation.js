@@ -5,7 +5,7 @@ import { fetchGroupById } from "./fetchGroupById";
 export const acceptGroupInvitation = async (groupData, user) => {
   try {
     // Update existing group
-    console.log("Accept Iniviations")
+   
     const groupsRef = ref(database, `groups/${groupData.groupId}`);
     const groupInfo = await fetchGroupById(groupData.groupId);
     const updates = {
