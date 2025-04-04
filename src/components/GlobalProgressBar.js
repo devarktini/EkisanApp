@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 2000, // Ensure it appears on top
+    zIndex: 9000, // Ensure it appears on top
   },
   backgroundOverlay: {
     position: "absolute",
