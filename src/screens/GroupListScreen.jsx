@@ -385,6 +385,7 @@ const styles = StyleSheet.create({
   },
   blurBackground: {
     flex: 1,
+    zIndex: 10,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
@@ -429,6 +430,7 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: "center",
     shadowColor: "#000",
+    zIndex: 20,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
