@@ -19,7 +19,11 @@ const MessageGroup = () => {
   };
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerTitleAlign: 'center', // Center align the header title
+      }}
+    >
       <Stack.Screen name="GroupList">
         {props => <GroupListScreen {...props} onCreateGroup={handleCreateGroup} />}
       </Stack.Screen>

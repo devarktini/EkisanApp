@@ -28,30 +28,34 @@ const OrderScreen = () => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color="black" />
-          <Text style={styles.backButtonText}>Back</Text>
+          <Ionicons name="arrow-back" size={24} color="#048404" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>My Orders</Text>
+        <TouchableOpacity
+          style={styles.homeButton}
+          onPress={() => navigation.navigate('Main')}
+        >
+          <Ionicons name="home" size={24} color="#048404" />
+        </TouchableOpacity>
       </View>
 
-   {console.log("order", orders)}
-        <ScrollView style={styles.orderList}>
-          {orders?.length > 0 ? (
-            orders?.map((order, index) => (
-          <View key={index} style={styles.orderCard}>
-            <Text style={styles.orderTitle}>Order ID : {order?.orderId}</Text>
-            <Text style={styles.orderDetail}>Total: ₹{order?.total}</Text>
-            <Text style={styles.orderDetail}>Quantity: {order?.quantity}</Text>
-            <Text style={styles.orderDetail}>Date: {new Date(order.timeStamp).toLocaleString()}</Text>
-          
-              <View  style={styles.itemContainer}>
-              <Image source={{ uri: order.imgUrl }} className="w-24 h-24 rounded-lg" />
-            <View style={styles.productDetails}>
-              <Text style={styles.productName}>{order?.name}</Text>
-              <Text style={styles.productPrice}>₹{order?.price ? order.price : '0.00'}</Text>
-            </View>
+      {console.log("order", orders)}
+      <ScrollView style={styles.orderList}>
+        {orders?.length > 0 ? (
+          orders?.map((order, index) => (
+            <View key={index} style={styles.orderCard}>
+              <Text style={styles.orderTitle}>Order ID : {order?.orderId}</Text>
+              <Text style={styles.orderDetail}>Total: ₹{order?.total}</Text>
+              <Text style={styles.orderDetail}>Quantity: {order?.quantity}</Text>
+              <Text style={styles.orderDetail}>Date: {new Date(order.timeStamp).toLocaleString()}</Text>
+
+              <View style={styles.itemContainer}>
+                <Image source={{ uri: order.imgUrl }} className="w-24 h-24 rounded-lg" />
+                <View style={styles.productDetails}>
+                  <Text style={styles.productName}>{order?.name}</Text>
+                  <Text style={styles.productPrice}>₹{order?.price ? order.price : '0.00'}</Text>
+                </View>
               </View>
-            {/* ))} */}
             </View>
           ))
         ) : (
@@ -72,14 +76,16 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    borderBottomColor: '#eee',
+    elevation: 2,
   },
   backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    padding: 8,
   },
   backButtonText: {
     marginLeft: 8,
@@ -87,9 +93,12 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginLeft: 16,
+    color: '#111827',
+  },
+  homeButton: {
+    padding: 8,
   },
   orderList: {
     padding: 16,
@@ -127,7 +136,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   productDetails: {
-    paddingLeft:6,
+    paddingLeft: 6,
     flex: 1,
   },
   productName: {

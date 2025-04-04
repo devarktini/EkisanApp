@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
-
+import { Ionicons } from "@expo/vector-icons";
 const CartCard = ({ item, index, handleQuantityChange, handleDeleteCartItem }) => {
   const calculateTotalPrice = (price, quantity) => (price * quantity).toFixed(2);
 
   return (
-    <View className="mb-4 border border-gray-200 rounded-lg p-4 bg-white shadow-sm">
+    <View className="mb-4 relative border border-gray-200 rounded-lg p-4 bg-white shadow-sm">
       <View className="flex-row">
         <Image source={{ uri: item.imgUrl }} className="w-24 h-24 rounded-lg" />
         <View className="ml-4 flex-1">
@@ -51,10 +51,10 @@ const CartCard = ({ item, index, handleQuantityChange, handleDeleteCartItem }) =
         <Text className="text-lg font-bold">₹{calculateTotalPrice(item.price, item.quantity)}</Text>
       </View>
       <TouchableOpacity
-        className="bg-red-200 rounded-full py-2 px-4 mt-4"
+        className="bg-red-200 absolute top-0 right-0 rounded-full py-2 px-4 mt-4 flex-row items-center"
         onPress={() => handleDeleteCartItem(index)}
       >
-        <Text className="text-red-600 font-semibold">Delete Item</Text>
+        <Ionicons name="trash" size={18} color="#dc2626" />
       </TouchableOpacity>
     </View>
   );

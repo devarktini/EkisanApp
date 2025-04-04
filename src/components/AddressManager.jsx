@@ -11,7 +11,7 @@ import {
   Alert,
   StyleSheet,
 } from "react-native";
-import { addOrUpdateAddress, getAddress, deleteAddress } from '../services/address/AddressService';
+import { addOrUpdateAddress, getAddress, deleteAddress } from "../services/address/AddressService";
 
 const AddressManager = ({
   user,
@@ -86,15 +86,22 @@ const AddressManager = ({
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={16} color="black" />
-          <Text style={styles.backButtonText}>Back</Text>
+          <Ionicons name="arrow-back" size={24} color="#048404" />
         </TouchableOpacity>
+        <View>
+        <Text style={styles.headerTitle}>Manage Addresses</Text>
+        </View>
+        <View></View>
+        
       </View>
+
+      {/* Add Address Button */}
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => {
@@ -108,126 +115,133 @@ const AddressManager = ({
           setIsModalVisible(true);
         }}
       >
-        <Text style={styles.addButtonText}>Add Address</Text>
+        <Ionicons name="add-circle-outline" size={20} color="#fff" />
+        <Text style={styles.addButtonText}>Add New Address</Text>
       </TouchableOpacity>
 
+      {/* Address List */}
       <View style={styles.addressList}>
-        <Text style={styles.addressListTitle}>Saved Address:</Text>
-        {addresses.map((address, index) => (
-          <TouchableOpacity
-          className="relative"
-            key={index}
-            style={[
-              styles.addressItem,
-              selectedAddressIndex === index && styles.selectedAddressItem,
-            ]}
-            onPress={() => setSelectedAddressIndex(index)}
-          >
-            <View>
-              <Text style={styles.addressName}>{address.name}</Text>
-              <Text style={styles.addressText}>{address.address_line_1}</Text>
-              <Text style={styles.addressText}>Contact: {address.contact}</Text>
-              <Text style={styles.addressText}>PIN: {address.pincode}</Text>
-              <Text style={styles.addressText}>Area: {address.localarea}</Text>
-            </View>
-            <View className=" absolute right-0 top-0" style={styles.addressButtons}>
-              <TouchableOpacity
-                style={styles.editButton}
-                onPress={() => {
-                  setNewAddress(address);
-                  setEditIndex(index);
-                    setIsModalVisible(true);
-                  }}
-                  >
-                  <Ionicons name="pencil" size={16} color="#004085" />
-                  {/* <Text style={styles.editButtonText}>Edit</Text> */}
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                  className=" pl-2"
-                  style={styles.deleteButton}
-                  onPress={handleDeleteAddress}
-                  >
-                    <Ionicons name="trash" size={16} color="#721c24" />
-                  {/* <Text style={styles.deleteButtonText}>Delete</Text> */}
-                  </TouchableOpacity>
+        {addresses.length > 0 ? (
+          addresses.map((address, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.addressItem,
+                selectedAddressIndex === index && styles.selectedAddressItem,
+              ]}
+              onPress={() => setSelectedAddressIndex(index)}
+            >
+              <View style={styles.addressContent}>
+                <View style={styles.addressInfo}>
+                  <Text style={styles.addressName}>{address.name}</Text>
+                  <Text style={styles.addressText}>{address.address_line_1}</Text>
+                  <Text style={styles.addressText}>Contact: {address.contact}</Text>
+                  <Text style={styles.addressText}>PIN: {address.pincode}</Text>
+                  <Text style={styles.addressText}>Area: {address.localarea}</Text>
                 </View>
 
-                <TouchableOpacity
-                  style={[
+                <View style={styles.actionButtons}>
+                  <TouchableOpacity
+                    style={styles.editButton}
+                    onPress={() => {
+                      setNewAddress(address);
+                      setEditIndex(index);
+                      setIsModalVisible(true);
+                    }}
+                  >
+                    <Ionicons name="pencil" size={18} color="#048404" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.deleteButton}
+                    onPress={handleDeleteAddress}
+                  >
+                    <Ionicons name="trash" size={18} color="#dc2626" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <TouchableOpacity
+                style={[
                   styles.selectButton,
                   selectedAddressIndex === index && styles.selectedSelectButton,
-                  ]}
-                  onPress={() => setSelectedAddressIndex(index)}
-                >
-                  <Text
+                ]}
+                onPress={() => setSelectedAddressIndex(index)}
+              >
+                <Text
                   style={[
                     styles.selectButtonText,
                     selectedAddressIndex === index && styles.selectedSelectButtonText,
                   ]}
-                  >
-                  {selectedAddressIndex === index ? "Selected" : "Select"}
-                  </Text>
-                </TouchableOpacity>
-                </TouchableOpacity>
-              ))}
-              </View>
-
-              <Modal visible={isModalVisible} transparent={true} animationType="slide">
-              <View style={styles.modalOverlay}>
-                <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>
-                  {editIndex !== null ? "Edit Address" : "Add New Address"}
+                >
+                  {selectedAddressIndex === index ? "Selected" : "Select Address"}
                 </Text>
-                <ScrollView>
-                  <TextInput
-                  style={styles.input}
-                  placeholder="Name"
-                  value={newAddress.name}
-                  onChangeText={(text) =>
-                    setNewAddress({ ...newAddress, name: text })
-                  }
-                  />
-                  <TextInput
-                  style={styles.input}
-                  placeholder="Address Line 1"
-                  value={newAddress.address_line_1}
-                  onChangeText={(text) =>
-                    setNewAddress({ ...newAddress, address_line_1: text })
-                  }
-                  multiline
-                  />
-                  <TextInput
-                  style={styles.input}
-                  placeholder="Contact Number"
-                  value={newAddress.contact}
-                  onChangeText={(text) =>
-                    setNewAddress({ ...newAddress, contact: text })
-                  }
-                  keyboardType="numeric"
-                  />
-                  <TextInput
-                  style={styles.input}
-                  placeholder="PIN Code"
-                  value={newAddress.pincode}
-                  onChangeText={(text) =>
-                    setNewAddress({ ...newAddress, pincode: text })
-                  }
-                  keyboardType="numeric"
-                  />
-                  <TextInput
-                  style={styles.input}
-                  placeholder="Local Area"
-                  value={newAddress.localarea}
-                  onChangeText={(text) =>
-                    setNewAddress({ ...newAddress, localarea: text })
-                  }
-                  multiline
-                  />
-                </ScrollView>
-                <View style={styles.modalButtons}>
-                  <TouchableOpacity
-                  style={styles.cancelButton}
-                  onPress={() => {
+              </TouchableOpacity>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <View style={styles.emptyState}>
+            <Ionicons name="location-outline" size={48} color="#9ca3af" />
+            <Text style={styles.emptyStateText}>No addresses found</Text>
+          </View>
+        )}
+      </View>
+
+      <Modal visible={isModalVisible} transparent={true} animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>
+              {editIndex !== null ? "Edit Address" : "Add New Address"}
+            </Text>
+            <ScrollView>
+              <TextInput
+                style={styles.input}
+                placeholder="Name"
+                value={newAddress.name}
+                onChangeText={(text) =>
+                  setNewAddress({ ...newAddress, name: text })
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Address Line 1"
+                value={newAddress.address_line_1}
+                onChangeText={(text) =>
+                  setNewAddress({ ...newAddress, address_line_1: text })
+                }
+                multiline
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Contact Number"
+                value={newAddress.contact}
+                onChangeText={(text) =>
+                  setNewAddress({ ...newAddress, contact: text })
+                }
+                keyboardType="numeric"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="PIN Code"
+                value={newAddress.pincode}
+                onChangeText={(text) =>
+                  setNewAddress({ ...newAddress, pincode: text })
+                }
+                keyboardType="numeric"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Local Area"
+                value={newAddress.localarea}
+                onChangeText={(text) =>
+                  setNewAddress({ ...newAddress, localarea: text })
+                }
+                multiline
+              />
+            </ScrollView>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => {
                   setIsModalVisible(false);
                   setEditIndex(null);
                 }}
@@ -253,41 +267,118 @@ const AddressManager = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     backgroundColor: "#f8f8f8",
   },
   header: {
     flexDirection: "row",
+    alignItems: "center",
     justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 3,
     backgroundColor: "#fff",
-    padding: 8,
-    borderRadius: 50,
+    elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
-  backButtonText: {
-    marginLeft: 8,
-    color: "#000",
+  backButton: {
+    padding: 8,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#111827",
   },
   addButton: {
-    backgroundColor: "#048404",
-    paddingVertical: 12,
-    borderRadius: 50,
+    flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    justifyContent: "center",
+    backgroundColor: "#048404",
+    marginHorizontal: 16,
+    marginVertical: 12,
+    paddingVertical: 12,
+    borderRadius: 8,
+    elevation: 2,
   },
   addButtonText: {
     color: "#fff",
     fontWeight: "bold",
+    marginLeft: 8,
+  },
+  addressList: {
+    paddingHorizontal: 16,
+  },
+  addressItem: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    marginBottom: 12,
+    padding: 12,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  selectedAddressItem: {
+    borderWidth: 2,
+    borderColor: "#048404",
+  },
+  addressContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  addressInfo: {
+    flex: 1,
+  },
+  addressName: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#111827",
+    marginBottom: 4,
+  },
+  addressText: {
+    color: "#4b5563",
+    marginBottom: 2,
+  },
+  actionButtons: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 12,
+  },
+  editButton: {
+    padding: 8,
+  },
+  deleteButton: {
+    padding: 8,
+  },
+  selectButton: {
+    marginTop: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    backgroundColor: "#f3f4f6",
+    alignItems: "center",
+  },
+  selectedSelectButton: {
+    backgroundColor: "#048404",
+  },
+  selectButtonText: {
+    fontWeight: "600",
+    color: "#4b5563",
+  },
+  selectedSelectButtonText: {
+    color: "#fff",
+  },
+  emptyState: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 40,
+  },
+  emptyStateText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: "#9ca3af",
   },
   modalOverlay: {
     flex: 1,
@@ -338,79 +429,6 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: "#fff",
     fontWeight: "bold",
-  },
-  addressList: {
-    marginTop: 16,
-  },
-  addressListTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  addressItem: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 8,
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  selectedAddressItem: {
-    borderColor: "#048404",
-  },
-  addressName: {
-    fontWeight: "bold",
-    marginBottom: 4,
-  },
-  addressText: {
-    marginBottom: 4,
-  },
-  addressButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 8,
-  },
-  editButton: {
-    backgroundColor: "#cce5ff",
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 50,
-  },
-  editButtonText: {
-    color: "#004085",
-    fontWeight: "bold",
-  },
-  deleteButton: {
-    backgroundColor: "#f8d7da",
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 50,
-  },
-  deleteButtonText: {
-    color: "#721c24",
-    fontWeight: "bold",
-  },
-  selectButton: {
-    marginTop: 8,
-    paddingVertical: 6,
-    borderRadius: 50,
-    alignItems: "center",
-    backgroundColor: "#ddd",
-  },
-  selectedSelectButton: {
-    backgroundColor: "#048404",
-  },
-  selectButtonText: {
-    color: "#666",
-    fontWeight: "bold",
-  },
-  selectedSelectButtonText: {
-    color: "#fff",
   },
 });
 
