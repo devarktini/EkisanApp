@@ -5,7 +5,7 @@ import { Alert } from "react-native";
 export const sendGroupInvitation = async (groupId, invitedUserId, invitedBy) => {
 console.log("group id", groupId)
 console.log("invited user id", invitedUserId)
-console.log("invitedby", invitedBy.name)
+console.log("invitedby", invitedBy)
   try {
     // Get invited user's data
     const userRef = ref(database, `users/${invitedUserId}`);
@@ -85,10 +85,11 @@ console.log("invitedby", invitedBy.name)
       createdAt: serverTimestamp()
     };
 
+    console.log("firstcccc0", invitedUserData)
     // Add to group's pending invitations
     updates[`groups/${groupId}/pendingInvitations/${invitationId}`] = {
       invitedUserId,
-      invitedUserName: invitedUserData.name,
+      invitedUserName: invitedUserData.name || invitedUserData.fullName,
       status: 'pending',
       createdAt: serverTimestamp()
     };
@@ -98,7 +99,7 @@ console.log("invitedby", invitedBy.name)
       groupId,
       groupName: groupData.name,
       invitedUserId,
-      invitedUserName: invitedUserData.name,
+      invitedUserName: invitedUserData.name || invitedUserData.fullName,
       status: 'pending',
       createdAt: serverTimestamp()
     };

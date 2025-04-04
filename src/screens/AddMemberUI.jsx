@@ -13,22 +13,48 @@ import { Avatar, FAB } from "react-native-paper";
 import image from "../assets/userProfile.png";
 import { AppContext } from "../context/AppContext";
 import { sendGroupInvitation } from "../services/Message/sendGroupInvitation";
+import { useProgress } from "../context/ProgressContext";
 
 const AddMemberUI = ({ setPopupVisible, tempAllUsers, selectedGroup }) => {
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [searchText, setSearchText] = useState("");
   const { userData } = useContext(AppContext);
+  const { startProgress, stopProgress, updateProgress } = useProgress();
+
+
+  const simulateLoading = () => {
+    startProgress();
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 10;
+      updateProgress(progress);
+      if (progress >= 100) {
+        clearInterval(interval);
+        progress = 0;
+      }
+    }, 300);
+  };
 
   const toggleSelectContact = async (contact) => {
-    if (selectedContacts.some((item) => item.uid === contact.uid)) {
-      setSelectedContacts(selectedContacts.filter((item) => item.uid !== contact.uid));
-    } else {
-      setSelectedContacts([...selectedContacts, contact]);
+    try {
+      if (selectedContacts.some((item) => item.uid === contact.uid)) {
+        setSelectedContacts(selectedContacts.filter((item) => item.uid !== contact.uid));
+      } else {
+        simulateLoading();
+        setSelectedContacts([...selectedContacts, contact]);
 
-      // Send Invitation
-      await sendGroupInvitation(selectedGroup.id, contact.userId || contact.uid, userData);
+        // Send Invitation
+        await sendGroupInvitation(selectedGroup.id, contact.userId || contact.uid, userData);
+      }
+    } catch (error) {
+      console.error("Error while toggling contact selection or sending invitation:", error);
+    } finally {
+      stopProgress();
+      // Any cleanup or final actions can be placed here if needed
     }
   };
+
+  
 
   const removeSelectedContact = (uid) => {
     setSelectedContacts(selectedContacts.filter((item) => item.uid !== uid));
