@@ -167,7 +167,7 @@ const AddProduct = ({ setIsModalVisible }) => {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.title}>Add New Product</Text>
+      <Text style={styles.title}></Text>
 
       {/* Image Picker */}
       <TouchableOpacity onPress={handleImagePick} style={styles.uploadButton}>
@@ -372,7 +372,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f7f7f7",
-    padding: 20,
+  width: "100%",
   },
   title: {
     fontSize: 26,
