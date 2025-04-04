@@ -5,7 +5,7 @@ import { Alert } from "react-native";
 export const sendGroupInvitation = async (groupId, invitedUserId, invitedBy) => {
 console.log("group id", groupId)
 console.log("invited user id", invitedUserId)
-console.log("invitedby", invitedBy.fullName)
+console.log("invitedby", invitedBy.name)
   try {
     // Get invited user's data
     const userRef = ref(database, `users/${invitedUserId}`);
@@ -55,7 +55,7 @@ console.log("invitedby", invitedBy.fullName)
       groupId,
       groupName: groupData.name,
       invitedUserId,
-      invitedUserName: invitedUserData.name,
+      invitedUserName: invitedBy.name || invitedBy.fullName,
       invitedBy: {
         uid: invitedBy.uid || invitedBy.userId,
         name: invitedBy.name || invitedBy.fullName,

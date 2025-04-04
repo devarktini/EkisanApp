@@ -249,13 +249,11 @@ const NotificationScreen = ({ navigation }) => {
   };
 
   const handleNotificationClick = async (item) => {
-    console.log("==================");
     if (item.type.toLowerCase() === 'product') {
-      console.log("objectddd")
+      console.log("objectddd " , item)
     } else if (item.type.toLowerCase() === 'order') {
-      console.log("object ccc")
+      navigation.navigate('order', { orderId: item.orderId });
     } else if (item.type.toLowerCase() === 'group_invitation') {
-      console.log(userId, item.groupId, item.groupData)
       const groupData  = {
         "timestamp": Date.now().toString(),
         "name": item.groupName,
@@ -271,7 +269,7 @@ const NotificationScreen = ({ navigation }) => {
             onPress: () => console.log("Cancel Pressed"),
           },
           { text: "OK", onPress: async () => {
-            simulateLoading(); // ✅ Start progress
+            simulateLoading();
             try {
               await addUserToGroupInFirebase(userId, item.groupId, groupData);
               await deleteNotification(userId, item.id);
@@ -279,15 +277,15 @@ const NotificationScreen = ({ navigation }) => {
             } catch (error) {
               console.error("Failed to join group:", error);
             } finally {
-              stopProgress(); // ✅ Ensure it stops even if an error occurs
+              stopProgress();
             }
           } },
         ]
       );
     } else if (item.type.toLowerCase() === 'experts-reply') {
-      console.log("object xxx")
+      navigation.navigate('TalkToExpert');
     } else if (item.type.toLowerCase() === 'other') {
-      console.log("object vvv")
+      navigation.navigate('myStore');
     }
   };
 
@@ -361,14 +359,18 @@ const NotificationScreen = ({ navigation }) => {
         {new Date(item.timestamp || item.createdAt).toLocaleString()}
       </Text>
       <View style={styles.cardButtonContainer}>
+        {getButtonText(item.type) !== 'View Product' ? (
+          <TouchableOpacity
+            style={styles.cardButton}
+            onPress={() => handleNotificationClick(item)}
+          >
+            <Text style={styles.cardButtonText}>{getButtonText(item.type)}</Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={{ flex: 1 }} />
+        )}
         <TouchableOpacity
-          style={styles.cardButton}
-          onPress={() => handleNotificationClick(item)}
-        >
-          <Text style={styles.cardButtonText}>{getButtonText(item.type)}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.cardDeleteButton}
+          style={[styles.cardDeleteButton, { marginLeft: 'auto' }]}
           onPress={() => handleNotificationDelete(item)}
         >
           <Ionicons name="trash" size={24} color="black" />

@@ -158,7 +158,7 @@ const HomeScreen = ({ navigation, route }) => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* All Featured - Now Horizontal */}
-        <View className="py-4">
+        <View className="py-1">
           <View className="flex-row justify-between items-center px-4 mb-3">
             <Text className="text-xl font-bold text-[#048404]">All Featured</Text>
             <TouchableOpacity onPress={() => navigation.navigate('Search')}>

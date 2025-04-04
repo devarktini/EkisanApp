@@ -90,6 +90,8 @@ const GroupListScreen = ({ onCreateGroup }) => {
       setOptionsModalVisible(false);
       setPopupVisible(true);
       onClickHandlerAddMamber();
+    } else if (option === "View mamber") {
+      console.log(":sssssssssss")
     }
     // else if( option === 'Delete Group'){
     //  const response = await deleteUserByMobile("+918514045400")
@@ -97,7 +99,6 @@ const GroupListScreen = ({ onCreateGroup }) => {
      
     //  console.log("response", response)
     // }
-    console.log(`Selected option: ${option} for group: ${selectedGroup.name}`);
   };
 
   return (

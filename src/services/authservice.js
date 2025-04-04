@@ -314,8 +314,6 @@ export const signInAnonymouslyToFirebase = async (number) => {
 
 const getUserByPhoneNumber = async (phoneValue) => {
   try {
-    console.log("=============== ")
-    console.log(phoneValue)
     const usersRef = ref(database, 'users');
 
     // Query for phoneNumber
@@ -517,7 +515,6 @@ const createNewAnonymousUser = async (number) => {
       };
     }
 
-    console.log("===========================================")
     return {
       success: false,
       message: "User not created Successfully!",
