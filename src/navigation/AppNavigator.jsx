@@ -97,7 +97,14 @@ const AppNavigator = ({ isFirstLaunch }) => {
           <Stack.Screen name="ProductDetails" component={ProductDetails} />
           <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="ShoppingCart" component={ShoppingCart} />
-          <Stack.Screen name="AddFarm" component={AddFarm} />
+          <Stack.Screen 
+            name="AddFarm" 
+            component={AddFarm}
+            options={{
+              presentation: 'modal',
+              headerShown: false,
+            }}
+          />
           <Stack.Screen name='MyAccount' component={MyAccount} />
           <Stack.Screen name ='order' component={OrderScreen} />
           <Stack.Screen name ='groupList' component={MessageGroup} />

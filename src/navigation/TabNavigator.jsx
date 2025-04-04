@@ -31,7 +31,7 @@ const TabNavigator = ({ route }) => {
           else if (route.name === "Cart") iconName = "shopping-cart";
           else if (route.name === "Wishlist") iconName = "heart";
           else if (route.name === "Settings") iconName = "settings";
-          else if (route.name === "Search") iconName = "search";
+          else if (route.name === "Search") iconName = "grid";
           return <Feather name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#10B981",

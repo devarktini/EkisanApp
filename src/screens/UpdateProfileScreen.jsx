@@ -73,8 +73,6 @@ const UpdateProfileScreen = ({ navigation }) => {
 
   useEffect(() => {
     const getCurrentUserData = async () => {
-      console.log("first, userData", userData)
-      console.log("sss", user)
       try {
         const response = await getCurrentUser(user);
         if (response.success) {

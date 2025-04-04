@@ -91,7 +91,7 @@ const CategoryProduct = () => {
             Showing {categoryName} products
           </Text>
         </View>
-        <View className="flex-row items-center space-x-4">
+        {/* <View className="flex-row items-center space-x-4">
           <TouchableOpacity className="flex-row items-center">
             <Ionicons name="funnel-outline" size={18} color="#666" />
             <Text className="text-gray-600 ml-1">Sort</Text>
@@ -100,7 +100,7 @@ const CategoryProduct = () => {
             <Ionicons name="filter-outline" size={18} color="#666" />
             <Text className="text-gray-600 ml-1">Filter</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
       
       <View className="flex-row flex-wrap justify-between px-2">

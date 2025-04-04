@@ -133,7 +133,7 @@ const HomeScreen = ({ navigation, route }) => {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-gray-100">
       <StatusBar backgroundColor="#fff" barStyle="dark-content" />
       
       {/* Header */}
@@ -235,7 +235,7 @@ const HomeScreen = ({ navigation, route }) => {
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false} 
-            className="px-4 py-2"
+            className="px-4 py-2 flex-1"
           >
             {products.map((product) => (
               <ProductCard key={product.id} item={product} />

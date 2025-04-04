@@ -1,14 +1,21 @@
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, Button, ImageBackground  } from 'react-native';
 import BackgroundImage from '../../src/assets/agricultures.jpeg';
+import { AppContext } from '../context/AppContext';
 
 const OnLandingScreen = () => {
     const navigation = useNavigation();
+    const{isAuthenticated} = useContext(AppContext)
 
     // You can add any logic or UI elements here for the landing screen.
  const onGoToHome = () => {
-  navigation.navigate('PhoneAuth');
+  if (!isAuthenticated) {
+    navigation.navigate('PhoneAuth');
+  } else {
+    
+  }
+  
         // navigation.navigate('PhoneAuth');
     };
   return (

@@ -130,7 +130,6 @@ const AddFarm = ({ navigation }) => {
         setCategories(categoriesData);
       } catch (error) {
         console.error("Error fetching data:", error);
-        Swal.fire("Error", "Failed to fetch data. Please try again.", "error");
       }
     };
     fetchData();
@@ -377,67 +376,73 @@ const AddFarm = ({ navigation }) => {
             </View>
           </View>
         </Modal>
-        <ScrollView className="p-4">
+        <ScrollView className="px-3 py-2">
           {farms && Array.isArray(farms) && farms.map((farm, index) => (
             <View
-              key={farm.id}
-              className="bg-white p-6 rounded-2xl shadow-lg mb-6 border-l-4 border-green-500"
+              key={index + 1}
+              className="bg-white rounded-xl shadow-md mb-3 overflow-hidden border-l-4 border-green-500"
             >
-              {/* Farm Label with Icon */}
-              <View className="flex-row items-center mb-4">
-                <Ionicons name="leaf" size={24} color="#22c55e" />
-                <Text className="text-xl font-bold ml-2 text-gray-800">Farm {index + 1}</Text>
+              {/* Header */}
+              <View className="flex-row justify-between items-center p-3 bg-gray-50">
+                <View className="flex-row items-center">
+                  <Ionicons name="leaf" size={20} color="#22c55e" />
+                  <Text className="text-lg font-bold ml-2 text-gray-800">Farm {index + 1}</Text>
+                </View>
+                <Text className="text-sm text-gray-500">{farm.dateOfSowing}</Text>
               </View>
 
-              {/* Farm Information Grid */}
-              <View className="grid grid-cols-2 gap-4 mb-4">
-                <View className="bg-gray-50 p-3 rounded-xl">
-                  <Text className="text-sm text-gray-500">Crop Type</Text>
-                  <Text className="text-base font-semibold text-gray-800">{farm.cropType}</Text>
+              {/* Farm Info */}
+              <View className="p-3">
+                <View className="flex-row justify-between mb-2">
+                  <View className="flex-1 mr-2">
+                    <Text className="text-xs text-gray-500">Crop Type</Text>
+                    <Text className="text-sm font-semibold text-gray-800">{farm.cropType}</Text>
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-xs text-gray-500">Crop Name</Text>
+                    <Text className="text-sm font-semibold text-gray-800">{farm.cropName}</Text>
+                  </View>
                 </View>
-
-                <View className="bg-gray-50 p-3 rounded-xl">
-                  <Text className="text-sm text-gray-500">Crop Name</Text>
-                  <Text className="text-base font-semibold text-gray-800">{farm.cropName}</Text>
-                </View>
-
-                <View className="bg-gray-50 p-3 rounded-xl">
-                  <Text className="text-sm text-gray-500">Sowing Date</Text>
-                  <Text className="text-base font-semibold text-gray-800">{farm.dateOfSowing}</Text>
-                </View>
-
-                <View className="bg-gray-50 p-3 rounded-xl">
-                  <Text className="text-sm text-gray-500">Farm Area</Text>
-                  <Text className="text-base font-semibold text-gray-800">
-                    {farm.fieldArea} {farm.fieldSizeUnit}
-                  </Text>
+                <View className="flex-row items-center">
+                  <View className="flex-row items-center bg-green-50 px-2 py-1 rounded-full">
+                    <Ionicons name="resize" size={12} color="#22c55e" />
+                    <Text className="text-xs ml-1 text-green-700">
+                      {farm.fieldArea} {farm.fieldSizeUnit}
+                    </Text>
+                  </View>
+                  {farm.irrigation === 'yes' && (
+                    <View className="flex-row items-center bg-blue-50 px-2 py-1 rounded-full ml-2">
+                      <Ionicons name="water" size={12} color="#3b82f6" />
+                      <Text className="text-xs ml-1 text-blue-700">Irrigated</Text>
+                    </View>
+                  )}
                 </View>
               </View>
 
               {/* Action Buttons */}
-              <View className="flex-row justify-around space-x-3">
+              <View className="flex-row border-t border-gray-100">
                 <TouchableOpacity
                   onPress={() => handleViewFarm(farm, index)}
-                  className="bg-blue-500 px-4 py-2 rounded-xl flex-row items-center"
+                  className="flex-1 flex-row justify-center items-center p-2 border-r border-gray-100"
                 >
-                  <Ionicons name="eye" size={16} color="white" />
-                  <Text className="text-white font-medium ml-1">View</Text>
+                  <Ionicons name="eye-outline" size={16} color="#3b82f6" />
+                  <Text className="text-blue-500 text-sm font-medium ml-1">View</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   onPress={() => handleEditFarm(farm, index)}
-                  className="bg-yellow-500 px-4 py-2 rounded-xl flex-row items-center"
+                  className="flex-1 flex-row justify-center items-center p-2 border-r border-gray-100"
                 >
-                  <Ionicons name="pencil" size={16} color="white" />
-                  <Text className="text-white font-medium ml-1">Edit</Text>
+                  <Ionicons name="pencil-outline" size={16} color="#eab308" />
+                  <Text className="text-yellow-500 text-sm font-medium ml-1">Edit</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   onPress={() => deleteFarm(farm, index)}
-                  className="bg-red-500 px-4 py-2 rounded-xl flex-row items-center"
+                  className="flex-1 flex-row justify-center items-center p-2"
                 >
-                  <Ionicons name="trash" size={16} color="white" />
-                  <Text className="text-white font-medium ml-1">Delete</Text>
+                  <Ionicons name="trash-outline" size={16} color="#ef4444" />
+                  <Text className="text-red-500 text-sm font-medium ml-1">Delete</Text>
                 </TouchableOpacity>
               </View>
             </View>

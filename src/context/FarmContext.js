@@ -98,7 +98,7 @@ export const FarmProvider = ({ children }) => {
   const fetchFarms = async (userData)=>{
     try {
       const response = await getFarms(userData);
-      console.log("first, ", response)
+
       if (response.success) {
         setFarms(response.data);
       } else {

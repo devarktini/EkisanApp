@@ -7,7 +7,7 @@ import { AppContext } from "../context/AppContext";
 const CustomDrawerContent = (props) => {
   const { userData, logout, loading } = useContext(AppContext);
   const { navigation } = props;
-console.log("first, ", userData)
+
   return (
     <SafeAreaView style={styles.container}>
       <ImageBackground source={require('../assets/agricultures.jpeg')} style={styles.header}>

@@ -17,6 +17,7 @@ export const AppProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [showUpdateProfile, setShowUpdateProfile]= useState(false)
     const [categoryList, setCategoryList]= useState([])
+    
 
     useEffect(() => {
         const initializeAuth = async () => {

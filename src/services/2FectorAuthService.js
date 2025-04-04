@@ -43,7 +43,7 @@ export const handleResendOtp = async (phoneNumbers, otpTemplateName) => {
 export const verifyOtp = async (phoneNumber, otpEnteredByUser) => {
   console.log("first", phoneNumber, otpEnteredByUser);
   const url = `https://2factor.in/API/V1/${YOUR_API_KEY}/SMS/VERIFY3/${phoneNumber}/${otpEnteredByUser}`;
-  console.log("first, ", url);
+
   try {
     const response = await fetch(url, {
       method: "GET", // Use GET method as per the API documentation

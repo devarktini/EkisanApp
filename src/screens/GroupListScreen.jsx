@@ -9,6 +9,7 @@ import {
   Animated,
   Modal,
   TextInput,
+  ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -48,11 +49,6 @@ const GroupListScreen = ({ onCreateGroup }) => {
       })
     );
 
-    // console.log("GROUP DATA")
-    // console.log(list)
-    // console.log("GROUP DATA")
-    
-    // const fetchedGroups = await fetchUserGroups(userData.uid !== undefined ? userData.uid : userData.userId);
     setGroups(list);
   };
 
@@ -91,14 +87,10 @@ const GroupListScreen = ({ onCreateGroup }) => {
       setPopupVisible(true);
       onClickHandlerAddMamber();
     } else if (option === "View mamber") {
-      console.log(":sssssssssss")
+      setSelectedOption(option);
+      setOptionsModalVisible(false);
+      setPopupVisible(true);
     }
-    // else if( option === 'Delete Group'){
-    //  const response = await deleteUserByMobile("+918514045400")
-    //  setOptionsModalVisible(false);
-     
-    //  console.log("response", response)
-    // }
   };
 
   return (
@@ -118,7 +110,6 @@ const GroupListScreen = ({ onCreateGroup }) => {
               <Image source={logo} style={styles.groupImage} />
               <View style={styles.groupInfo}>
                 <Text style={styles.groupName}>{item.name}</Text>
-                {/* <Text style={styles.groupDetails}>{item.lastMessage}</Text> */}
                 <Text style={styles.status}>
                   • {item.members ? Object.keys(item.members).length : 0} members •{" "}
                   <Text style={{ color: "red", fontWeight: "bold" }}>
@@ -213,13 +204,6 @@ const GroupListScreen = ({ onCreateGroup }) => {
               <Ionicons name="people" size={24} color="#2196f3" />
               <Text style={styles.optionText}>View Members</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.optionItem}
-              onPress={() => handleOptionSelect("Delete Group")}
-            >
-              <Ionicons name="trash" size={24} color="#f44336" />
-              <Text style={styles.optionText}>Delete Group</Text>
-            </TouchableOpacity>
           </View>
         </TouchableOpacity>
       </Modal>
@@ -235,7 +219,7 @@ const GroupListScreen = ({ onCreateGroup }) => {
         <View style={styles.blurBackground}>
           <View style={styles.popupView}>
             {selectedOption === "Add mamber" ? (
-              <View className=" w-full h-[90%]">
+              <View className=" w-full h-[97%]">
                 <AddMemberUI
                   tempAllUsers={tempAllUsers}
                   setPopupVisible={setPopupVisible}
@@ -244,8 +228,79 @@ const GroupListScreen = ({ onCreateGroup }) => {
                 />
               </View>
             ) : selectedOption === "View mamber" ? (
-              <View>
-                <Text>View Mamber</Text>
+              <View className="w-full max-h-[90%]">
+                <View className="flex-row justify-between items-center mb-4 pb-2 border-b border-gray-200">
+                  <Text className="text-xl font-bold text-gray-800">
+                    Group Members ({selectedGroup?.members ? Object.keys(selectedGroup.members).length : 0})
+                  </Text>
+                  <TouchableOpacity onPress={() => setPopupVisible(false)}>
+                    <Ionicons name="close-circle" size={24} color="#666" />
+                  </TouchableOpacity>
+                </View>
+
+                <ScrollView className="w-full" showsVerticalScrollIndicator={false}>
+                  {selectedGroup?.members && Object.entries(selectedGroup.members).map(([uid, member]) => (
+                    <View 
+                      key={uid} 
+                      className="flex-row items-center p-3 mb-2 bg-gray-50 rounded-xl border border-gray-100"
+                    >
+                      <View className="w-10 h-10 rounded-full bg-green-100 items-center justify-center mr-3">
+                        <Text className="text-green-700 font-bold text-lg">
+                          {member.name ? member.name[0].toUpperCase() : '?'}
+                        </Text>
+                      </View>
+                      
+                      <View className="flex-1">
+                        <Text className="text-base font-semibold text-gray-800">{member.name}</Text>
+                        <Text className="text-sm text-gray-500">{member.phoneNumber}</Text>
+                      </View>
+
+                      <View className="flex-row items-center">
+                        {member.role === 'admin' && (
+                          <View className="px-2 py-1 bg-green-100 rounded-full">
+                            <Text className="text-xs text-green-700 font-medium">Admin</Text>
+                          </View>
+                        )}
+                      </View>
+                    </View>
+                  ))}
+                  {selectedGroup?.pendingInvitations && Object.keys(selectedGroup.pendingInvitations).length > 0 && (
+                    <View className="mt-4">
+                      <Text className="text-lg font-semibold text-gray-700 mb-2">
+                        Pending Invitations ({Object.keys(selectedGroup.pendingInvitations).length})
+                      </Text>
+                      
+                      {Object.entries(selectedGroup.pendingInvitations).map(([uid, member]) => (
+                        <View 
+                          key={uid}
+                          className="flex-row items-center p-3 mb-2 bg-yellow-50 rounded-xl border border-yellow-100"
+                        >
+                          <View className="w-10 h-10 rounded-full bg-yellow-100 items-center justify-center mr-3">
+                            <Text className="text-yellow-700 font-bold text-lg">
+                              {member.invitedUserName ? member.invitedUserName[0].toUpperCase() : '?'}
+                            </Text>
+                          </View>
+                          
+                          <View className="flex-1">
+                            <Text className="text-base font-semibold text-gray-800">{member.invitedUserName}</Text>
+                            {/* <Text className="text-sm text-gray-500">{member.phoneNumber}</Text> */}
+                          </View>
+
+                          <View className="px-2 py-1 bg-yellow-100 rounded-full">
+                            <Text className="text-xs text-yellow-700 font-medium">Pending</Text>
+                          </View>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+
+                  {(!selectedGroup?.members || Object.keys(selectedGroup.members).length === 0) && (
+                    <View className="py-8 items-center">
+                      <Ionicons name="people-outline" size={48} color="#999" />
+                      <Text className="text-gray-500 mt-2">No members found</Text>
+                    </View>
+                  )}
+                </ScrollView>
               </View>
             ) : null}
           </View>
@@ -368,7 +423,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   popupView: {
-    width: "90%",
+    width: "95%",
     backgroundColor: "white",
     borderRadius: 20,
     padding: 20,
