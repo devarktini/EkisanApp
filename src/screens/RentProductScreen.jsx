@@ -145,12 +145,25 @@ const RentProductScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {/* Header with Back Button */}
-      <View style={styles.headerContainer}>
+      <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-gray-100 shadow-sm">
+        <TouchableOpacity
+          className="p-2 rounded-full bg-gray-50"
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="arrow-back" size={24} color="#048404" />
+        </TouchableOpacity>
+        
+        <Text className="flex-1 text-lg font-bold text-gray-800 text-center mx-4">
+        Rent Product
+        </Text>
+        
+      </View>
+      {/* <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Rent Product</Text>
-      </View>
+      </View> */}
 
       {/* Form Content */}
       <ScrollView style={styles.content}>

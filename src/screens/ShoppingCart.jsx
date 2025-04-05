@@ -45,7 +45,23 @@ const ShoppingCart = ({ navigation }) => {
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
+
+      <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-gray-100 shadow-sm">
+              <TouchableOpacity
+                className="p-2 rounded-full bg-gray-50"
+                onPress={() => navigation.goBack()}
+              >
+                <Ionicons name="arrow-back" size={24} color="#048404" />
+              </TouchableOpacity>
+              
+              <Text className="flex-1 text-lg font-bold text-gray-800 text-center mx-4">
+                Order Summary
+              </Text>
+              
+              
+              
+            </View>
+      {/* <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
@@ -53,7 +69,7 @@ const ShoppingCart = ({ navigation }) => {
           <Ionicons name="arrow-back" size={16} color="black" />
           <Text style={styles.backButtonText}>Back</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       {/* Product Section */}
       {cartItems?.length > 0 ? (
@@ -129,7 +145,7 @@ const ShoppingCart = ({ navigation }) => {
       <View style={styles.bottomBar}>
         <Text style={styles.totalAmount}>₹{finalTotal}</Text>
         <TouchableOpacity onPress={() => onHandlePressOrder()} style={styles.paymentButton}>
-          <Text style={styles.paymentButtonText}>Proceed to Payment</Text>
+          <Text style={styles.paymentButtonText}>Place your Order</Text>
         </TouchableOpacity>
       </View>
       {/* Success Popup Modal */}
@@ -161,13 +177,33 @@ const ShoppingCart = ({ navigation }) => {
             <Text style={{ textAlign: 'center', marginTop: 10, color: '#666' }}>
               Thank you for your order. It will be delivered soon.
             </Text>
+            <View className="flex-row justify-around mt-4 w-full">
             <TouchableOpacity
               style={{
                 backgroundColor: '#029130',
                 padding: 10,
+                paddingHorizontal: 20,
                 borderRadius: 25,
                 marginTop: 20,
-                width: '100%',
+                width: 'auto',
+              }}
+              onPress={() => {
+                setIsSuccessPopup(false);
+                navigation.navigate('Main');
+              }}
+            >
+              <Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold' }}>
+                Go To Home
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#fca019',
+                padding: 10,
+                paddingHorizontal: 20,
+                borderRadius: 25,
+                marginTop: 20,
+                width: 'auto',
               }}
               onPress={() => {
                 setIsSuccessPopup(false);
@@ -175,9 +211,11 @@ const ShoppingCart = ({ navigation }) => {
               }}
             >
               <Text style={{ color: 'white', textAlign: 'center', fontWeight: 'bold' }}>
-                Continue Shopping
+                Go To Order
               </Text>
             </TouchableOpacity>
+            </View>
+
           </View>
         </View>
         <ConfettiCannon ref={confettiRef} count={200} origin={{ x: 10, y: 0 }} fadeOut />

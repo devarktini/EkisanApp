@@ -17,7 +17,7 @@ import { getOrderTrackDetails, sendMessage, updateRequestStatus } from '../servi
 const { width } = Dimensions.get('window');
 
 const TrackOrderScreen = ({ navigation, route }) => {
-  const { orderDetails } = route.params || {};
+  const { orderDetails, type } = route.params || {};
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [orderTrackData, setOrderTrackData] = useState([]);
@@ -27,8 +27,8 @@ const TrackOrderScreen = ({ navigation, route }) => {
 
   const fetchOrderTrack = async () => {
     try {
-      const response = await getOrderTrackDetails(orderDetails.id);
-    
+      const response = await getOrderTrackDetails(orderDetails.id || orderDetails.orderId);
+     console.log("zzzzzzzzzz",response)
       setOrderTrackData(response);
 
       // Check if response has requests array with messages
@@ -79,7 +79,8 @@ const TrackOrderScreen = ({ navigation, route }) => {
 
   const handleStatusUpdate = async (status) => {
     try {
-      await updateRequestStatus(orderTrackData?.orderTrackId, status);
+     const response = await updateRequestStatus(orderTrackData?.orderTrackId, status);
+     console.log("response", response)
       setOrderStatus(status);
       Alert.alert('Success', `Order ${status.toLowerCase()} successfully`);
       fetchOrderTrack();
@@ -132,10 +133,10 @@ const TrackOrderScreen = ({ navigation, route }) => {
 
       {/* Order Summary */}
       <View style={{ backgroundColor: '#fff', margin: 16, padding: 20, borderRadius: 16, elevation: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 }}>
-        <Text style={{ fontSize: 16, color: '#333', fontWeight: '600', marginBottom: 12 }}>Order #{orderDetails?.id}</Text>
+        <Text style={{ fontSize: 16, color: '#333', fontWeight: '600', marginBottom: 12 }}>Order #{orderDetails?.id ||orderDetails.orderId }</Text>
         <View style={{ borderLeftWidth: 4, borderColor: '#048404', paddingLeft: 16, marginVertical: 8 }}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>{orderDetails.item.name}</Text>
-          <Text style={{ fontSize: 16, color: '#666', lineHeight: 22 }}>quantity {orderDetails.quantity} • Price ₹{orderDetails.item.price}</Text>
+          <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>{orderDetails?.item?.name|| orderDetails?.name}</Text>
+          <Text style={{ fontSize: 16, color: '#666', lineHeight: 22 }}>quantity {orderDetails?.quantity} • Price ₹{orderDetails?.item?.price || orderDetails?.price}</Text>
         </View>
         <View style={styles.statusContainer}>
           <Text style={[
@@ -165,63 +166,65 @@ const TrackOrderScreen = ({ navigation, route }) => {
 
       {/* Message Input */}
       <View style={styles.inputContainer}>
+        {type !== 'buyer' &&
         <View style={styles.actionButtonsContainer}>
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => handleStatusUpdate('Accepted')}
-          >
-            <Ionicons 
-              name="checkmark-circle" 
-              size={24} 
-              color="#048404" 
-            />
-            <Text style={styles.actionButtonText}>
-              Accept
-            </Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => handleStatusUpdate('Accepted')}
+        >
+          <Ionicons 
+            name="checkmark-circle" 
+            size={24} 
+            color="#048404" 
+          />
+          <Text style={styles.actionButtonText}>
+            Accept
+          </Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => handleStatusUpdate('Rejected')}
-          >
-            <Ionicons 
-              name="close-circle" 
-              size={24} 
-              color="#e53935" 
-            />
-            <Text style={styles.actionButtonText}>
-              Reject
-            </Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => handleStatusUpdate('Rejected')}
+        >
+          <Ionicons 
+            name="close-circle" 
+            size={24} 
+            color="#e53935" 
+          />
+          <Text style={styles.actionButtonText}>
+            Reject
+          </Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => handleStatusUpdate('Shipped')}
-          >
-            <Ionicons 
-              name="car" 
-              size={24} 
-              color="#1976d2" 
-            />
-            <Text style={styles.actionButtonText}>
-              Ship
-            </Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => handleStatusUpdate('Shipped')}
+        >
+          <Ionicons 
+            name="car" 
+            size={24} 
+            color="#1976d2" 
+          />
+          <Text style={styles.actionButtonText}>
+            Ship
+          </Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => handleStatusUpdate('Delivered')}
-          >
-            <Ionicons 
-              name="checkmark-done-circle" 
-              size={24} 
-              color="#43a047" 
-            />
-            <Text style={styles.actionButtonText}>
-              Deliver
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => handleStatusUpdate('Delivered')}
+        >
+          <Ionicons 
+            name="checkmark-done-circle" 
+            size={24} 
+            color="#43a047" 
+          />
+          <Text style={styles.actionButtonText}>
+            Deliver
+          </Text>
+        </TouchableOpacity>
+      </View>}
+        
         <View className=" flex flex-row items-center justify-between">
           <TextInput
             style={styles.input}

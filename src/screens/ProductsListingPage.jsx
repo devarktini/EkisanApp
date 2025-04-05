@@ -26,7 +26,7 @@ const ProductsListingPage = () => {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header with back button */}
-      <View className="flex-row items-center mb-2 px-2">
+      <View className="flex-row items-center bg-white pb-4 px-2">
         <TouchableOpacity 
           onPress={() => navigation.goBack()}
           className="p-2"
@@ -73,7 +73,7 @@ const ProductsListingPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    // padding: 10,
   },
   title: {
     fontSize: 18,

@@ -164,7 +164,9 @@ const AddFarm = ({ navigation }) => {
           <Text className="flex-1 text-xl font-bold text-gray-800 text-center">
             My Farms
           </Text>
-          <View className="w-10" /> {/* Spacer for alignment */}
+          <View>
+            
+          </View>
         </View>
 
         {/* Farm Cards */}

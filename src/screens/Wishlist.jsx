@@ -50,9 +50,25 @@ const WishlistScreen = () => {
   }, [userData]);
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Your Wishlist</Text>
+      <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-gray-100 shadow-sm">
+        <TouchableOpacity
+          className="p-2 rounded-full bg-gray-50"
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="arrow-back" size={24} color="#048404" />
+        </TouchableOpacity>
+        
+        <Text className="flex-1 text-lg font-bold text-gray-800 text-center mx-4">
+          Wishlist
+        </Text>
+        
+        
+        
+      </View>
       {wishlistItems.length === 0 ? (
-        <Text style={styles.emptyText}>Your wishlist is empty.</Text>
+       <View className="flex-1 justify-center items-center">
+          <Text style={styles.emptyText}>Your wishlist is empty</Text>
+        </View>
       ) : (
         <>
           <FlatList
@@ -117,7 +133,7 @@ const WishlistScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    
     backgroundColor: '#f5f5f5',
   },
   title: {
@@ -127,6 +143,9 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   emptyText: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     fontSize: 16,
     color: '#888',
     textAlign: 'center',

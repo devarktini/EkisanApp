@@ -19,16 +19,32 @@ const MyAccount = ({ navigation }) => {
   return (
     <View className="flex-1 bg-gray-100">
       {/* Header */}
-      <View className="flex-row justify-between items-center px-4 py-3 bg-white shadow-md">
+
+      <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-gray-100 shadow-sm">
+        <TouchableOpacity
+          className="p-2 rounded-full bg-gray-50"
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="arrow-back" size={24} color="#048404" />
+        </TouchableOpacity>
+        
+        <Text className="flex-1 text-lg font-bold text-gray-800 text-center mx-4">
+          My Account
+        </Text>
+        
+        
+        
+      </View>
+      {/* <View className="flex-row justify-between items-center px-4 py-3 bg-white shadow-md">
         <TouchableOpacity className="flex-row items-center" onPress={() => navigation.navigate("Profile")}>
           <Ionicons name="arrow-back" size={20} color="black" />
           <Text className="text-black ml-2">Back</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
-      <ScrollView className="space-y-4 mt-4">
+      <ScrollView className="space-y-4">
         <View className="p-4">
-          <Text className="text-2xl text-center font-bold mb-6">My Account</Text>
+          {/* <Text className="text-2xl text-center font-bold mb-6">My Account</Text> */}
 
           {/* User Info Section */}
           <View className="bg-white relative p-4 rounded-lg shadow flex-row items-center">
@@ -52,7 +68,7 @@ const MyAccount = ({ navigation }) => {
           <View className="bg-white p-6 mt-4 rounded-2xl shadow-lg">
             <View className="flex-row items-center mb-4">
               <Ionicons name="settings-outline" size={28} color="#048404" />
-              <Text className="text-gray-700 ml-3 font-medium">Account Settings</Text>
+              <Text className="text-gray-700 ml-3 text-lg font-bold">Account Settings</Text>
             </View>
 
             <TouchableOpacity onPress={onHandlerEditForms} className="flex-row items-center justify-between py-4 border-b border-gray-100">
@@ -76,7 +92,7 @@ const MyAccount = ({ navigation }) => {
           <View className="bg-white p-6 mt-4 rounded-2xl shadow-lg">
             <View className="flex-row items-center mb-4">
               <Ionicons name="wallet-outline" size={28} color="#048404" />
-              <Text className="text-gray-700 ml-3 font-medium">Payment</Text>
+              <Text className="text-gray-700 ml-3 text-lg font-bold">Order</Text>
             </View>
 
             <TouchableOpacity onPress={() => navigation.navigate('order')} className="flex-row items-center justify-between py-4">
@@ -99,7 +115,7 @@ const MyAccount = ({ navigation }) => {
           <View className="bg-white p-6 mt-4 rounded-2xl shadow-lg">
             <View className="flex-row items-center mb-4">
               <Ionicons name="help-buoy-outline" size={28} color="#048404" />
-              <Text className="text-gray-700 ml-3 font-medium">Help & Support</Text>
+              <Text className="text-gray-700 ml-3 text-lg font-bold">Help & Support</Text>
             </View>
 
             <TouchableOpacity onPress={() => navigation.navigate('f&q')} className="flex-row items-center justify-between py-4 border-b border-gray-100">

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { 
   View, Text, TextInput, FlatList, StyleSheet, Image, TouchableOpacity, 
   KeyboardAvoidingView, Platform 
@@ -9,12 +9,15 @@ import logo from "../assets/icon.png";
 import { fetchGroupById } from '../services/Message/fetchGroupById';
 import { sendMessage } from '../services/Message/sendMessage';
 import { AppContext } from '../context/AppContext';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const GroupChatScreen = ({ route }) => {
   const { userData } = useContext(AppContext);
   const [groupChatData, setGroupChatData] = useState([]);
   const [admin, setAdmin] = useState({});
   const [messageText, setMessageText] = useState('');
+  const flatListRef = useRef(null);
 
   const navigation = useNavigation();
 
@@ -43,20 +46,32 @@ const GroupChatScreen = ({ route }) => {
     }
   }, [route.params]);
 
-  // Handle sending message (Dummy function for now)
+  // Add function to scroll to bottom
+  const scrollToBottom = () => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToEnd({ animated: true });
+    }
+  };
+
+  // Handle sending message
   const handleSendMessage = async () => {
     if (messageText.trim()) {
       await sendMessage(groupChatData.id, messageText, userData);
       setMessageText('');
+      scrollToBottom();
     }
   };
 
   return (
-    <KeyboardAvoidingView 
+    <SafeAreaView 
       style={styles.container} 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
+      
+       <StatusBar backgroundColor="#4caf50" barStyle="dark-content" />
       {/* Header */}
+      
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -70,11 +85,14 @@ const GroupChatScreen = ({ route }) => {
 
       {/* Message List */}
       <FlatList
+        ref={flatListRef}
         data={groupChatData.messages ? Object.entries(groupChatData.messages) : []}
         keyExtractor={([messageId]) => messageId}
+        onContentSizeChange={scrollToBottom}
+        onLayout={scrollToBottom}
         renderItem={({ item }) => {
           const [messageId, message] = item;
-          const isCurrentUser = message.sender.uid === userData.uid; // Changed condition here
+          const isCurrentUser = message.sender.uid === userData.uid;
 
           return (
             <View 
@@ -116,13 +134,20 @@ const GroupChatScreen = ({ route }) => {
           style={styles.input} 
           placeholder="Enter message..." 
           value={messageText} 
-          onChangeText={setMessageText} 
+          onChangeText={setMessageText}
+          multiline={true}
+          maxHeight={100}
         />
-        <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
+        <TouchableOpacity 
+          style={styles.sendButton} 
+          onPress={handleSendMessage}
+          activeOpacity={0.7}
+        >
           <Ionicons name="send" size={24} color="white" />
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </SafeAreaView>
+   
   );
 };
 
@@ -211,6 +236,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#a5d6a7',
     backgroundColor: '#fff',
+    minHeight: 60,
+    maxHeight: 120,
+    paddingBottom: Platform.OS === 'ios' ? 25 : 10,
   },
   input: {
     flex: 1,
@@ -219,12 +247,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#81c784',
     backgroundColor: '#f8f8f8',
+    maxHeight: 100,
+    fontSize: 16,
   },
   sendButton: {
     marginLeft: 10,
     backgroundColor: '#4caf50',
     borderRadius: 25,
-    padding: 15,
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
     elevation: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

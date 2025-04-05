@@ -6,11 +6,10 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  ScrollView,
-  ImageBackground,
-  Alert,
   FlatList,
   Modal,
+  ImageBackground,
+  Alert,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
@@ -48,7 +47,6 @@ const TalkToExpert = ({ navigation }) => {
     }
 
     const response = await submitUserQuery(userData, description, image);
- 
 
     if (response.success) {
       Alert.alert('Request Submitted Successfully');
@@ -83,121 +81,165 @@ const TalkToExpert = ({ navigation }) => {
   );
 
   return (
-    <ImageBackground
-      source={require('../assets/homeBackground.webp')}
-      style={styles.background}
-    >
-      <View style={styles.container}>
-        {/* Back Button */}
-        <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#fff" />
-          </TouchableOpacity>
-          <Text style={styles.header}>Get Expert Help</Text>
-        </View>
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.headerWrapper}>
+        {/* <ImageBackground
+          source={require('../assets/homeBackground.webp')}
+          style={styles.headerBackground}
+        > */}
+          <View style={styles.headerOverlay}>
+            <View style={styles.headerContainer}>
+              <TouchableOpacity 
+                onPress={() => navigation.goBack()} 
+                style={styles.backButton}
+              >
+                <Ionicons name="arrow-back" size={24} color="black" />
+              </TouchableOpacity>
+              <Text style={styles.header}>Talk to Expert</Text>
+              <View></View>
+            </View>
+          </View>
+        {/* </ImageBackground> */}
+      </View>
 
-        {/* Message List */}
+      {/* Content */}
+      <View style={styles.contentContainer}>
         {messages.length > 0 ? (
           <FlatList
             data={messages}
             keyExtractor={(item) => item.id}
             renderItem={renderMessageItem}
             contentContainerStyle={styles.messageList}
+            showsVerticalScrollIndicator={false}
           />
         ) : (
-          <Text style={styles.noMessagesText}>No messages available. Submit your query below.</Text>
-        )}
-
-        {/* Floating Add Button */}
-        {messages.length > 0 && (
-          <TouchableOpacity
-            style={styles.floatingButton}
-            onPress={() => setIsPopupVisible(true)}
-          >
-            <Ionicons name="add" size={30} color="#fff" />
-          </TouchableOpacity>
-        )}
-
-        {/* Popup for Input Box and Submit Button */}
-        <Modal
-          visible={isPopupVisible || messages.length === 0}
-          transparent
-          animationType="slide"
-        >
-          <View style={styles.popupContainer}>
-            <View style={styles.popup}>
-              <TextInput
-                style={[styles.input, styles.textArea]}
-                placeholder="Enter your query or description"
-                value={description}
-                onChangeText={setDescription}
-                multiline
-                numberOfLines={4}
-                placeholderTextColor="#aaa"
-              />
-
-              <TouchableOpacity style={styles.imageUpload} onPress={handleImageUpload}>
-                {image ? (
-                  <Image source={{ uri: image.uri }} style={styles.image} />
-                ) : (
-                  <Text style={styles.imageUploadText}>Select Image</Text>
-                )}
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                <Text style={styles.submitButtonText}>Submit</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => setIsPopupVisible(false)}
-              >
-                <Text style={styles.closeButtonText}>Close</Text>
-              </TouchableOpacity>
-            </View>
+          <View style={styles.emptyContainer}>
+            <Ionicons name="chatbubble-ellipses-outline" size={64} color="#ccc" />
+            <Text style={styles.noMessagesText}>No messages available.</Text>
+            <Text style={styles.noMessagesSubText}>Start a conversation with our experts!</Text>
           </View>
-        </Modal>
+        )}
       </View>
-    </ImageBackground>
+
+      {/* Floating Action Button */}
+      <TouchableOpacity 
+        style={styles.fab}
+        onPress={() => setIsPopupVisible(true)}
+      >
+        <Ionicons name="add" size={30} color="#fff" />
+      </TouchableOpacity>
+
+      {/* Query Modal */}
+      <Modal
+        visible={isPopupVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setIsPopupVisible(false)}
+      >
+        <View style={styles.popupContainer}>
+          <View style={styles.popup}>
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              placeholder="Enter your query or description"
+              value={description}
+              onChangeText={setDescription}
+              multiline
+              numberOfLines={4}
+              placeholderTextColor="#aaa"
+            />
+
+            <TouchableOpacity style={styles.imageUpload} onPress={handleImageUpload}>
+              {image ? (
+                <Image source={{ uri: image.uri }} style={styles.image} />
+              ) : (
+                <Text style={styles.imageUploadText}>Select Image</Text>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+              <Text style={styles.submitButtonText}>Submit</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setIsPopupVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    resizeMode: 'cover',
-  },
   container: {
     flex: 1,
-    padding: 20,
+    backgroundColor: '#f5f5f5',
+  },
+  headerWrapper: {
+    height: 60,
+    backgroundColor: 'white',
+  },
+  headerBackground: {
+    flex: 1,
+    width: '100%',
+  },
+  headerOverlay: {
+    flex: 1,
+    // backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'flex-end',
   },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingBottom: 16,
   },
   backButton: {
-    marginRight: 10,
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
   header: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#fff',
+    color: 'black',
+    textAlign: 'center',
+  },
+  contentContainer: {
+    flex: 1,
+    paddingHorizontal: 16,
+    marginTop: 16,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 100,
   },
   noMessagesText: {
-    fontSize: 16,
-    color: '#fff',
-    textAlign: 'center',
-    marginTop: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#666',
+    marginTop: 16,
+  },
+  noMessagesSubText: {
+    fontSize: 14,
+    color: '#888',
+    marginTop: 8,
   },
   messageList: {
-    paddingBottom: 80,
+    paddingBottom: 16,
   },
   messageCard: {
     backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 10,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -219,22 +261,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#888',
     textAlign: 'right',
-  },
-  floatingButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: '#4caf50',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
   },
   popupContainer: {
     flex: 1,
@@ -310,6 +336,18 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 18,
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#4caf50',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
   },
 });
 

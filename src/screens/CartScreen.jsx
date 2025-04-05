@@ -25,7 +25,21 @@ const CartScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Your Cart</Text>
+      <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-gray-100 shadow-sm">
+              <TouchableOpacity
+                className="p-2 rounded-full bg-gray-50"
+                onPress={() => navigation.goBack()}
+              >
+                <Ionicons name="arrow-back" size={24} color="#048404" />
+              </TouchableOpacity>
+              
+              <Text className="flex-1 text-xl font-bold text-gray-800 text-center mx-4">
+                Your Cart
+              </Text>
+              
+              
+             
+            </View>
       {cartItems.length === 0 ? (
         <Text style={styles.emptyText}>Your cart is empty.</Text>
       ) : (
@@ -86,7 +100,7 @@ const CartScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    // padding: 16,
     backgroundColor: '#f5f5f5',
   },
   title: {

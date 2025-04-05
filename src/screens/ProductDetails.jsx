@@ -70,18 +70,32 @@ const ProductDetails = ({}) => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <View className="flex-row justify-between items-center px-4 py-3">
+      <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-gray-100 shadow-sm">
         <TouchableOpacity
-          className=" shadow-md bg-white p-2 rounded-full  flex-row items-center"
+          className="p-2 rounded-full bg-gray-50"
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={16} color="black" />
-          <Text className="text-black ml-1">Back</Text>
+          <Ionicons name="arrow-back" size={24} color="#048404" />
         </TouchableOpacity>
+        
+        <Text className="flex-1 text-lg font-bold text-gray-800 text-center mx-4">
+          Product Details
+        </Text>
+        
+        
         <TouchableOpacity
-          onPress={() => navigation.navigate("ShoppingBag", { cartItems })}
+          className="p-2 rounded-full bg-gray-50 relative"
+          onPress={() => handleAddToCart()}
         >
-          <Ionicons name="cart" size={24} color="black" />
+          <Ionicons name="cart-outline" size={24} color="#048404" />
+          {/* Add a badge if you have cart items */}
+          {cartItems.length > 0 && (
+            <View className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full items-center justify-center">
+              <Text className="text-white text-xs font-bold">
+                {cartItems.length}
+              </Text>
+            </View>
+          )}
         </TouchableOpacity>
       </View>
 

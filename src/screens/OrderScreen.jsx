@@ -20,47 +20,89 @@ const OrderScreen = () => {
     fetchOrdersList();
   }, [userData.uid]);
 
+  console.log("rrrrrrrrrr", orders)
+
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
+          onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#048404" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>My Orders</Text>
-        <TouchableOpacity
-          style={styles.homeButton}
-          onPress={() => navigation.navigate('Main')}
-        >
-          <Ionicons name="home" size={24} color="#048404" />
-        </TouchableOpacity>
+        <View>
+        </View>
       </View>
 
-     
       <ScrollView style={styles.orderList}>
         {orders?.length > 0 ? (
           orders?.map((order, index) => (
             <View key={index} style={styles.orderCard}>
-              <Text style={styles.orderTitle}>Order ID : {order?.orderId}</Text>
-              <Text style={styles.orderDetail}>Total: ₹{order?.total}</Text>
-              <Text style={styles.orderDetail}>Quantity: {order?.quantity}</Text>
-              <Text style={styles.orderDetail}>Date: {new Date(order.timeStamp).toLocaleString()}</Text>
-
-              <View style={styles.itemContainer}>
-                <Image source={{ uri: order.imgUrl }} className="w-24 h-24 rounded-lg" />
-                <View style={styles.productDetails}>
-                  <Text style={styles.productName}>{order?.name}</Text>
-                  <Text style={styles.productPrice}>₹{order?.price ? order.price : '0.00'}</Text>
+              {/* Order Header */}
+              <View style={styles.orderHeader}>
+                <View style={styles.orderStatus}>
+                  <Ionicons name="cart" size={20} color="#048404" />
+                  <Text style={styles.orderIdText}>#{order?.orderId}</Text>
                 </View>
+                <Text style={styles.orderDate}>
+                  {new Date(order.timeStamp).toLocaleDateString('en-US', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                  })}
+                </Text>
+              </View>
+
+              {/* Product Details */}
+              <View style={styles.itemContainer}>
+                <Image 
+                  source={{ uri: order.imgUrl }} 
+                  style={styles.productImage}
+                />
+                <View style={styles.productDetails}>
+                  <Text style={styles.productName} numberOfLines={2}>
+                    {order?.name}
+                  </Text>
+                  <Text style={styles.quantityText}>
+                    Quantity: {order?.quantity}/ {order?.unit}
+                  </Text>
+                  <View style={styles.priceContainer}>
+                    <Text style={styles.productPrice}>₹{order?.price}</Text>
+                    <Text style={styles.totalAmount}>Total: ₹{order?.price}</Text>
+                  </View>
+                </View>
+              </View>
+
+              {console.log("orderssss", order)}
+
+              {/* Order Footer */}
+              <View style={styles.orderFooter}>
+                <TouchableOpacity 
+                  style={styles.trackButton}
+                  onPress={() => navigation.navigate('trackorder', { orderDetails: order, type:'buyer' })}
+                >
+                  <Ionicons name="location-outline" size={18} color="#048404" />
+                  <Text style={styles.trackButtonText}>Track Order</Text>
+                </TouchableOpacity>
+                {/* <TouchableOpacity style={styles.reorderButton}>
+                  <Ionicons name="repeat-outline" size={18} color="#fff" />
+                  <Text style={styles.reorderButtonText}>Reorder</Text>
+                </TouchableOpacity> */}
               </View>
             </View>
           ))
         ) : (
           <View style={styles.emptyOrders}>
-            <Text style={styles.emptyOrdersText}>You have no orders.</Text>
+            <Ionicons name="cart-outline" size={64} color="#ccc" />
+            <Text style={styles.emptyOrdersText}>No orders yet</Text>
+            <TouchableOpacity 
+              style={styles.shopNowButton}
+              onPress={() => navigation.navigate('Main')}
+            >
+              <Text style={styles.shopNowText}>Start Shopping</Text>
+            </TouchableOpacity>
           </View>
         )}
       </ScrollView>
@@ -114,15 +156,25 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  orderTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  orderHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 8,
   },
-  orderDetail: {
-    fontSize: 14,
+  orderStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  orderIdText: {
+    marginLeft: 8,
+    fontSize: 16,
+    fontWeight: 'bold',
     color: '#333',
-    marginBottom: 4,
+  },
+  orderDate: {
+    fontSize: 14,
+    color: '#666',
   },
   itemContainer: {
     flexDirection: 'row',
@@ -144,9 +196,55 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
+  quantityText: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+  },
+  priceContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 4,
+  },
   productPrice: {
     fontSize: 14,
     color: '#333',
+  },
+  totalAmount: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  orderFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  trackButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+    borderWidth: 1,
+    borderColor: '#048404',
+    borderRadius: 8,
+  },
+  trackButtonText: {
+    marginLeft: 4,
+    fontSize: 14,
+    color: '#048404',
+  },
+  reorderButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+    backgroundColor: '#048404',
+    borderRadius: 8,
+  },
+  reorderButtonText: {
+    marginLeft: 4,
+    fontSize: 14,
+    color: '#fff',
   },
   emptyOrders: {
     padding: 16,
@@ -155,6 +253,19 @@ const styles = StyleSheet.create({
   emptyOrdersText: {
     fontSize: 16,
     color: '#888',
+    marginTop: 8,
+  },
+  shopNowButton: {
+    marginTop: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    backgroundColor: '#048404',
+    borderRadius: 8,
+  },
+  shopNowText: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 
