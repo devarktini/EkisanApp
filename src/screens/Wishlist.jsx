@@ -93,7 +93,7 @@ const WishlistScreen = () => {
                     >
                       <Ionicons name="remove" size={20} color="#048404" />
                     </TouchableOpacity>
-                    <Text style={styles.quantityText}>{item.quantity}</Text>
+                    <Text style={styles.quantityText}>{item?.quantity}</Text>
                     <TouchableOpacity
                       onPress={() => incrementWishlistQuantity(item.id)}
                       style={styles.quantityButton}

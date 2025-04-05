@@ -28,7 +28,7 @@ const TrackOrderScreen = ({ navigation, route }) => {
   const fetchOrderTrack = async () => {
     try {
       const response = await getOrderTrackDetails(orderDetails.id || orderDetails.orderId);
-     console.log("zzzzzzzzzz",response)
+    
       setOrderTrackData(response);
 
       // Check if response has requests array with messages
@@ -55,6 +55,7 @@ const TrackOrderScreen = ({ navigation, route }) => {
   };
 
   const handleSendMessage = async () => {
+    console.log("first", orderDetails.sellerUID)
     if (!newMessage.trim() || isSending) return;
 
     setIsSending(true);
@@ -63,7 +64,7 @@ const TrackOrderScreen = ({ navigation, route }) => {
         message: newMessage.trim(),
         timestamp: new Date().toISOString(),
         admin: false,
-        userId: orderDetails.item.sellerUID
+        userId: orderDetails?.item?.sellerUID || orderDetails.sellerUID
       };
     
       await sendMessage(orderTrackData?.orderTrackId, messageData);
@@ -76,6 +77,16 @@ const TrackOrderScreen = ({ navigation, route }) => {
       setIsSending(false);
     }
   };
+
+   useEffect(() => {
+        fetchOrderTrack()
+        const interval = setInterval(() => {
+            fetchOrderTrack()
+        }, 1000); // Fetch messages every 5 seconds
+  
+        return () => clearInterval(interval);
+      
+    }, [route.params]);
 
   const handleStatusUpdate = async (status) => {
     try {
