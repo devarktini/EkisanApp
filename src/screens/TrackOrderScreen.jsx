@@ -120,18 +120,18 @@ const TrackOrderScreen = ({ navigation, route }) => {
     
     <View style={[
       styles.messageCard,
-      item.admin === false ? styles.messageCardRight : styles.messageCardLeft
+      item.userId === (userData.uid || userData.userId) ? styles.messageCardRight : styles.messageCardLeft
     ]}>
         
       <Text style={[
         styles.messageText,
-        item.admin === false ? styles.messageTextRight : styles.messageTextLeft
+        item.userId === (userData.uid || userData.userId) ? styles.messageTextRight : styles.messageTextLeft
       ]}>
         {item.message}
       </Text>
       <Text style={[
         styles.messageTimestamp,
-        item.admin === false ? styles.timestampRight : styles.timestampLeft
+        item.userId === (userData.uid || userData.userId) ? styles.timestampRight : styles.timestampLeft
       ]}>
         {item.timestamp}
       </Text>
