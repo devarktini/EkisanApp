@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -13,10 +13,12 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getOrderTrackDetails, sendMessage, updateRequestStatus } from '../services/TrackOrderService';
+import { AppContext } from '../context/AppContext';
 
 const { width } = Dimensions.get('window');
 
 const TrackOrderScreen = ({ navigation, route }) => {
+    const { userData } = useContext(AppContext);
   const { orderDetails, type } = route.params || {};
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -56,6 +58,7 @@ const TrackOrderScreen = ({ navigation, route }) => {
 
   const handleSendMessage = async () => {
     console.log("first", orderDetails.sellerUID)
+    console.log("message", messages)
     if (!newMessage.trim() || isSending) return;
 
     setIsSending(true);
@@ -64,7 +67,8 @@ const TrackOrderScreen = ({ navigation, route }) => {
         message: newMessage.trim(),
         timestamp: new Date().toISOString(),
         admin: false,
-        userId: orderDetails?.item?.sellerUID || orderDetails.sellerUID
+        // userId: orderDetails?.item?.sellerUID || orderDetails.sellerUID
+        userId: userData?.uid || userData.userId,
       };
     
       await sendMessage(orderTrackData?.orderTrackId, messageData);
@@ -113,10 +117,12 @@ const TrackOrderScreen = ({ navigation, route }) => {
   }, [orderDetails.id]);
 
   const renderMessage = ({ item }) => (
+    
     <View style={[
       styles.messageCard,
       item.admin === false ? styles.messageCardRight : styles.messageCardLeft
     ]}>
+        
       <Text style={[
         styles.messageText,
         item.admin === false ? styles.messageTextRight : styles.messageTextLeft
@@ -425,6 +431,8 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'col',
     alignItems: 'center',
+    borderColor: 'gray',
+    borderTopWidth: 2,
     padding: 16,
     backgroundColor: '#fff',
     borderTopWidth: 1,
@@ -435,6 +443,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
     borderRadius: 24,
+    borderColor: '#048404',
+    borderWidth: 1,
     paddingHorizontal: 20,
     paddingVertical: 10,
     marginRight: 12,
@@ -444,6 +454,8 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     backgroundColor: '#048404',
+    borderColor: '#048404',
+    borderWidth: 1,
     width: 44,
     height: 44,
     borderRadius: 22,
