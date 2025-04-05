@@ -15,7 +15,7 @@ import { AppContext } from '../context/AppContext';
 import { fetchRejectedProducts, fetchItemToVerify } from '../services/productService';
 
 const { width } = Dimensions.get('window'); // Get screen width for responsive design
-const tabs = [ 'Verified', 'Pending', 'Rejected'];
+const tabs = [ 'Verified', 'Pending', 'Rejected', 'Rent'];
 
 const MyStore = ({ navigation }) => {
   const { userData } = useContext(AppContext);
@@ -23,6 +23,7 @@ const MyStore = ({ navigation }) => {
   const [verifiedProducts, setVerifiedProducts] = useState([]);
   const [pendingProducts, setPendingProducts] = useState([]);
   const [rejectedProducts, setRejectedProducts] = useState([]);
+  const [rentProducts, setRentProducts] = useState([]);
  
 
   useEffect(() => {
@@ -35,11 +36,13 @@ const MyStore = ({ navigation }) => {
 
         // Fetch pending and verified products
         const verifyingResponse = await fetchItemToVerify(userData.uid || userData.uiId);
-       
+       console.log("cccccccccccc", verifyingResponse)
         const verified = verifyingResponse.filter((item) => item.status === 'verified');
+        const RentProduct = verifyingResponse.filter((item) => item.isRented === true);
         const pending = verifyingResponse.filter((item) => item.status === 'pending');
 
         // Fetch received orders
+        setRentProducts(RentProduct)
 
         setVerifiedProducts(verified);
         setPendingProducts(pending);
@@ -88,6 +91,8 @@ const MyStore = ({ navigation }) => {
         return pendingProducts;
       case 'Rejected':
         return rejectedProducts;
+        case 'Rent':
+        return rentProducts;
       default:
         return [];
     }

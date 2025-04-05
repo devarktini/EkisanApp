@@ -35,7 +35,7 @@ const ProfileScreen = () => {
 
           <TouchableOpacity
             className="p-2 rounded-full bg-white/20 backdrop-blur-sm"
-            onPress={() => {
+            onPress={() => {navigator.navigate("MyAccount")
               /* Add settings or edit profile action */
             }}
           >

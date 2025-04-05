@@ -10,6 +10,7 @@ import {
   Image,
   Alert,
 } from "react-native";
+import Toast from "react-native-toast-message";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
 import { AppContext } from "../context/AppContext";
@@ -135,6 +136,12 @@ const AddProduct = ({ setIsModalVisible }) => {
         itemData: completeItemData,
         productImages: selectedImages,
       });
+      Toast.show({
+      type: "success",
+      text1: "Product submitted successfully for verification",
+      position: "top",
+    });
+  
 
       if (result?.success) {
         Alert.alert("Success", "Product submitted successfully for verification.");

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -23,6 +23,7 @@ import {
   isInWishlist,
 } from "../context/CartContext";
 import { AppContext } from "../context/AppContext";
+
 const ProductCard = ({ item }) => {
   const navigation = useNavigation();
 
@@ -58,21 +59,30 @@ const CategoryProduct = () => {
   const route = useRoute();
   const params = route.params || {};
   const { categoryName = "All" } = params;
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Filter products based on category
-  const categoryProducts =
-    categoryName === "All"
-      ? categoryList
-      : categoryList.filter(
-          (product) =>
-            product.category.toLowerCase() === categoryName.toLowerCase()
-        );
+  // Updated filtering logic to include search
+  const filteredProducts = useMemo(() => {
+    let filtered =
+      categoryName === "All"
+        ? categoryList
+        : categoryList.filter(
+            (product) =>
+              product.category.toLowerCase() === categoryName.toLowerCase()
+          );
 
+    if (searchQuery) {
+      filtered = filtered.filter((product) =>
+        product.categorieName.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    return filtered;
+  }, [categoryList, categoryName, searchQuery]);
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
       <StatusBar backgroundColor="#fff" barStyle="dark-content" />
-
       <Header />
 
       {/* Search Bar */}
@@ -82,11 +92,19 @@ const CategoryProduct = () => {
           <TextInput
             className="flex-1 ml-2 text-base font-medium text-gray-700"
             placeholder="Search any Product.."
-            placeholderTextColor="#048404 "
+            placeholderTextColor="#048404"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
           />
-          <TouchableOpacity>
-            <Ionicons name="mic-outline" size={20} color="#048404" />
-          </TouchableOpacity>
+          {searchQuery ? (
+            <TouchableOpacity onPress={() => setSearchQuery("")}>
+              <Ionicons name="close-circle" size={20} color="#048404" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity>
+              <Ionicons name="mic-outline" size={20} color="#048404" />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
@@ -94,7 +112,7 @@ const CategoryProduct = () => {
         <View className="flex-row justify-between items-center px-4 py-3 border-b border-gray-200">
           <View className="flex-row items-center space-x-2">
             <Text className="text-base font-semibold text-gray-800">
-              <Text>{categoryProducts.length} </Text>
+              <Text>{filteredProducts.length} </Text>
               <Text>Items</Text>
             </Text>
             <View className="h-5 w-0.5 bg-gray-300" />
@@ -102,20 +120,10 @@ const CategoryProduct = () => {
               Showing {categoryName} products
             </Text>
           </View>
-          {/* <View className="flex-row items-center space-x-4">
-          <TouchableOpacity className="flex-row items-center">
-            <Ionicons name="funnel-outline" size={18} color="#666" />
-            <Text className="text-gray-600 ml-1">Sort</Text>
-          </TouchableOpacity>
-          <TouchableOpacity className="flex-row items-center">
-            <Ionicons name="filter-outline" size={18} color="#666" />
-            <Text className="text-gray-600 ml-1">Filter</Text>
-          </TouchableOpacity>
-        </View> */}
         </View>
 
         <View className="flex-row flex-wrap justify-between px-2">
-          {categoryList.map((item) => (
+          {filteredProducts.map((item) => (
             <ProductCard key={item.id} item={item} />
           ))}
         </View>

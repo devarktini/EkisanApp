@@ -12,6 +12,9 @@ import IrrigationEquipment from '../../components/IrrigationEquipment';
 import AdScrollView from '../../components/AdScrollView';
 import { fetchCategories, fetchProducts } from '../../services/productService';
 import { AppContext } from '../../context/AppContext';
+import SearchOverlay from '../../components/SearchOverlay';
+
+
 
 const CategoryCircle = ({coverUrl, coverImage, categorieName }) => {
   const navigation = useNavigation();
@@ -59,6 +62,14 @@ const HomeScreen = ({ route }) => {
   const [pulses, setPulses] = useState([]);
   const [Irrigation, setIrrigation]= useState([])
    const {  setCategoryList, categoryList } = useContext(AppContext);
+   const [isSearchVisible, setIsSearchVisible] = useState(false);
+const [recentSearches, setRecentSearches] = useState([
+  'Vegetables',
+  'Fruits',
+  'Seeds',
+  'Fertilizers',
+  'Tools'
+]);
   useEffect(() => {
     fetchCategories({ user }).then(setCategories);
     fetchCategories({ user }).then(setCategoryList);
@@ -69,64 +80,6 @@ const HomeScreen = ({ route }) => {
     fetchProducts({ sortType: "newest", limit: 10, search: "Pulses" }).then(setPulses);
     fetchProducts({ sortType: "newest", limit: 10, search: "Irrigation Equipment" }).then(setIrrigation);
   }, [user]);
-
-  const trendingProducts = [
-    {
-      id: 1,
-      name: 'Women Fitness Outfit',
-      description: 'High quality gym wear',
-      price: 79.99,
-      image: 'https://media.istockphoto.com/id/493687446/photo/fresh-garden-vegetablesin-vintage-metal-basket.jpg?s=612x612&w=0&k=20&c=Q1w0PUL-ddnEyWwEnal7hfwQaq1QQXzrpTvNsHIrITc=',
-      rating: 4.8
-    },
-    {
-      id: 2,
-      name: 'Nike Air Jordan Special',
-      description: 'Limited edition sneakers',
-      price: 129.99,
-      image: 'https://media.istockphoto.com/id/160356158/photo/fruits-and-veggies-in-wood-box-with-white-backdrop.jpg?s=612x612&w=0&k=20&c=WMWJuSBYbXtk7gfGCb3FkI2Eycd_2TkwQv8W34rUAQY=',
-      rating: 4.9
-    },
-    {
-      id: 3,
-      name: 'Nike Air Jordan Special',
-      description: 'Limited edition sneakers',
-      price: 129.99,
-      image: 'https://media.istockphoto.com/id/522803894/photo/healthy-food-in-basket.jpg?s=612x612&w=0&k=20&c=8EGuahS2SisV4aIzIPca_KHOT-8nUIRzZfC2T-uFMh4=',
-      rating: 4.9
-    },
-    {
-      id: 4,
-      name: 'Nike Air Jordan Special',
-      description: 'Limited edition sneakers',
-      price: 129.99,
-      image: 'https://media.istockphoto.com/id/1051343392/photo/pine-box-full-of-colorful-fresh-vegetables-and-fruits-on-a-white-background.jpg?s=612x612&w=0&k=20&c=JS94KsyZGV3_qEMUw-DZlN6kM5oklTJWQs8Rzbz3vS4=',
-      rating: 4.9
-    }
-  ];
-
-  const dealOfTheDay = [
-    {
-      id: 1,
-      name: "Women Printed Kurta",
-      description: "Neque porro quisquam est qui",
-      price: 1500,
-      originalPrice: 1899,
-      discount: 40,
-      image: "https://i.imgur.com/deal1.jpg",
-      rating: 4.5
-    },
-    {
-      id: 2,
-      name: "HRX by Hrithik Roshan",
-      description: "Neque porro quisquam est qui",
-      price: 2499,
-      originalPrice: 2999,
-      discount: 25,
-      image: "https://i.imgur.com/deal2.jpg",
-      rating: 4.2
-    }
-  ];
 
   const ViewAllProductList = (searchQuery) => {
    
@@ -141,25 +94,30 @@ const HomeScreen = ({ route }) => {
    
       <Header/>
 
-      {/* shopping search bar */}
+      {/* Search Bar */}
       <View className="bg-white px-4 py-2 border-b border-gray-100">
-        <View className="flex-row items-center bg-[#F5F5F5] rounded-full px-4 py-1 border-2 border-[#048404]">
+        <TouchableOpacity
+          className="flex-row items-center bg-[#F5F5F5] rounded-full px-4 py-1 border-2 border-[#048404]"
+          onPress={() => setIsSearchVisible(true)}
+        >
           <Ionicons name="search-outline" size={20} color="#048404" />
-          <TextInput
-            className="flex-1 ml-2 text-base font-medium text-gray-700"
-            placeholder="Search any Product.."
-            placeholderTextColor="#048404"
-           
-            onChange={(event) => {
-              const searchQuery = event.nativeEvent.text;
-              navigation.navigate("ProductList", { categoryName: searchQuery });
-            }}
-          />
-          <TouchableOpacity>
-            <Ionicons name="mic-outline" size={20} color="#048404" />
-          </TouchableOpacity>
-        </View>
+          <Text  className="flex-1 ml-2 py-2 text-base font-medium text-gray-700">
+            Search any Product..
+          </Text>
+          <Ionicons name="mic-outline" size={20} color="#048404" />
+        </TouchableOpacity>
       </View>
+
+      {/* Search Overlay */}
+      <SearchOverlay
+        isVisible={isSearchVisible}
+        onClose={() => setIsSearchVisible(false)}
+        onSearch={(query) => {
+          navigation.navigate("ProductList", { searchQuery: query });
+          setIsSearchVisible(false);
+        }}
+        recentSearches={recentSearches}
+      />
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* All Featured - Now Horizontal */}
@@ -182,30 +140,6 @@ const HomeScreen = ({ route }) => {
         </View>
 
         {/* Sale Banners */}
-        {/* <ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-2">
-          <SaleCard
-            title="Farm Fresh Produce"
-            description="Fresh from the farm to your table"
-            image="https://i.imgur.com/farming.png"
-            buttonText="Learn More"
-            bgColor="bg-green-500"
-            imageStyle="w-full h-full"
-          />
-          <SaleCard
-            title="Seeds & Fertilizers"
-            description="Everything you need to grow your own"
-            image="https://i.imgur.com/seeds.png"
-            buttonText="Shop Now"
-            bgColor="bg-brown-500"
-          />
-          <SaleCard
-            title="Organic Farming"
-            description="Nature-friendly farming practices"
-            image="https://i.imgur.com/organic.png"
-            buttonText="Learn More"
-            bgColor="bg-light-green-500"
-          />
-        </ScrollView> */}
         {/* <AppSlider/> */}
 
         {/* Special Offers */}
