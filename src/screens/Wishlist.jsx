@@ -23,7 +23,7 @@ const WishlistScreen = () => {
 
   const handleMoveToCart = (item) => {
     moveToCart(item);
-    removeFromWishlist(item.id);
+    removeFromWishlist(item?.id);
   };
 
   const handleBuyNow = () => {
@@ -34,10 +34,10 @@ const WishlistScreen = () => {
  
   useEffect(() => {
     const fetchWishlistProducts = async () => {
-      const wishListData = await getUserWishlist(userData.uid);
+      const wishListData = await getUserWishlist(userData?.uid);
       
       if (wishListData) {
-        const itemIds = Object.values(wishListData).map(item => item.itemId); // Extract itemIds
+        const itemIds = Object.values(wishListData).map(item => item?.itemId); // Extract itemIds
         
         // Fetch product details for each itemId
         const products = await Promise.all(itemIds.map(id => fetchProductDatabyId(id)));
@@ -73,29 +73,29 @@ const WishlistScreen = () => {
         <>
           <FlatList
             data={wishlistItems}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item?.id.toString()}
             renderItem={({ item }) => (
-              <View style={styles.card}>
+              <View key={item?.id} style={styles.card}>
                 <Image
-                  source={{ uri: item.imgUrl }}
+                  source={{ uri: item?.imgUrl }}
                   style={styles.image}
                   resizeMode="cover"
                 />
                 <View style={styles.details}>
                   <Text style={styles.name} numberOfLines={1}>
-                    {item.name}
+                    {item?.name}
                   </Text>
-                  <Text style={styles.price}>₹{item.price}</Text>
+                  <Text style={styles.price}>₹{item?.price}</Text>
                   <View style={styles.quantityContainer}>
                     <TouchableOpacity
-                      onPress={() => decrementWishlistQuantity(item.id)}
+                      onPress={() => decrementWishlistQuantity(item?.id)}
                       style={styles.quantityButton}
                     >
                       <Ionicons name="remove" size={20} color="#048404" />
                     </TouchableOpacity>
                     <Text style={styles.quantityText}>{item?.quantity}</Text>
                     <TouchableOpacity
-                      onPress={() => incrementWishlistQuantity(item.id)}
+                      onPress={() => incrementWishlistQuantity(item?.id)}
                       style={styles.quantityButton}
                     >
                       <Ionicons name="add" size={20} color="#048404" />
@@ -109,7 +109,7 @@ const WishlistScreen = () => {
                   </TouchableOpacity>
                 </View>
                 <TouchableOpacity
-                  onPress={() => removeFromWishlist(item.id)}
+                  onPress={() => removeFromWishlist(item?.id)}
                   style={styles.deleteButton}
                 >
                   <Ionicons name="trash-outline" size={24} color="red" />

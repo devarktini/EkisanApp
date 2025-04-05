@@ -6,6 +6,7 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // For icons
 import { fetchReceivedOrders } from '../services/OrderService';
@@ -14,6 +15,7 @@ import { AppContext } from '../context/AppContext';
 const ReceivedOrder = ({ navigation }) => {
   const { userData } = useContext(AppContext);
   const [receivedOrders, setReceivedOrders] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -21,7 +23,6 @@ const ReceivedOrder = ({ navigation }) => {
         // Fetch received orders
         const receivedResponse = await fetchReceivedOrders(userData);
         setReceivedOrders(receivedResponse);
-       
       } catch (error) {
         console.error('Error fetching products:', error);
       }
@@ -30,76 +31,119 @@ const ReceivedOrder = ({ navigation }) => {
     fetchProducts();
   }, []);
 
-const renderOrderCard = ({ item }) => (
+  const getFilteredOrders = () => {
+    return receivedOrders.filter(order => {
+      const searchLower = searchQuery.toLowerCase();
+      const date = new Date(order.orderDate).toLocaleDateString();
+
+      return (
+        order.item.name.toLowerCase().includes(searchLower) ||
+        order.buyerName.toLowerCase().includes(searchLower) ||
+        order.orderStatus.toLowerCase().includes(searchLower) ||
+        date.includes(searchLower)
+      );
+    });
+  };
+
+  const renderOrderCard = ({ item }) => (
     <View style={styles.card}>
-        {/* Product Image */}
-        <Image source={{ uri: item.item.imgUrl }} style={styles.productImage} />
+      {/* Product Image */}
+      <Image source={{ uri: item.item.imgUrl }} style={styles.productImage} />
 
-        {/* Order Details */}
-        <View style={styles.cardContent}>
-            <Text style={styles.productName}>{item.item.name}</Text>
-            <Text style={styles.productCategory}>{item.item.category}</Text>
-            <Text style={styles.productDescription} numberOfLines={2}>
-                {item.item.description}
-            </Text>
+      {/* Order Details */}
+      <View style={styles.cardContent}>
+        <Text style={styles.productName}>{item.item.name}</Text>
+        <Text style={styles.productCategory}>{item.item.category}</Text>
+        {/* <Text style={styles.productDescription} numberOfLines={2}>
+          {item.item.description}
+        </Text> */}
 
-            {/* Buyer Details */}
+        
             <View style={styles.buyerDetails}>
-                <Text style={styles.buyerName}>
-                    Buyer: {item.buyerName} ({item.buyerMobile})
-                </Text>
-                <Text style={styles.buyerLocation}>
-                    {item.BuyerDistrict}, {item.BuyerState}
-                </Text>
+              <Text style={styles.buyerName}>
+                Buyer: {item.buyerName}
+              </Text>
+              <Text style={styles.buyerName}>
+                Date: 
+                {new Date(item.timeStamp).toLocaleString()}
+              </Text>
+              <Text style={styles.buyerLocation}>
+                {item.BuyerDistrict}, {item.BuyerState}
+              </Text>
             </View>
 
             {/* Order Info */}
-            <View style={styles.orderInfo}>
-                <Text style={styles.orderQuantity}>
-                    Quantity: {item.quantity} {item.item.unit}
-                </Text>
-                <Text style={styles.orderPrice}>
-                    Price: ₹{item.item.price * item.quantity}
-                </Text>
-            </View>
-
-            {/* Order Status */}
-            <Text style={styles.orderStatus}>
-                Status: {item.orderStatus.charAt(0).toUpperCase() + item.orderStatus.slice(1)}
-            </Text>
+        <View style={styles.orderInfo}>
+          <Text style={styles.orderQuantity}>
+            Quantity: {item.quantity} {item.item.unit}
+          </Text>
+          <Text style={styles.orderPrice}>
+            Price: ₹{item.item.price * item.quantity}
+          </Text>
         </View>
 
-        {/* Track Button */}
-        <TouchableOpacity
-            style={styles.trackButton}
-            onPress={() => navigation.navigate('trackorder', { orderDetails: item })}
-        >
-            <Ionicons name="location-outline" size={20} color="#fff" />
-            <Text style={styles.trackButtonText}>Track</Text>
-        </TouchableOpacity>
+        {/* Order Status */}
+        <Text style={styles.orderStatus}>
+          Status: {item.orderStatus.charAt(0).toUpperCase() + item.orderStatus.slice(1)}
+        </Text>
+      </View>
+
+      {/* Track Button */}
+      <TouchableOpacity
+        style={styles.trackButton}
+        onPress={() => navigation.navigate('trackorder', { orderDetails: item })}
+      >
+        <Ionicons name="location-outline" size={20} color="#fff" />
+        <Text style={styles.trackButtonText}>Track</Text>
+      </TouchableOpacity>
     </View>
-);
+  );
 
   return (
     <View style={styles.container}>
-      {/* Header with Back Button */}
-      <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="black" />
-        </TouchableOpacity>
-        <Text className=" text-center" style={styles.header}>Received Orders</Text>
+      {/* Enhanced Header */}
+      <View style={styles.headerWrapper}>
+        <View style={styles.headerContainer}>
+          <TouchableOpacity 
+            onPress={() => navigation.goBack()} 
+            style={styles.backButton}
+          >
+            <Ionicons name="arrow-back" size={24} color="#048404" />
+          </TouchableOpacity>
+          <Text style={styles.header}>Received Orders</Text>
+        </View>
+
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <Ionicons name="search-outline" size={20} color="#666" />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search by name, buyer, status or date..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholderTextColor="#999"
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery('')}>
+              <Ionicons name="close-circle" size={20} color="#666" />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
-      {/* Order List */}
+      {/* Orders List */}
       {receivedOrders.length > 0 ? (
         <FlatList
-          data={receivedOrders}
+          data={getFilteredOrders()}
           keyExtractor={(item) => item.id}
           renderItem={renderOrderCard}
           contentContainerStyle={styles.list}
         />
       ) : (
-        <Text style={styles.noOrdersText}>No orders available.</Text>
+        <View style={styles.emptyContainer}>
+          <Ionicons name="receipt-outline" size={64} color="#ccc" />
+          <Text style={styles.noOrdersText}>No orders available.</Text>
+        </View>
       )}
     </View>
   );
@@ -112,23 +156,52 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f8f8',
   },
+  headerWrapper: {
+    backgroundColor: '#fff',
+    paddingTop: 10,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-   
-    paddingVertical: 10,
     paddingHorizontal: 16,
+    marginBottom: 12,
+    height: 32, // Fixed height for better alignment
   },
   backButton: {
-    marginRight: 10,
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: '#f0f9f0',
+    position: 'absolute',
+    left: 16,
+    zIndex: 1,
   },
   header: {
-    flex:1,
-    fontSize: 20,
+    flex: 1,
+    fontSize: 24,
     fontWeight: 'bold',
-    alignItems:'center',
-    justifyContent:'center',
-    color: 'black',
+    color: '#111',
+    textAlign: 'center', // Center the text
+    width: '100%', // Take full width
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    paddingHorizontal: 12,
+    height: 44,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 16,
+    color: '#333',
   },
   list: {
     padding: 16,
@@ -222,10 +295,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 5,
   },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 100,
+  },
   noOrdersText: {
     fontSize: 16,
-    color: '#888',
-    textAlign: 'center',
-    marginTop: 20,
+    color: '#666',
+    marginTop: 16,
   },
 });

@@ -14,38 +14,45 @@ export const CartProvider = ({ children }) => {
 
   // Add item to cart
   const addToCart = async(item, userData) => {
-    const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
+    if (!item) return; // Guard clause for undefined items
+    
+    const existingItem = cartItems.find((cartItem) => cartItem?.id === item?.id);
     if (existingItem) {
-      updateCartItem(item.id, existingItem.quantity + 1);
+      updateCartItem(item?.id, existingItem?.quantity + 1);
     } else {
       setCartItems((prevItems) => [...prevItems, { ...item, quantity: 1 }]);
     }
-    // Show toast message
-  //   Toast.show({
-  //     type: "success",
-  //     text1: response.message,
-  //     text2: "Welcome back!",
-  //     position: "top",
-  // });
-     const cartData = await addToCarts(userData, item)
- 
-    Toast.show({
-      type: "success",
-      text1: "Success!",
-      position: "top",
-    });
+
+    try {
+      const cartData = await addToCarts(userData, item);
+      Toast.show({
+        type: "success",
+        text1: "Added to cart successfully!",
+        position: "top",
+      });
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Failed to add to cart",
+        position: "top",
+      });
+    }
   };
 
   // Update cart item quantity
   const updateCartItem = (id, quantity) => {
+    if (!id) return; // Guard clause for undefined id
+    
     setCartItems((prevItems) =>
-      prevItems.map((item) => (item.id === id ? { ...item, quantity } : item))
+      prevItems.map((item) => 
+        item?.id === id ? { ...item, quantity: Math.max(1, quantity) } : item
+      )
     );
   };
 
   // Remove item from cart
   const removeFromCart = (id) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+    setCartItems((prevItems) => prevItems.filter((item) => item?.id !== id));
   };
 
   // Clear cart
@@ -55,7 +62,7 @@ export const CartProvider = ({ children }) => {
 
   // Add item to wishlist
   const addToWishlist = async(item, userData) => {
-    if (!wishlistItems.find((wishlistItem) => wishlistItem.id === item.id)) {
+    if (!wishlistItems.find((wishlistItem) => wishlistItem.id === item?.id)) {
       setWishlistItems((prevItems) => [...prevItems, { ...item, quantity: 1 }]);
    
      const wishListResponse = await  AddToWishlist(item, userData )
@@ -71,7 +78,7 @@ export const CartProvider = ({ children }) => {
 
   // Remove item from wishlist
   const removeFromWishlist = (id) => {
-    setWishlistItems((prevItems) => prevItems.filter((item) => item.id !== id));
+    setWishlistItems((prevItems) => prevItems.filter((item) => item?.id !== id));
   };
 
   // Clear wishlist
@@ -81,20 +88,23 @@ export const CartProvider = ({ children }) => {
 
   // Check if an item is in the wishlist
   const isInWishlist = (id) => {
-    return wishlistItems.some((item) => item.id === id);
+    return wishlistItems.some((item) => item?.id === id);
   };
 
   // Calculate total cart amount
   const getCartTotal = () => {
     return cartItems
-      .reduce((total, item) => total + item.price * item.quantity, 0)
+      .reduce((total, item) => 
+        total + (item?.price || 0) * (item?.quantity || 0), 0)
       .toFixed(2);
   };
 
+  console.log("wwwwwww", wishlistItems)
   // Calculate total wishlist amount
   const getWishlistTotal = () => {
+    console.log("wwwwwww", wishlistItems)
     return wishlistItems
-      .reduce((total, item) => total + item.price * item.quantity, 0)
+      .reduce((total, item) => total + item?.price * item?.quantity, 0)
       .toFixed(2);
   };
 
@@ -102,7 +112,7 @@ export const CartProvider = ({ children }) => {
   const incrementWishlistQuantity = (id) => {
     setWishlistItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+        item?.id === id ? { ...item, quantity: item?.quantity + 1 } : item
       )
     );
   };
@@ -111,8 +121,8 @@ export const CartProvider = ({ children }) => {
   const decrementWishlistQuantity = (id) => {
     setWishlistItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
+        item?.id === id && item.quantity > 1
+          ? { ...item, quantity: item?.quantity - 1 }
           : item
       )
     );
@@ -125,19 +135,23 @@ export const CartProvider = ({ children }) => {
 
   // Increment quantity for cart items
   const incrementCartQuantity = (id) => {
+    if (!id) return; // Guard clause for undefined id
+    
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+        item?.id === id ? { ...item, quantity: (item?.quantity || 0) + 1 } : item
       )
     );
   };
 
   // Decrement quantity for cart items
   const decrementCartQuantity = (id) => {
+    if (!id) return; // Guard clause for undefined id
+    
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
+        item?.id === id && item.quantity > 1
+          ? { ...item, quantity: item?.quantity - 1 }
           : item
       )
     );
@@ -149,26 +163,26 @@ export const CartProvider = ({ children }) => {
   };
   // getCartItemCount
   const getCartItemCount = () => {
-    return cartItems.reduce((count, item) => count + item.quantity, 0);
+    return cartItems.reduce((count, item) => count + item?.quantity, 0);
   };
   // getwishlistItemCount
   const getWishlistItemCount = () => {
-    return wishlistItems.reduce((count, item) => count + item.quantity, 0);
+    return wishlistItems.reduce((count, item) => count + item?.quantity, 0);
   };
   const moveToCart = (item) => {
-    const existingItem = cartItems.find((cartItem) => cartItem.id === item.id);
+    if (!item?.id) return; // Guard clause for undefined item
+    
+    const existingItem = cartItems.find((cartItem) => cartItem?.id === item?.id);
     if (existingItem) {
-      // If the item already exists in the cart, increment its quantity
       setCartItems((prevItems) =>
         prevItems.map((cartItem) =>
-          cartItem.id === item.id
-            ? { ...cartItem, quantity: cartItem.quantity + item.quantity }
+          cartItem?.id === item?.id
+            ? { ...cartItem, quantity: (cartItem?.quantity || 0) + (item?.quantity || 1) }
             : cartItem
         )
       );
     } else {
-      // If the item doesn't exist in the cart, add it
-      setCartItems((prevItems) => [...prevItems, item]);
+      setCartItems((prevItems) => [...prevItems, { ...item, quantity: item?.quantity || 1 }]);
     }
   };
 

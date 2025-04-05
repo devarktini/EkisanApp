@@ -66,7 +66,7 @@ const AuthOtpScreen = () => {
         if (authResponse.success) {
           const userData = authResponse.userData;
           setUserData(authResponse.userData);
-          saveToStorage("notifications", authResponse.user.notifications);
+          saveToStorage("notifications", JSON.stringify(authResponse.user.notifications));
           // await saveUserInDatabase(authResponse.user.uid, phoneNumber);
           await login(
             authResponse.token,

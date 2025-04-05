@@ -117,21 +117,31 @@ const TrackOrderScreen = ({ navigation, route }) => {
   }, [orderDetails.id]);
 
   const renderMessage = ({ item }) => (
-    
     <View style={[
       styles.messageCard,
-      item.userId === (userData.uid || userData.userId) ? styles.messageCardRight : styles.messageCardLeft
+      item.admin 
+        ? styles.messageCardAdmin 
+        : item.userId === (userData.uid || userData.userId) 
+          ? styles.messageCardRight 
+          : styles.messageCardLeft
     ]}>
-        
       <Text style={[
         styles.messageText,
-        item.userId === (userData.uid || userData.userId) ? styles.messageTextRight : styles.messageTextLeft
+        item.admin 
+          ? styles.messageTextAdmin
+          : item.userId === (userData.uid || userData.userId) 
+            ? styles.messageTextRight 
+            : styles.messageTextLeft
       ]}>
         {item.message}
       </Text>
       <Text style={[
         styles.messageTimestamp,
-        item.userId === (userData.uid || userData.userId) ? styles.timestampRight : styles.timestampLeft
+        item.admin 
+          ? styles.timestampAdmin
+          : item.userId === (userData.uid || userData.userId) 
+            ? styles.timestampRight 
+            : styles.timestampLeft
       ]}>
         {item.timestamp}
       </Text>
@@ -141,7 +151,7 @@ const TrackOrderScreen = ({ navigation, route }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f8f8f8' }}>
       {/* Header */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', paddingVertical: 16, paddingHorizontal: 20, elevation: 4, borderBottomLeftRadius: 20, borderBottomRightRadius: 20 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', paddingVertical: 10, paddingHorizontal: 20, elevation: 4, borderBottomLeftRadius: 20, borderBottomRightRadius: 20 }}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
@@ -149,7 +159,7 @@ const TrackOrderScreen = ({ navigation, route }) => {
       </View>
 
       {/* Order Summary */}
-      <View style={{ backgroundColor: '#fff', margin: 16, padding: 20, borderRadius: 16, elevation: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 }}>
+      <View style={{ backgroundColor: '#fff', marginTop:2, margin: 8, padding: 20, borderRadius: 16, elevation: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 }}>
         <Text style={{ fontSize: 16, color: '#333', fontWeight: '600', marginBottom: 12 }}>Order #{orderDetails?.id ||orderDetails.orderId }</Text>
         <View style={{ borderLeftWidth: 4, borderColor: '#048404', paddingLeft: 16, marginVertical: 8 }}>
           <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>{orderDetails?.item?.name|| orderDetails?.name}</Text>
@@ -356,10 +366,10 @@ const styles = StyleSheet.create({
   },
   messagesContainer: {
     flex: 1,
-    margin: 16,
+    margin: 0,
     backgroundColor: '#fff',
     borderRadius: 16,
-    padding: 20,
+    padding: 10,
     elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -370,8 +380,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 16,
-    paddingBottom: 8,
+    marginBottom: 4,
+    paddingBottom: 2,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
@@ -391,11 +401,21 @@ const styles = StyleSheet.create({
   },
   messageCardLeft: {
     alignSelf: 'flex-start',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#f5f5f5',
     borderTopRightRadius: 20,
     borderBottomRightRadius: 20,
     borderBottomLeftRadius: 20,
     borderTopLeftRadius: 4,
+  },
+  messageCardAdmin: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#fff3e0', // Light yellow background
+    borderTopRightRadius: 20,
+    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 20,
+    borderTopLeftRadius: 4,
+    borderWidth: 1,
+    borderColor: '#ffe0b2',
   },
   messageCardRight: {
     alignSelf: 'flex-end',
@@ -413,6 +433,10 @@ const styles = StyleSheet.create({
   messageTextLeft: {
     color: '#333',
   },
+  messageTextAdmin: {
+    color: '#f57c00', // Dark orange text
+    fontWeight: '500',
+  },
   messageTextRight: {
     color: '#fff',
   },
@@ -424,6 +448,9 @@ const styles = StyleSheet.create({
   },
   timestampLeft: {
     color: '#888',
+  },
+  timestampAdmin: {
+    color: '#ffb74d', // Light orange timestamp
   },
   timestampRight: {
     color: 'rgba(255, 255, 255, 0.7)',
