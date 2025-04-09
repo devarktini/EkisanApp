@@ -424,6 +424,50 @@ const fetchItemToVerify = (uid) => {
 }
 
 
+const imgExtRemover = (uri) => {
+  return uri?.split('.').pop(); // Extract file extension from URI
+};
+
+
+ const updatePfp = async (productImage, user) => {
+  try {
+    if (productImage) {
+      console.log("product Image", productImage)
+      const fileExtension = imgExtRemover(productImage);
+      console.log("fileExtension", fileExtension)
+      const imageRef = storageRef(storage, `products/${user.uid || user.userId}/${Date.now()}-${fileExtension}`);
+    
+     
+      const response = await fetch(productImage);
+      const blob = await response.blob();
+      const uploadResult = await uploadBytes(imageRef, blob);
+
+      // Get the download URL of the uploaded image
+       imageUrl = await getDownloadURL(imageRef);
+    }
+      // Prepare the new pfp object
+      const pfp = {
+          profilePic: imageUrl,
+          isApproved: false
+      };
+
+      // Reference to the user node in Firebase database
+      const userRef = ref(database, `users/${user.uid}`);
+
+      // Update the user data by adding the new pfp field, preserving other fields
+      await update(userRef, {
+          pfp, // Add the new profile picture object
+      });
+      console.log("Profile picture updated successfully:", pfp);
+      return true;
+  } catch (e) {
+      console.error("Error updating profile picture:", e);
+      console.log("first", e)
+      throw new Error("Failed to update profile picture");
+  }
+};
+
+
 export {
   fetchCategories,
   fetchProducts,
@@ -432,5 +476,6 @@ export {
   uploadImage,
   deleteItemById,
   fetchRejectedProducts,
-  fetchItemToVerify
+  fetchItemToVerify,
+  updatePfp
 };

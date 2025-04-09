@@ -38,7 +38,8 @@ export default function ProductCard({ item }) {
         </TouchableOpacity>
       </View>
       <Image
-      resizeMethod="none"
+      resizeMethod="resize"
+      
         source={{ uri: item.imgUrl }}
         className="w-full h-40 rounded-t-lg"
         resizeMode="cover"

@@ -4,7 +4,7 @@
 set -e
 
 echo "📦 Installing dependencies..."
-npm install --force
+# npm install --force
 
 echo "🚀 Building APK using Expo..."
 npx expo prebuild

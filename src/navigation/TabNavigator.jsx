@@ -13,6 +13,7 @@ import CheckoutScreen from "../screens/CheckoutScreen";
 import ShoppingCart from "../screens/ShoppingCart";
 import CartScreen from "../screens/CartScreen";
 import { useCart } from '../context/CartContext'; 
+import ChatWithAdmin from "../screens/ChatWithAdmin";
 
 const Tab = createBottomTabNavigator();
 
@@ -29,7 +30,7 @@ const TabNavigator = ({ route }) => {
           if (route.name === "HomeTab") iconName = "home";
           else if (route.name === "Profile") iconName = "user";
           else if (route.name === "Cart") iconName = "shopping-cart";
-          else if (route.name === "Wishlist") iconName = "heart";
+          else if (route.name === "Chat") iconName = "message-circle";
           else if (route.name === "Settings") iconName = "settings";
           else if (route.name === "Search") iconName = "grid";
           return <Feather name={iconName} size={size} color={color} />;
@@ -39,12 +40,13 @@ const TabNavigator = ({ route }) => {
       })}
     >
       <Tab.Screen name="HomeTab" component={HomeScreen} initialParams={{ user }}  />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
       <Tab.Screen name="Search" component={CategoryProduct} options={{ title: "Categories" }}/>
-      <Tab.Screen name="Wishlist" component={Wishlist} 
+     
+      
+      <Tab.Screen name="Chat" component={ChatWithAdmin} 
         options={{
-        title: 'Wishlist',
-        tabBarBadge: getWishlistItemCount() > 0 ? getWishlistItemCount() : null, // Dynamic badge
+        title: 'Chat',
+        
       }}
       />
       <Tab.Screen
@@ -55,6 +57,13 @@ const TabNavigator = ({ route }) => {
           tabBarBadge: getCartItemCount() > 0 ? getCartItemCount() : null, // Dynamic badge
         }}
       />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+      {/* <Tab.Screen name="Wishlist" component={Wishlist} 
+        options={{
+        title: 'Wishlist',
+        tabBarBadge: getWishlistItemCount() > 0 ? getWishlistItemCount() : null, // Dynamic badge
+      }}
+      /> */}
       {/* <Tab.Screen name="ShoppingBag" component={ShoppingBag} /> */}
 
       {/* <Tab.Screen name="Settings" component={SettingsScreen} /> */}

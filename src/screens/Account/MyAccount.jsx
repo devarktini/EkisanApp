@@ -50,7 +50,7 @@ const MyAccount = ({ navigation }) => {
           <View className="bg-white relative p-4 rounded-lg shadow flex-row items-center">
             <View className="w-24 h-24 rounded-full bg-gray-200 mr-4">
               <Image
-                source={{ uri: userData?.profileImage || 'https://via.placeholder.com/150' }}
+                source={{ uri: userData?.pfp.profilePic || 'https://via.placeholder.com/150' }}
                 className="w-full h-full rounded-full"
               />
             </View>

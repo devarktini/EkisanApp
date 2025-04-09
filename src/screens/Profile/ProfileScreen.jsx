@@ -10,7 +10,7 @@ const ProfileScreen = () => {
   return (
     <ScrollView className="flex-1 bg-white">
       {/* Header with Background Image */}
-      <View className="relative h-64">
+      <View className="relative h-56">
         <Image
           source={{
             uri: "https://media.istockphoto.com/id/108313157/photo/india-farming.webp?a=1&b=1&s=612x612&w=0&k=20&c=yseKM6JJgR7-3W0vV-ZGTClDwHNIumNoJw2nYWjQOAE=",
@@ -32,26 +32,24 @@ const ProfileScreen = () => {
           <Text className="flex-1 text-lg font-bold text-white text-center mx-4">
             Profile
           </Text>
+          <View></View>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             className="p-2 rounded-full bg-white/20 backdrop-blur-sm"
             onPress={() => {navigator.navigate("MyAccount")
-              /* Add settings or edit profile action */
+              
             }}
           >
             <Ionicons name="settings-outline" size={24} color="white" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
-
       {/* Profile Section - Update the margin top */}
       <View className="px-4 -mt-20">
-        <View className="flex-row items-start">
+        <View className="flex-row items-center">
           <View className="items-center">
             <Image
-              source={{
-                uri: "https://media.istockphoto.com/id/503646746/photo/farmer-spreading-fertilizer-in-the-field-wheat.webp?a=1&b=1&s=612x612&w=0&k=20&c=BnR0YEwUlQ7xXQhC3CRce04lqQv6pLWbvS076HCw4DI=", // Replace with profile picture URL
-              }}
+              source={{ uri: userData.pfp.profilePic }}
               className="w-20 h-20 rounded-full border-2 border-white"
             />
             <Text className="text-lg font-bold mt-2">
@@ -69,7 +67,7 @@ const ProfileScreen = () => {
             </Text>
           </View>
           <TouchableOpacity className="bg-[#048404] px-4 py-2 rounded-full ml-20">
-            <Text className="text-white px-3">seller</Text>
+            <Text className="text-white px-3">{userData.userType}</Text>
           </TouchableOpacity>
         </View>
 
@@ -88,9 +86,7 @@ const ProfileScreen = () => {
             { name: "Cucumbers", icon: "droplet" },
             { name: "Potatoes", icon: "package" },
             { name: "Onions", icon: "cloud-rain" },
-            { name: "Oranges", icon: "sunrise" },
-            { name: "Strawberries", icon: "heart" },
-            { name: "Olives", icon: "circle" },
+            
           ].map((item, index) => (
             <View
               key={index}

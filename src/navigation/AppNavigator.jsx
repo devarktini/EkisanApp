@@ -41,28 +41,37 @@ const Stack = createStackNavigator();
 
 const AppNavigator = ({ isFirstLaunch }) => {
   const { isAuthenticated, setIsAuthenticated } = useContext(AppContext);
-  const [isLoading, setIsLoading] = useState(true);
  
   useEffect(() => {
     const checkAuth = async () => {
-      //  const token = await getAuthToken()
-      const userList = JSON.parse(await getUserData());
-      const result = await autoLogin(userList.phoneNumber !== undefined ? userList.phoneNumber : userList.phone);
-      if (result) {
-        setIsAuthenticated(true);
-        setIsLoading(false);
-        // await refreshAuthToken(userList.phoneNumber);
-      } else {
+      try {
+        const userData = await getUserData();
+        if (!userData) {
+          setIsAuthenticated(false);
+          return;
+        }
+
+        const userList = JSON.parse(userData);
+        if (!userList) {
+          setIsAuthenticated(false);
+          return;
+        }
+
+        const phoneNumber = userList?.phoneNumber || userList?.phone;
+        if (!phoneNumber) {
+          setIsAuthenticated(false);
+          return;
+        }
+
+        const result = await autoLogin(phoneNumber);
+        setIsAuthenticated(result || false);
+      } catch (error) {
+        console.error('Auth check failed:', error);
         setIsAuthenticated(false);
-        setIsLoading(false);
       }
     };
     checkAuth();
   }, []);
-
-  if (isLoading) {
-    return <SplashScreen />;
-  }
  
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

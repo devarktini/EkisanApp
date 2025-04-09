@@ -47,7 +47,7 @@ const Header = () => {
           className="w-10 h-10"
           resizeMode="contain"
         />
-        <Text className="text-[15px] font-semibold text-[#048404] ml-1">EKishan Darshan</Text>
+        <Text className="text-[15px] font-semibold text-[#048404] ml-1">eKisan Darshan</Text>
       </View>
 
       <View>
@@ -63,7 +63,7 @@ const Header = () => {
       {show && (
         <TouchableOpacity>
           <Image 
-            source={{ uri: 'https://i.imgur.com/profile.jpg' }}
+           source={{ uri: userData?.pfp?.profilePic }}
             className="w-12 h-12 rounded-full border-2 border-[#048404]"
             resizeMode="cover"
           />

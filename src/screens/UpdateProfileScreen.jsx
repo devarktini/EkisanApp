@@ -11,6 +11,7 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { AppContext } from '../context/AppContext';
@@ -19,6 +20,9 @@ import { IndianDistrict, IndianStates, Blocks } from '../constants/GeographicalD
 import { useRoute } from '@react-navigation/native';
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as ImagePicker from "expo-image-picker";
+import { updatePfp } from '../services/productService';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,7 +30,7 @@ const { width, height } = Dimensions.get('window');
 const userType = ['Select Role', 'farmer', 'corporate', 'consumer'];
 
 const CustomCheckbox = ({ value, onValueChange }) => (
-  <TouchableOpacity 
+  <TouchableOpacity
     style={[styles.checkbox, value && styles.checkboxChecked]}
     onPress={() => onValueChange(!value)}
     activeOpacity={0.7}
@@ -40,7 +44,7 @@ const CustomCheckbox = ({ value, onValueChange }) => (
 const UpdateProfileScreen = ({ navigation }) => {
 
   const route = useRoute();
-  const {user, type} = route.params || {};
+  const { user, type } = route.params || {};
   const { userData, setUserData, setIsAuthenticated } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const object = {
@@ -57,6 +61,29 @@ const UpdateProfileScreen = ({ navigation }) => {
   const [optionDistrict, setOptionDistrict] = useState([]);
   const [optionBlock, setOptionBlock] = useState([]);
   const [userPhone, setUserPhone] = useState('');
+  const [image, setImage] = useState(null);
+
+  const pickImage = async () => {
+    // Request media library permission
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      alert("Permission denied!");
+      return;
+    }
+
+    // Pick image
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri); // Store image URI
+    }
+  };
+
 
   useEffect(() => {
     if (user) {
@@ -68,6 +95,7 @@ const UpdateProfileScreen = ({ navigation }) => {
         district: user.district || '',
         block: user.block || '',
       });
+      setImage(user.pfp.profilePic || null); // Set initial image URI if available
     }
   }, [user]);
 
@@ -77,7 +105,6 @@ const UpdateProfileScreen = ({ navigation }) => {
         const response = await getCurrentUser(user);
         if (response.success) {
           setUserData(response.userData);
-         
           setUserPhone(response.userData.phoneNumber);
         }
       } catch (error) {
@@ -87,7 +114,7 @@ const UpdateProfileScreen = ({ navigation }) => {
 
     getCurrentUserData();
   }, []);
-  
+
   useEffect(() => {
     // Update districts when state changes
     // setFormData(userData)
@@ -152,7 +179,7 @@ const UpdateProfileScreen = ({ navigation }) => {
         setError('Please agree to the terms and conditions');
         return;
       }
-    
+
       const result = await updateUserProfile({
         ...formData,
         uid: userData.uid || userData.userId,
@@ -162,13 +189,13 @@ const UpdateProfileScreen = ({ navigation }) => {
         updatedAt: new Date().toISOString()
       });
       if (result.success) {
-        setIsAuthenticated (true)
+        setIsAuthenticated(true)
         setUserData(result.userData);
         await AsyncStorage.setItem("isFirstLaunch", "false");
         if (type === 'edit') {
           navigation.navigate('MyAccount');
         }
-        else{
+        else {
           setTimeout(() => {
             navigation.navigate('Main');
           }, 100);
@@ -182,6 +209,29 @@ const UpdateProfileScreen = ({ navigation }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleUpload = async () => {
+    if (!image) return;
+
+    await updatePfp(image, userData);
+    
+
+    // try {
+    //   const res = await fetch("https://your-api.com/upload-profile", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "multipart/form-data",
+    //       Authorization: `Bearer YOUR_TOKEN`,
+    //     },
+    //     body: formData,
+    //   });
+
+    //   const data = await res.json();
+    //   console.log("Uploaded successfully", data);
+    // } catch (err) {
+    //   console.error("Upload error", err);
+    // }
   };
 
   const renderDropdown = (items, selectedValue, onValueChange) => (
@@ -212,17 +262,46 @@ const UpdateProfileScreen = ({ navigation }) => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             {type === 'edit' &&
-            <View style={styles.modalHeader}>
-            <TouchableOpacity onPress={handleClose}>
-              <Ionicons name="close" size={24} color="#333" />
-            </TouchableOpacity>
-          </View>
+              <View style={styles.modalHeader}>
+                <TouchableOpacity onPress={handleClose}>
+                  <Ionicons name="close" size={24} color="#333" />
+                </TouchableOpacity>
+              </View>
             }
-          
+
             <ScrollView contentContainerStyle={styles.scrollContent}>
-              <Text style={styles.title}>{type === 'edit' ? 'Update Your Profile':'Complete Your Profile'}</Text>
+              <Text style={styles.title}>{type === 'edit' ? 'Update Your Profile' : 'Complete Your Profile'}</Text>
               <Text style={styles.subtitle}>Please provide your details to continue</Text>
 
+
+              <View className="items-center justify-center ">
+                {image ? (
+                  <Image
+                    source={{ uri: image }}
+                    style={{ width: 120, height: 120, borderRadius: 60, marginBottom: 16 }}
+                  />
+                ) : (
+                  <View
+                    style={{
+                      width: 120,
+                      height: 120,
+                      borderRadius: 60,
+                      backgroundColor: "#ccc",
+                      marginBottom: 16,
+                    }}
+                  />
+                )}
+
+                <TouchableOpacity onPress={pickImage} className="mb-4 bg-blue-500 px-4 py-2 rounded-full">
+                  <Text className="text-white">Choose Image</Text>
+                </TouchableOpacity>
+
+                {image && (
+                  <TouchableOpacity onPress={handleUpload} className="bg-green-500 px-4 py-2 rounded-full">
+                    <Text className="text-white">Upload Image</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
               <View style={styles.form}>
                 {/* Name Input */}
                 <View style={styles.inputContainer}>
@@ -281,7 +360,7 @@ const UpdateProfileScreen = ({ navigation }) => {
                     selectedValue={formData.district}
                     onValueChange={(itemValue) => handleFormChanges('district', itemValue)}
                     style={styles.picker}
-                    // enabled={optionDistrict.length > 0}
+                  // enabled={optionDistrict.length > 0}
                   >
                     <Picker.Item label="Select a District" value="" />
                     {optionDistrict.map((item, index) => (
@@ -297,7 +376,7 @@ const UpdateProfileScreen = ({ navigation }) => {
                     selectedValue={formData.block}
                     onValueChange={(itemValue) => handleFormChanges('block', itemValue)}
                     style={styles.picker}
-                    // enabled={!!formData.district}
+                  // enabled={!!formData.district}
                   >
                     <Picker.Item label="Select a Block" value="" />
                     {optionBlock.map((item, index) => (
@@ -319,8 +398,8 @@ const UpdateProfileScreen = ({ navigation }) => {
 
                 {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-                <TouchableOpacity 
-                  style={[styles.button, (!agreed || loading) && styles.buttonDisabled]} 
+                <TouchableOpacity
+                  style={[styles.button, (!agreed || loading) && styles.buttonDisabled]}
                   onPress={handleSubmit}
                   disabled={!agreed || loading}
                 >

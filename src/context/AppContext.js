@@ -21,24 +21,45 @@ export const AppProvider = ({ children }) => {
 
     useEffect(() => {
         const initializeAuth = async () => {
-            const userList = JSON.parse(await getUserData());
-            const token = await getAuthToken()
-            const { user, userData } = await autoLogin(userList.phoneNumber !== undefined ? userList.phoneNumber : userList.phone);
-            if (token && user) {
-                if(userData.isFirstTimeUser){
-                    setShowUpdateProfile(true);
-                    navigation.navigate("UpdateProfile", { user: userData });
-                }else{
-                    const refreshToken =  await getRefreshToken()
-                   
-                    navigation.navigate("Main",{user: userData })
+            try {
+                const rawUserData = await getUserData();
+                if (!rawUserData) {
+                    setIsAuthenticated(false);
+                    return;
                 }
-                // navigation.navigate("Main",{user: userData })
-                setAuthToken(token);
-                setUserData(user);
-                setIsAuthenticated(true);
-                // await refreshAuthToken(userList.phoneNumber);
-            } else {
+
+                const userList = JSON.parse(rawUserData);
+                if (!userList) {
+                    setIsAuthenticated(false);
+                    return;
+                }
+
+                const token = await getAuthToken();
+                const phoneNumber = userList?.phoneNumber || userList?.phone;
+                
+                if (!phoneNumber || !token) {
+                    setIsAuthenticated(false);
+                    return;
+                }
+
+                const { user, userData } = await autoLogin(phoneNumber);
+                
+                if (token && user) {
+                    if (userData?.isFirstTimeUser) {
+                        setShowUpdateProfile(true);
+                        navigation.navigate("UpdateProfile", { user: userData });
+                    } else {
+                        const refreshToken = await getRefreshToken();
+                        navigation.navigate("Main", { user: userData });
+                    }
+                    setAuthToken(token);
+                    setUserData(user);
+                    setIsAuthenticated(true);
+                } else {
+                    setIsAuthenticated(false);
+                }
+            } catch (error) {
+                console.error('Authentication initialization failed:', error);
                 setIsAuthenticated(false);
             }
         };
