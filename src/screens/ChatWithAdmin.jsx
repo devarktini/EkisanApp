@@ -48,7 +48,7 @@ const ChatWithAdmin = ({navigation}) => {
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        // console.log("sssssssss")
+       
         const messages = await getAdminMessages(userData.uid || userData.userId);
         setChatMessages(messages);
       } catch (error) {

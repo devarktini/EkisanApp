@@ -76,7 +76,7 @@ const SignInScreen = () => {
                             resizeMode="contain"
                         />
                         <Text style={styles.headerText}>Welcome Back</Text>
-                        <Text style={styles.subHeaderText}>Sign in to continue to eKisan</Text>
+                        <Text style={styles.subHeaderText}>Sign in to continue to eKisan Darshan</Text>
                     </View>
 
                     {/* Input Container */}

@@ -127,7 +127,9 @@ const AddFarm = ({ navigation }) => {
         const cropsData = await fetchCrops();
         const categoriesData = await fetchCategories({});
         setCrops(cropsData);
-        setCategories(categoriesData);
+        setCategories(
+          categoriesData.filter((category) => category.categorieName !== "Farm Machinery")
+        );
       } catch (error) {
         console.error("Error fetching data:", error);
       }

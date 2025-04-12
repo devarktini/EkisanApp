@@ -36,6 +36,7 @@ import ReceivedOrder from "../screens/ReceivedOrder";
 import TrackOrderScreen from "../screens/TrackOrderScreen";
 import SplashScreen from "../components/SplashScreen";
 import ProfileScreen from "../screens/Profile/ProfileScreen";
+import WishlistScreen from "../screens/Wishlist";
 
 const Stack = createStackNavigator();
 
@@ -106,6 +107,7 @@ const AppNavigator = ({ isFirstLaunch }) => {
           <Stack.Screen name="ProductDetails" component={ProductDetails} />
           <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="ShoppingCart" component={ShoppingCart} />
+          <Stack.Screen name="Wishlist" component={WishlistScreen} />
           <Stack.Screen 
             name="AddFarm" 
             component={AddFarm}

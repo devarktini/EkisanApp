@@ -57,8 +57,6 @@ const TrackOrderScreen = ({ navigation, route }) => {
   };
 
   const handleSendMessage = async () => {
-    console.log("first", orderDetails.sellerUID)
-    console.log("message", messages)
     if (!newMessage.trim() || isSending) return;
 
     setIsSending(true);
@@ -95,7 +93,6 @@ const TrackOrderScreen = ({ navigation, route }) => {
   const handleStatusUpdate = async (status) => {
     try {
      const response = await updateRequestStatus(orderTrackData?.orderTrackId, status);
-     console.log("response", response)
       setOrderStatus(status);
       Alert.alert('Success', `Order ${status.toLowerCase()} successfully`);
       fetchOrderTrack();

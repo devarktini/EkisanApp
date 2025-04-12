@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Image, ScrollView, Modal, StyleSheet, Act
 import { Ionicons } from "@expo/vector-icons";
 import { AppContext } from '../../context/AppContext';
 import AddProduct from '../AddProduct';
+import farmerImage from '../../assets/farmer.png';
 
 const MyAccount = ({ navigation }) => {
   const { userData, logout, loading } = useContext(AppContext);
@@ -50,7 +51,11 @@ const MyAccount = ({ navigation }) => {
           <View className="bg-white relative p-4 rounded-lg shadow flex-row items-center">
             <View className="w-24 h-24 rounded-full bg-gray-200 mr-4">
               <Image
-                source={{ uri: userData?.pfp.profilePic || 'https://via.placeholder.com/150' }}
+                source = {
+                    userData?.pfp?.profilePic
+                      ? { uri: userData.pfp.profilePic } // For remote image
+                      : farmerImage                      // For local image
+                  }
                 className="w-full h-full rounded-full"
               />
             </View>
@@ -95,6 +100,13 @@ const MyAccount = ({ navigation }) => {
               <Text className="text-gray-700 ml-3 text-lg font-bold">Order</Text>
             </View>
 
+            <TouchableOpacity onPress={() => navigation.navigate('Wishlist')} className="flex-row items-center justify-between py-4">
+              <View className="flex-row items-center">
+                <Ionicons name="heart-outline" size={28} color="#048404" />
+                <Text className="text-gray-700 ml-3 font-medium">My WishList</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="#666" />
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('order')} className="flex-row items-center justify-between py-4">
               <View className="flex-row items-center">
                 <Ionicons name="cart-outline" size={28} color="#048404" />
@@ -102,13 +114,15 @@ const MyAccount = ({ navigation }) => {
               </View>
               <Ionicons name="chevron-forward" size={20} color="#666" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('recivedOrder')} className="flex-row items-center justify-between py-4">
+            {userData.userType !== 'consumer' && (
+              <TouchableOpacity onPress={() => navigation.navigate('recivedOrder')} className="flex-row items-center justify-between py-4">
               <View className="flex-row items-center">
                 <Ionicons name="cart-outline" size={28} color="#048404" />
                 <Text className="text-gray-700 ml-3 font-medium">Received Orders</Text>
               </View>
               <Ionicons name="chevron-forward" size={20} color="#666" />
             </TouchableOpacity>
+            )}
           </View>
 
           {/* Help & Support */}

@@ -95,14 +95,14 @@ const UpdateProfileScreen = ({ navigation }) => {
         district: user.district || '',
         block: user.block || '',
       });
-      setImage(user.pfp.profilePic || null); // Set initial image URI if available
+      setImage(user?.pfp?.profilePic); // Set initial image URI if available
     }
   }, [user]);
 
   useEffect(() => {
     const getCurrentUserData = async () => {
       try {
-        const response = await getCurrentUser(user);
+        const response = await getCurrentUser(user.phoneNumber || user.phone);
         if (response.success) {
           setUserData(response.userData);
           setUserPhone(response.userData.phoneNumber);
@@ -215,24 +215,8 @@ const UpdateProfileScreen = ({ navigation }) => {
     if (!image) return;
 
     await updatePfp(image, userData);
-    
-
-    // try {
-    //   const res = await fetch("https://your-api.com/upload-profile", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "multipart/form-data",
-    //       Authorization: `Bearer YOUR_TOKEN`,
-    //     },
-    //     body: formData,
-    //   });
-
-    //   const data = await res.json();
-    //   console.log("Uploaded successfully", data);
-    // } catch (err) {
-    //   console.error("Upload error", err);
-    // }
   };
+ 
 
   const renderDropdown = (items, selectedValue, onValueChange) => (
     <View style={styles.pickerContainer}>

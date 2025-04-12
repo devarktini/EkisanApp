@@ -23,7 +23,7 @@ const ContactSupport = ({ navigation }) => {
   };
 
   const handleSubmit = () => {
-    console.log('Form Data:', formData);
+   
     // Add form submission logic here
   };
 

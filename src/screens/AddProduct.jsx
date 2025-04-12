@@ -78,7 +78,14 @@ const AddProduct = ({ setIsModalVisible }) => {
         const cropsData = await fetchCrops();
         const categoriesData = await fetchCategories({});
         setCrops(cropsData);
-        setCategories(categoriesData);
+        if (userData.userType === "farmer") {
+          setCategories(
+            categoriesData.filter((category) => category.categorieName !== "Farm Machinery")
+          );
+        } else {
+          
+          setCategories(categoriesData);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
         Alert.alert("Error", "Failed to fetch data. Please try again.");

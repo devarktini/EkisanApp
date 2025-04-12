@@ -36,14 +36,11 @@ const MyStore = ({ navigation }) => {
 
         // Fetch pending and verified products
         const verifyingResponse = await fetchItemToVerify(userData.uid || userData.uiId);
-       console.log("cccccccccccc", verifyingResponse)
         const verified = verifyingResponse.filter((item) => item.status === 'verified');
         const RentProduct = verifyingResponse.filter((item) => item.isRented === true);
         const pending = verifyingResponse.filter((item) => item.status === 'pending');
-
         // Fetch received orders
         setRentProducts(RentProduct)
-
         setVerifiedProducts(verified);
         setPendingProducts(pending);
 
@@ -111,20 +108,23 @@ const MyStore = ({ navigation }) => {
       {/* Tab Bar */}
       <ScrollView>
       <View style={styles.tabContainer}>
-        {tabs.map((tab) => (
-          <TouchableOpacity
-            key={tab}
-            onPress={() => setActiveTab(tab)}
-            style={[
-              styles.tabButton,
-              activeTab === tab && styles.activeTabButton, // Active Tab Style
-            ]}
-          >
-            <Text className=" whitespace-nowrap" style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
-              {tab}
-            </Text>
-          </TouchableOpacity>
-        ))}
+        {tabs.map((tab) => {
+          if(userData.userType === "corporate" && tab === 'Rent') return null;
+          return (
+            <TouchableOpacity
+              key={tab}
+              onPress={() => setActiveTab(tab)}
+              style={[
+                styles.tabButton,
+                activeTab === tab && styles.activeTabButton, // Active Tab Style
+              ]}
+            >
+              <Text className=" whitespace-nowrap" style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
+                {tab}
+              </Text>
+            </TouchableOpacity>
+          )
+        })}
       </View>
       </ScrollView>
 

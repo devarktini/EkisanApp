@@ -99,10 +99,9 @@ export const CartProvider = ({ children }) => {
       .toFixed(2);
   };
 
-  console.log("wwwwwww", wishlistItems)
+ 
   // Calculate total wishlist amount
   const getWishlistTotal = () => {
-    console.log("wwwwwww", wishlistItems)
     return wishlistItems
       .reduce((total, item) => total + item?.price * item?.quantity, 0)
       .toFixed(2);

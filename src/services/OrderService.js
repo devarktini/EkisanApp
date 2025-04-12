@@ -115,14 +115,16 @@ export const fetchOrdersByUserId = async (userId) => {
       return [];
     }
 
-    const orders = Object.entries(snapshot.val()).map(([orderId, order]) => ({
-      orderId,
-      ...order.item,
-      orderStatus: order.orderStatus,
-      quantity: order.quantity,
-      timeStamp: order.timeStamp,
-      itemId: order?.item?.id,
-    }));
+    const orders = Object.entries(snapshot.val())
+      .map(([orderId, order]) => ({
+        orderId,
+        ...order.item,
+        orderStatus: order.orderStatus,
+        quantity: order.quantity,
+        timeStamp: order.timeStamp,
+        itemId: order?.item?.id,
+      }))
+      .sort((a, b) => b.timeStamp - a.timeStamp); // Sort by latest order
 
     return orders;
   } catch (error) {

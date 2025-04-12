@@ -432,9 +432,9 @@ const imgExtRemover = (uri) => {
  const updatePfp = async (productImage, user) => {
   try {
     if (productImage) {
-      console.log("product Image", productImage)
+      
       const fileExtension = imgExtRemover(productImage);
-      console.log("fileExtension", fileExtension)
+  
       const imageRef = storageRef(storage, `products/${user.uid || user.userId}/${Date.now()}-${fileExtension}`);
     
      
@@ -458,11 +458,9 @@ const imgExtRemover = (uri) => {
       await update(userRef, {
           pfp, // Add the new profile picture object
       });
-      console.log("Profile picture updated successfully:", pfp);
+     
       return true;
   } catch (e) {
-      console.error("Error updating profile picture:", e);
-      console.log("first", e)
       throw new Error("Failed to update profile picture");
   }
 };

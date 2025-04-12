@@ -5,12 +5,11 @@ import { database } from "../../firebase.config";
 export const orderTrack = async (itemData, user, orderId) => {
    
     if(!user){
-        console.log("you are not register")
+       
     }
     return new Promise(async (resolve, reject) => {
         const TIMESTAMP = Date.now();
         if(!user){
-            console.log("you are not register")
         }
         try {
             const orderTrackRef = ref(database, "order-track");

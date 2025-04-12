@@ -1,5 +1,5 @@
 import { database } from '../../firebase.config';
-import { onValue, ref, query, limitToFirst, remove, update } from 'firebase/database';
+import { onValue, ref, query, limitToFirst, remove, update, get } from 'firebase/database';
 import {
   getDownloadURL,
   ref as storageRef,
@@ -125,3 +125,51 @@ export const removeUserNotification = async (userId, notificationId) => {
 };
 
 
+
+export const fetchSeller = ({ sellerId }) => {
+  const itemsRef = ref(database, `users/${sellerId}`);
+  return new Promise(resolve => {
+      onValue(itemsRef, (snapshot) => {
+          const snapVal = snapshot.val();
+          const sellerData = {
+            sellerDetails: snapVal,
+              // location: productLocation({ product: snapVal, short: false }),
+              name: snapVal.userType == "corporate" ? snapVal.corporateData.name
+                  : snapVal.name,
+              id: sellerId,
+              userType: snapVal.userType,
+              pfp:snapVal.pfp
+          }
+          resolve(sellerData)
+      });
+  })
+}
+
+export const getReviews = async (userId) => {
+  console.log("first", userId)
+  try {
+    if (!userId) {
+      showToast({ icon: "error", title: "No reviews available for this profile!" });
+      return [];
+    }
+    const reviewsRef = ref(database, `users/${userId}/reviews`);
+    const snapshot = await get(reviewsRef);
+
+    if (snapshot.exists()) {
+      const reviews = [];
+      snapshot.forEach((childSnapshot) => {
+        reviews.push({
+          id: childSnapshot.key,
+          ...childSnapshot.val(),
+        });
+      });
+      return reviews;
+    } else {
+      showToast({ icon: "error", title: "No reviews available for this profile!" });
+      return []; 
+    }
+  } catch (error) {
+    console.error("Error retrieving reviews:", error.message);
+    throw error;
+  }
+};

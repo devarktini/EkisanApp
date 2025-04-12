@@ -10,8 +10,16 @@ import {
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { database } from "../../firebase.config"; // Firebase configuration
-import { ref, onValue } from "firebase/database";
+import { ref, onValue, off } from "firebase/database";
 import { Ionicons } from "@expo/vector-icons"; // Back icon
+import { StatusBar } from 'expo-status-bar';
+import { LinearGradient } from 'expo-linear-gradient';
+import { fetchSeller, getReviews } from "../services/userService";
+import filterProduct from "../services/filterProduct";
+import ProductCard from "../components/ProductCard";
+import { fetchProducts } from "../services/productService";
+import { AirbnbRating } from 'react-native-ratings'; // You'll need to install this package
+import { getFarms } from "../services/farmer/FarmerFarmProfile";
 
 const FarmerViewDetails = () => {
   const navigation = useNavigation();
@@ -19,31 +27,85 @@ const FarmerViewDetails = () => {
   const { seller } = route.params || {}; // Get sellerUID from route params
   const [farmerData, setFarmerData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [totalRating, setTotalRating] = useState()
+  const [reviews, setReviews] = useState([]);
+  const [sellers, setSellers] = useState(null);
+  const [sellerFarmsData, setSellerFarmsData] = useState([]);
+  const MAX_RETRIES = 3;
 
   useEffect(() => {
     if (!seller) {
-      console.error("❌ Seller ID is missing!");
+      setError("Seller ID is missing!");
       setLoading(false);
       return;
     }
 
-    const fetchData = async () => {
+    const getAllFarms = async () => {
+      const CurrentUser = {
+          userId: seller
+      }
+      const data = await getFarms(CurrentUser);
+      setSellerFarmsData(data)
+  };
+  getAllFarms();
+
+   
+    const fetchData = async (retryCount = 0) => {
       try {
-        const userRef = ref(database, `users/${seller}`);
-        onValue(
+        setLoading(true);
+        setError(null);
+        const sellerData = await fetchSeller({ sellerId: seller.userId || seller.uid });
+      
+        const userRef = ref(database, `users/${seller}`);  
+        const unsubscribe = onValue(
           userRef,
           (snapshot) => {
             const data = snapshot.val();
             if (data) {
-              setFarmerData(data);
+              // Validate required fields
+              if (!data.name || !data.userType) {
+                setError("Invalid farmer data format");
+                return;
+              }
+              
+              // Transform and sanitize data if needed
+              const sanitizedData = {
+                ...data,
+                name: data.name.trim(),
+                userType: data.userType.trim(),
+                address: data.address || {},
+                item_rejected: data.item_rejected || []
+              };
+              
+              setFarmerData(sanitizedData);
             } else {
-              console.warn("⚠️ No farmer data found!");
+              // Retry logic for empty data
+              if (retryCount < MAX_RETRIES) {
+                console.warn(`Retry attempt ${retryCount + 1}`);
+                setTimeout(() => fetchData(retryCount + 1), 1000 * (retryCount + 1));
+                return;
+              }
+              setError("No farmer data available");
             }
+          },
+          (error) => {
+            console.error("Database error:", error);
+            setError(`Failed to fetch data: ${error.message}`);
           },
           { onlyOnce: true }
         );
+
+        // Cleanup function
+        return () => {
+          off(userRef);
+          unsubscribe();
+        };
+
       } catch (error) {
-        console.error("🔥 Error fetching data:", error);
+        console.error("🔥 Error:", error);
+        setError(`An unexpected error occurred: ${error.message}`);
       } finally {
         setLoading(false);
       }
@@ -51,6 +113,141 @@ const FarmerViewDetails = () => {
 
     fetchData();
   }, [seller]);
+
+  
+  const fetchAllReviews = async () => {
+    const data = await getReviews(seller);
+    const totalRating = data.reduce((sum, review) => sum + (review.selectedRating || 0), 0);
+    setTotalRating(totalRating)
+    setReviews(data)
+}
+
+  useEffect(() => {
+    const fetchDatas = async () => {
+      try {
+        const productsList = await fetchProducts({});
+        setProducts(productsList);
+        
+        // Fix: Use seller from route.params instead of params
+        if (seller) {
+          const sellerData = await fetchSeller({ sellerId: seller });
+          setSellers(sellerData);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError("Failed to fetch seller data");
+      }
+    };
+
+    fetchDatas();
+    fetchAllReviews();
+  }, [seller]); // Add seller as dependency
+
+  const calculateAverageRating = () => {
+    if (!reviews.length) return 0;
+    return (totalRating / reviews.length).toFixed(1);
+  };
+
+  const formatDate = (timestamp) => {
+    return new Date(timestamp).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  const renderFarmIcon = (type) => {
+    const iconMap = {
+      animalHusbandry: "paw",
+      irrigation: "water",
+      storage: "cube",
+      soilTested: "leaf",
+      chemicalFertilizer: "flask",
+    };
+    return iconMap[type] || "checkbox";
+  };
+
+  const renderProductGrid = () => {
+    const filteredProducts = filterProduct({
+      products,
+      filterBy: "seller",
+      sellerUID: seller,
+    });
+
+    return (
+      <View className="px-4">
+        <View className="flex-row items-center justify-between mb-4">
+          <Text className="text-xl font-bold text-gray-800">
+            Farmer's Products
+          </Text>
+          <Text className="text-green-600 text-sm">
+            {filteredProducts.length} items
+          </Text>
+        </View>
+
+        {filteredProducts.length > 0 ? (
+          <View className="flex-row flex-wrap justify-between">
+            {filteredProducts.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                className="w-[48%] mb-4 bg-white rounded-xl shadow-md overflow-hidden"
+                onPress={() => navigation.navigate('ProductDetails', { product : item })}
+              >
+                <Image
+                  source={{ uri: item.imgUrl }}
+                  className="w-full h-32 rounded-t-xl"
+                  resizeMode="cover"
+                />
+                <View className="p-3">
+                  <Text className="text-lg font-bold text-gray-800 mb-1" numberOfLines={1}>
+                    {item.name}
+                  </Text>
+                  <Text className="text-sm text-gray-500 mb-2" numberOfLines={1}>
+                    {item.description}
+                  </Text>
+                  <View className="flex-row items-center justify-between">
+                    <Text className="text-green-600 font-bold">
+                      ₹{item.price}
+                    </Text>
+                    {item.inStock ? (
+                      <View className="bg-green-100 px-2 py-1 rounded-full">
+                        <Text className="text-xs text-green-700">In Stock</Text>
+                      </View>
+                    ) : (
+                      <View className="bg-red-100 px-2 py-1 rounded-full">
+                        <Text className="text-xs text-red-700">Out of Stock</Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        ) : (
+          <View className="items-center py-8">
+            <Ionicons name="basket-outline" size={48} color="#9CA3AF" />
+            <Text className="text-gray-500 mt-2">No products available</Text>
+          </View>
+        )}
+      </View>
+    );
+  };
+
+  // Add error UI
+  if (error) {
+    return (
+      <View className="flex-1 items-center justify-center bg-gray-100">
+        <Ionicons name="warning" size={48} color="#FF6B6B" />
+        <Text className="text-lg font-bold text-red-500 mt-4">{error}</Text>
+        <TouchableOpacity 
+          onPress={() => navigation.goBack()}
+          className="mt-4 bg-green-500 px-6 py-2 rounded-full"
+        >
+          <Text className="text-white font-semibold">Go Back</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   if (loading) {
     return (
@@ -70,77 +267,215 @@ const FarmerViewDetails = () => {
   }
 
   // Extract products from farmerData
-  const products = farmerData.item_rejected
-    ? Object.values(farmerData.item_rejected)
-    : [];
+  // const products = farmerData.item_rejected
+  //   ? Object.values(farmerData.item_rejected)
+  //   : [];
 
   return (
     <View className="flex-1 bg-white">
-      {/* ✅ Custom Header with Back Button */}
-      <View className="flex-row items-center p-4 bg-green-500 shadow-md">
-        <TouchableOpacity onPress={() => navigation.goBack()} className="p-2">
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text className="text-white text-lg font-semibold ml-2">
-          Farmer Details
-        </Text>
-      </View>
+<StatusBar backgroundColor="#fff" barStyle="dark-content" />
+      
+      {/* Enhanced Header Section */}
+      <LinearGradient
+        colors={['#2D723F', '#00C853']}
+        className="w-full pt-6"
+      >
+        <View className="pt-12 pb-6 px-4">
+          <View className="flex-row items-center justify-between">
+            <TouchableOpacity 
+              onPress={() => navigation.goBack()} 
+              className="bg-white/20 p-2 rounded-full"
+            >
+              <Ionicons name="arrow-back" size={24} color="white" />
+            </TouchableOpacity>
+            <Text className="text-white text-xl font-bold">
+              Farmer Profile
+            </Text>
+           <View></View>
+          </View>
+
+          <TouchableOpacity className="items-center mt-4">
+            <View className="bg-white p-1 rounded-full shadow-lg">
+              {farmerData?.pfp?.profilePic ? (
+                <Image
+                  source={{ uri: farmerData?.pfp?.profilePic }}
+                  className="w-24 h-24 rounded-full"
+                />
+              ) : (
+                <View className="w-24 h-24 rounded-full bg-gray-200 items-center justify-center">
+                  <Ionicons name="person" size={40} color="#666" />
+                </View>
+              )}
+            </View>
+            <Text className="text-white text-2xl font-bold mt-3">
+              {farmerData?.name || "Unknown Farmer"}
+            </Text>
+            <Text className="text-white/80 text-base">
+              {farmerData?.userType || "Not Available"}
+            </Text>
+            
+            <View className="flex-row items-center mt-2">
+              <Ionicons name="location" size={16} color="white" />
+              <Text className="text-white/90 text-sm ml-1">
+                {farmerData?.address
+                  ? `${farmerData.address.address_line_1 || ""}, ${
+                      farmerData.address.pincode || ""
+                    }`
+                  : "No Address Available"}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </LinearGradient>
 
       <ScrollView className="flex-1">
-        {/* ✅ Farmer Profile Section */}
-        <View className="items-center p-6 bg-gray-50 rounded-b-3xl shadow-md">
-          {farmerData.pfp?.profilePic ? (
-            <Image
-              source={{ uri: farmerData.pfp.profilePic }}
-              className="w-28 h-28 rounded-full border-4 border-gray-300"
-            />
+        {renderProductGrid()}
+        
+        {/* Farms Section */}
+        <View className="px-6 py-4">
+          <Text className="text-xl font-bold text-gray-800 mb-4">
+            Farmer's Farms
+          </Text>
+
+          {sellerFarmsData?.data?.length > 0 ? (
+            sellerFarmsData.data.map((farm, index) => (
+              <View key={index} className="bg-white rounded-lg shadow-md mb-4 overflow-hidden">
+                {/* Farm Header */}
+                <LinearGradient
+                  colors={['#2D723F', '#00C853']}
+                  className="px-4 py-3"
+                >
+                  <Text className="text-lg font-bold text-white">
+                    {farm.cropName}
+                  </Text>
+                  <Text className="text-white/80 text-sm">
+                    {farm.cropType}
+                  </Text>
+                </LinearGradient>
+
+                {/* Farm Details */}
+                <View className="p-4">
+                  <View className="flex-row justify-between items-center mb-4">
+                    <View className="flex-row items-center">
+                      <Ionicons name="calendar" size={20} color="#666" />
+                      <Text className="ml-2 text-gray-700">
+                        Sowing Date: {farm.dateOfSowing}
+                      </Text>
+                    </View>
+                    <View className="flex-row items-center">
+                      <Ionicons name="resize" size={20} color="#666" />
+                      <Text className="ml-2 text-gray-700">
+                        {farm.fieldArea} {farm.fieldSizeUnit}
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Farm Features */}
+                  <View className="flex-row flex-wrap">
+                    {['animalHusbandry', 'irrigation', 'storage', 'soilTested', 'chemicalFertilizer'].map(
+                      (feature) => farm[feature] === 'yes' && (
+                        <View key={feature} className="flex-row items-center mr-4 mb-2 bg-green-50 px-3 py-1 rounded-full">
+                          <Ionicons 
+                            name={renderFarmIcon(feature)} 
+                            size={16} 
+                            color="#2D723F" 
+                          />
+                          <Text className="ml-1 text-green-800 text-sm capitalize">
+                            {feature.replace(/([A-Z])/g, ' $1').trim()}
+                          </Text>
+                        </View>
+                      )
+                    )}
+                  </View>
+                </View>
+              </View>
+            ))
           ) : (
-            <Text className="text-gray-500">No Image</Text>
+            <Text className="text-gray-500 text-center py-4">
+              No farms registered
+            </Text>
           )}
-          <Text className="text-2xl font-bold mt-2 text-gray-800">
-            {farmerData.name || "Unknown Farmer"}
-          </Text>
-          <Text className="text-gray-600 text-lg">{farmerData.userType || "Not Available"}</Text>
-          <Text className="text-sm text-gray-500 mt-1">
-            {farmerData.address
-              ? `${farmerData.address.address_line_1 || ""}, ${
-                  farmerData.address.address_line_2 || ""
-                }, ${farmerData.address.pincode || ""}`
-              : "No Address Available"}
-          </Text>
         </View>
 
-        {/* ✅ Product List Section */}
-        <Text className="text-xl font-bold ml-6 mt-6 text-gray-800">
-          Farmer's Products
-        </Text>
-        {products.length > 0 ? (
-          <FlatList
-            data={products}
-            keyExtractor={(item, index) => index.toString()}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <View className="m-3 p-4 bg-white rounded-lg shadow-lg border border-gray-200 w-40">
-                <Image
-                  source={{ uri: item.imgUrl }}
-                  className="w-32 h-32 rounded-lg"
-                />
-                <Text className="text-lg font-semibold mt-2 text-gray-800">
-                  {item.name}
+        {/* Reviews Section */}
+        <View className="px-6 py-4 bg-white">
+          <Text className="text-xl font-bold text-gray-800 mb-4">
+            Reviews & Ratings
+          </Text>
+
+          {/* Rating Summary */}
+          <View className="bg-gray-50 p-4 rounded-lg mb-4">
+            <View className="flex-row items-center justify-between">
+              <View>
+                <Text className="text-3xl font-bold text-gray-900">
+                  {calculateAverageRating()}
                 </Text>
-                <Text className="text-gray-600">₹{item.price}/{item.unit}</Text>
-                {item.isRented && (
-                  <Text className="text-green-500 font-semibold mt-1">
-                    Rent: ₹{item.rentPrice}/{item.rentTime}
+                <Text className="text-sm text-gray-500">
+                  Based on {reviews.length} reviews
+                </Text>
+              </View>
+              <View>
+                {/* Updated Rating Component */}
+                <AirbnbRating
+                  count={5}
+                  defaultRating={Number(calculateAverageRating()) || 0}
+                  size={20}
+                  showRating={false}
+                  isDisabled={true}
+                  starContainerStyle={{ paddingVertical: 4 }}
+                />
+              </View>
+            </View>
+          </View>
+
+          {/* Individual Reviews */}
+          {reviews.length > 0 ? (
+            reviews.map((review, index) => (
+              <View 
+                key={review.id} 
+                className="border-b border-gray-200 py-4"
+                style={index === 0 ? {borderTopWidth: 1} : {}}
+              >
+                <View className="flex-row items-center justify-between">
+                  <View className="flex-row items-center">
+                    <View className="w-10 h-10 bg-green-100 rounded-full items-center justify-center">
+                      <Text className="text-green-600 font-bold">
+                        {review.reviewerName?.charAt(0).toUpperCase()}
+                      </Text>
+                    </View>
+                    <View className="ml-3">
+                      <Text className="font-semibold text-gray-800">
+                        {review.reviewerName}
+                      </Text>
+                      <Text className="text-xs text-gray-500">
+                        {formatDate(review.createdAt)}
+                      </Text>
+                    </View>
+                  </View>
+                  <View className="flex-row items-center">
+                    <Text className="text-gray-700 mr-2">
+                      {review.selectedRating}
+                    </Text>
+                    <Ionicons 
+                      name="star" 
+                      size={16} 
+                      color="#FFB800"
+                    />
+                  </View>
+                </View>
+                {review.text && (
+                  <Text className="text-gray-600 mt-2 ml-13">
+                    {review.text}
                   </Text>
                 )}
               </View>
-            )}
-          />
-        ) : (
-          <Text className="ml-6 mt-2 text-gray-500">No products available.</Text>
-        )}
+            ))
+          ) : (
+            <Text className="text-gray-500 text-center py-4">
+              No reviews yet
+            </Text>
+          )}
+        </View>
       </ScrollView>
     </View>
   );

@@ -20,7 +20,7 @@ const OrderScreen = () => {
     fetchOrdersList();
   }, [userData.uid]);
 
-  console.log("rrrrrrrrrr", orders)
+ 
 
   return (
     <View style={styles.container}>
@@ -28,7 +28,7 @@ const OrderScreen = () => {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.goBack()}>
+          onPress={() => navigation.navigate('Main')}>
           <Ionicons name="arrow-back" size={24} color="#048404" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>My Orders</Text>
@@ -74,8 +74,6 @@ const OrderScreen = () => {
                   </View>
                 </View>
               </View>
-
-              {console.log("orderssss", order)}
 
               {/* Order Footer */}
               <View style={styles.orderFooter}>

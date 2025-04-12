@@ -87,7 +87,7 @@ const NotificationScreen = ({ navigation }) => {
           {
             text: "Cancel",
             style: "cancel",
-            onPress: () => console.log("Cancel Pressed"),
+           
           },
           { text: "OK", onPress: async () => {
             simulateLoading();
@@ -118,7 +118,7 @@ const NotificationScreen = ({ navigation }) => {
         {
           text: "Cancel",
           style: "cancel",
-          onPress: () => console.log("Cancel Pressed"),
+         
         },
         { text: "OK", onPress: async () => {
           simulateLoading();

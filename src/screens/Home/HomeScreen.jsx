@@ -27,7 +27,7 @@ const CategoryCircle = ({ coverUrl, coverImage, categorieName }) => {
     if (categorieName) {
       navigation.navigate('ProductList', { searchQuery: categorieName })
     } else {
-      console.log('Category name is undefined');
+      
     }
   };
 

@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import logo from '../../assets/splashscreen_logo.png';
 import { AppContext } from '../context/AppContext';
+import farmerImage from '../assets/farmer.png';
 
 const Header = () => {
   const { userData } = useContext(AppContext);
@@ -29,6 +30,9 @@ const Header = () => {
     }
   }, [route.name, userData]);
 
+  const imageSource = userData?.pfp?.profilePic
+  ? { uri: userData.pfp.profilePic }
+  : farmerImage;
   return (
     <View className="bg-white px-4 py-2 flex-row items-center justify-between">
       {show ? (
@@ -63,7 +67,12 @@ const Header = () => {
       {show && (
         <TouchableOpacity>
           <Image 
-           source={{ uri: userData?.pfp?.profilePic }}
+          // source={farmerImage}
+          source = {
+    userData?.pfp?.profilePic
+      ? { uri: userData.pfp.profilePic } // For remote image
+      : farmerImage                      // For local image
+  }
             className="w-12 h-12 rounded-full border-2 border-[#048404]"
             resizeMode="cover"
           />
