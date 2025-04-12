@@ -149,7 +149,7 @@ export const getReviews = async (userId) => {
   console.log("first", userId)
   try {
     if (!userId) {
-      showToast({ icon: "error", title: "No reviews available for this profile!" });
+      
       return [];
     }
     const reviewsRef = ref(database, `users/${userId}/reviews`);
@@ -165,7 +165,7 @@ export const getReviews = async (userId) => {
       });
       return reviews;
     } else {
-      showToast({ icon: "error", title: "No reviews available for this profile!" });
+  
       return []; 
     }
   } catch (error) {

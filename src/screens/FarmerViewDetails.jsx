@@ -20,6 +20,7 @@ import ProductCard from "../components/ProductCard";
 import { fetchProducts } from "../services/productService";
 import { AirbnbRating } from 'react-native-ratings'; // You'll need to install this package
 import { getFarms } from "../services/farmer/FarmerFarmProfile";
+import CustomRating from '../components/CustomRating';
 
 const FarmerViewDetails = () => {
   const navigation = useNavigation();
@@ -414,17 +415,7 @@ const FarmerViewDetails = () => {
                   Based on {reviews.length} reviews
                 </Text>
               </View>
-              <View>
-                {/* Updated Rating Component */}
-                <AirbnbRating
-                  count={5}
-                  defaultRating={Number(calculateAverageRating()) || 0}
-                  size={20}
-                  showRating={false}
-                  isDisabled={true}
-                  starContainerStyle={{ paddingVertical: 4 }}
-                />
-              </View>
+              <CustomRating rating={calculateAverageRating()} />
             </View>
           </View>
 

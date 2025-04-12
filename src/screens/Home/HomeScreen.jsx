@@ -59,6 +59,7 @@ const HomeScreen = ({ route }) => {
   const user = route?.params?.user;
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
+  const [tempFilterProduct, setTempFilterProduct] = useState([]);
   const [fullProducts, setFullProducts] = useState([])
   const [vegetables, setVegetables] = useState([])
   const [fertilizers, setFertilizers] = useState([]);
@@ -85,7 +86,7 @@ const HomeScreen = ({ route }) => {
   useEffect(() => {
     fetchCategories({ user }).then(setCategories);
     fetchCategories({ user }).then(setCategoryList);
-
+    fetchProducts({}).then(setTempFilterProduct);
     fetchProducts({ sortType: "newest", limit: 10 }).then(setProducts);
     fetchProducts({ sortType: "newest", limit: 10, search: "Fruits" }).then(setFruits);
     fetchProducts({ sortType: "newest", limit: 10, search: "Vegetables" }).then(setVegetables);
@@ -102,7 +103,6 @@ const HomeScreen = ({ route }) => {
     fetchProducts({ sortType: "newest", limit: 10, search: "Animal Husbandry" }).then(setAnimalhasbendry);
     fetchProducts({ sortType: "newest", limit: 10, search: "Oilseeds" }).then(setOilSeeds);
   }, [user]);
-
   const ViewAllProductList = (searchQuery) => {
 
     navigation.navigate("ProductList", { searchQuery: searchQuery });
@@ -114,7 +114,7 @@ const HomeScreen = ({ route }) => {
 
       {/* Header */}
 
-      <Header />
+      <Header  />
 
       {/* Search Bar */}
       <View className="bg-white px-4 py-2 border-b border-gray-100">
@@ -132,6 +132,7 @@ const HomeScreen = ({ route }) => {
 
       {/* Search Overlay */}
       <SearchOverlay
+      tempFilterProduct={tempFilterProduct}
         isVisible={isSearchVisible}
         onClose={() => setIsSearchVisible(false)}
         onSearch={(query) => {
