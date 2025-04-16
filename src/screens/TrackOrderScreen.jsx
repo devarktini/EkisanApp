@@ -14,6 +14,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { getOrderTrackDetails, sendMessage, updateRequestStatus } from '../services/TrackOrderService';
 import { AppContext } from '../context/AppContext';
+import { updateOrderStatus, updateOrderStatus1 } from '../services/OrderService';
 
 const { width } = Dimensions.get('window');
 
@@ -89,10 +90,13 @@ const TrackOrderScreen = ({ navigation, route }) => {
         return () => clearInterval(interval);
       
     }, [route.params]);
-
   const handleStatusUpdate = async (status) => {
+    console.log("ssssssss", orderTrackData)
     try {
      const response = await updateRequestStatus(orderTrackData?.orderTrackId, status);
+    const response2 = await updateOrderStatus(userData, orderTrackData.orderId, status )
+    const response3 = await updateOrderStatus1(orderDetails.buyerId, orderTrackData.orderId, status )
+    // console.log("first", response2)
       setOrderStatus(status);
       Alert.alert('Success', `Order ${status.toLowerCase()} successfully`);
       fetchOrderTrack();

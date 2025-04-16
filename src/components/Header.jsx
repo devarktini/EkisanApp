@@ -65,7 +65,7 @@ const Header = () => {
         </TouchableOpacity>
       </View>
       {show && (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=> navigation.navigate('Profile')}>
           <Image 
           // source={farmerImage}
           source = {

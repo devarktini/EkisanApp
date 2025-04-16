@@ -1,22 +1,26 @@
 import React from 'react';
-import { AirbnbRating } from 'react-native-ratings';
 import { View } from 'react-native';
+import { Rating } from 'react-native-ratings';
 
 const CustomRating = ({
   rating = 0,
+  count = 5,
   size = 20,
-  isDisabled = true,
   showRating = false,
+  readonly = true,
 }) => {
   return (
     <View>
-      <AirbnbRating
-        count={5}
-        defaultRating={Number(rating)}
-        size={size}
+      <Rating
+        type="custom"
+        ratingCount={count}
+        startingValue={Number(rating) || 0}
+        imageSize={size}
         showRating={showRating}
-        isDisabled={isDisabled}
-        starContainerStyle={{ paddingVertical: 4 }}
+        readonly={readonly}
+        ratingColor="#FFB800"
+        ratingBackgroundColor="#DDD"
+        tintColor="#F9FAFB"
       />
     </View>
   );

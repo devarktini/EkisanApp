@@ -6,6 +6,7 @@ import {
   Modal,
   ScrollView,
   TextInput,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -20,6 +21,7 @@ import { AppContext } from "../../context/AppContext";
 import { getFarms } from "../../services/farmer/FarmerFarmProfile";
 import fetchCrops from "../../services/fetchCrops";
 import fetchCategories from "../../services/fetchCategories";
+import { LoaderContext } from "../../context/LoaderContext";
 
 const AddFarm = ({ navigation }) => {
   const {
@@ -38,6 +40,7 @@ const AddFarm = ({ navigation }) => {
   const [isViewModalVisible, setIsViewModalVisible] = useState(false); //
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const { setLoading } = useContext(LoaderContext);
 
   // Form states
   const [cropType, setCropType] = useState("");
@@ -54,30 +57,64 @@ const AddFarm = ({ navigation }) => {
 
   // Dropdown options
   // Handle form submission
-  const handleSubmit = () => {
-    const farmData = {
-      cropType,
-      cropName: cropGrown,
-      dateOfSowing: sowingDate.toDateString(),
-      fieldArea: farmArea,
-      fieldSizeUnit: unitOfMeasurement,
-      irrigation: irrigationFacility,
-      storage: storageFacility,
-      chemicalFertilizer,
-      soilTested,
-      animalHusbandry,
-    };
+  const handleSubmit = async () => {
+    try {
+      // Validate all required fields
+      if (!cropType) {
+        Alert.alert('Error', 'Please select a crop type');
+        return;
+      }
+      if (!cropGrown) {
+        Alert.alert('Error', 'Please select a specific crop');
+        return;
+      }
+      if (!farmArea) {
+        Alert.alert('Error', 'Please enter farm area');
+        return;
+      }
+      if (isNaN(farmArea) || farmArea <= 0) {
+        Alert.alert('Error', 'Please enter a valid farm area (numbers only)');
+        return;
+      }
 
-    if (editingFarm) {
-      updateFarm(userData, selectedIndex, farmData); // Update existing farm
-    } else {
-      addFarm(farmData, userData); // Add new farm
+      setLoading(true);
+
+      const farmData = {
+        cropType,
+        cropName: cropGrown,
+        dateOfSowing: sowingDate.toDateString(),
+        fieldArea: farmArea,
+        fieldSizeUnit: unitOfMeasurement,
+        irrigation: irrigationFacility,
+        storage: storageFacility,
+        chemicalFertilizer,
+        soilTested,
+        animalHusbandry,
+      };
+
+      if (editingFarm) {
+        await updateFarm(userData, selectedIndex, farmData);
+      } else {
+        await addFarm(farmData, userData);
+      }
+
+      // Reset form and close modal
+      setIsModalVisible(false);
+      setEditingFarm(null);
+      resetForm();
+
+    } catch (error) {
+      console.error('Error submitting farm:', error);
+      Alert.alert('Error', 'Failed to submit farm data');
+    } finally {
+      setLoading(false); // Stop loading regardless of outcome
     }
+  };
 
-    // Reset form and close modal
-    setIsModalVisible(false);
-    setEditingFarm(null);
-    resetForm();
+  const handleAreaChange = (value) => {
+    // Only allow numbers and decimal point
+    const numericValue = value.replace(/[^0-9]/g, '');
+    setFarmArea(numericValue);
   };
 
   // Reset form fields
@@ -95,20 +132,35 @@ const AddFarm = ({ navigation }) => {
   };
 
   // Handle edit farm
-  const handleEditFarm = (farm, index) => {
-    setSelectedIndex(index);
-    setEditingFarm(farm);
-    setCropType(farm.cropType);
-    setCropGrown(farm.cropGrown);
-    setSowingDate(new Date(farm.sowingDate));
-    setFarmArea(farm.farmArea);
-    setUnitOfMeasurement(farm.unitOfMeasurement);
-    setIrrigationFacility(farm.irrigationFacility);
-    setStorageFacility(farm.storageFacility);
-    setChemicalFertilizer(farm.chemicalFertilizer);
-    setSoilTested(farm.soilTested);
-    setAnimalHusbandry(farm.animalHusbandry);
-    setIsModalVisible(true);
+  const handleEditFarm = async (farm, index) => {
+    try {
+      setSelectedIndex(index);
+      setEditingFarm(farm);
+      
+      // First set the crop type
+      setCropType(farm.cropType || "");
+      
+      // Wait for next render cycle to ensure cropType is set
+      setTimeout(() => {
+        // Then set the crop grown
+        setCropGrown(farm.cropName || "");
+      }, 100);
+
+      // Set other fields
+      setSowingDate(new Date(farm.dateOfSowing || new Date()));
+      setFarmArea(farm.fieldArea?.toString() || "");
+      setUnitOfMeasurement(farm.fieldSizeUnit || "acre");
+      setIrrigationFacility(farm.irrigation || "no");
+      setStorageFacility(farm.storage || "no");
+      setChemicalFertilizer(farm.chemicalFertilizer || "no");
+      setSoilTested(farm.soilTested || "no");
+      setAnimalHusbandry(farm.animalHusbandry || "no");
+      
+      setIsModalVisible(true);
+    } catch (error) {
+      console.error("Error setting edit form data:", error);
+      Alert.alert("Error", "Failed to load farm data for editing");
+    }
   };
 
   // Function to handle the "View" button click
@@ -514,13 +566,14 @@ const AddFarm = ({ navigation }) => {
                   {/* 4. Area of Farm */}
                   <View className="mb-6">
                     <Text className="text-lg font-semibold mb-2 text-gray-700">
-                      Area of Farm
+                      Area of Farm *
                     </Text>
                     <TextInput
-                      placeholder="Enter area"
+                      placeholder="Enter area (numbers only)"
                       value={farmArea}
-                      onChangeText={setFarmArea}
+                      onChangeText={handleAreaChange}
                       keyboardType="numeric"
+                      maxLength={8}
                       className="border-2 border-gray-200 p-4 rounded-xl bg-gray-50"
                     />
                   </View>

@@ -7,6 +7,7 @@ import ProductCard from "../components/ProductCard";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { fetchProducts } from "../services/productService";
 import { Ionicons } from '@expo/vector-icons';
+import filterProduct from "../services/filterProduct";
 
 const ProductsListingPage = () => {
   const route = useRoute();
@@ -14,10 +15,31 @@ const ProductsListingPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [products, setProducts] = useState([]);
   const serchText = route.params?.searchQuery || "";
+  // const{  filterBy, address } = route.params || {};
+  const { filterKey, filterValue } = route.params || {};
 
   useEffect(() => {
-    fetchProducts({ sortType: "newest", limit: null, search: serchText }).then(setProducts);
-  }, [searchQuery]);
+    const loadProducts = async () => {
+      try {
+        const allProducts = await fetchProducts({ sortType: "newest", limit: null, search: serchText });
+        
+        if (filterKey && filterValue) {
+          const filteredResults = filterProduct({
+            products: allProducts,
+            filterBy: filterKey,
+            [filterKey]: filterValue
+          });
+          setProducts(filteredResults);
+        } else {
+          setProducts(allProducts);
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    loadProducts();
+  }, [searchQuery, filterKey, filterValue]);
 
   const filteredProducts = products.filter(product =>
     product?.name?.toLowerCase().includes(searchQuery.toLowerCase())

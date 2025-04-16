@@ -281,7 +281,7 @@ const FarmerViewDetails = () => {
         colors={['#2D723F', '#00C853']}
         className="w-full pt-6"
       >
-        <View className="pt-12 pb-6 px-4">
+        <View className="mt-16 pb-6 px-4">
           <View className="flex-row items-center justify-between">
             <TouchableOpacity 
               onPress={() => navigation.goBack()} 
@@ -312,9 +312,9 @@ const FarmerViewDetails = () => {
               {farmerData?.name || "Unknown Farmer"}
             </Text>
             <Text className="text-white/80 text-base">
-              {farmerData?.userType || "Not Available"}
+              {farmerData.userType === 'corporate'? 'Company/Organisation':farmerData.userType || "Not Available"}
             </Text>
-            
+             {console.log("first", farmerData)}
             <View className="flex-row items-center mt-2">
               <Ionicons name="location" size={16} color="white" />
               <Text className="text-white/90 text-sm ml-1">
@@ -343,6 +343,7 @@ const FarmerViewDetails = () => {
               <View key={index} className="bg-white rounded-lg shadow-md mb-4 overflow-hidden">
                 {/* Farm Header */}
                 <LinearGradient
+                style={{ paddingHorizontal: 16, paddingVertical: 8 }}
                   colors={['#2D723F', '#00C853']}
                   className="px-4 py-3"
                 >
@@ -396,6 +397,66 @@ const FarmerViewDetails = () => {
               No farms registered
             </Text>
           )}
+        </View>
+
+
+        {/* Announcements Section */}
+        <View className="px-6 py-6 bg-gradient-to-r from-green-50 to-white">
+          {/* <View className="flex-row items-center justify-between mb-6">
+            <Text className="text-xl font-bold text-gray-800">
+              Announcements
+            </Text>
+            <TouchableOpacity className="bg-green-100 px-3 py-1 rounded-full">
+              <Text className="text-green-700 text-sm">View All</Text>
+            </TouchableOpacity>
+          </View> */}
+
+          {/* Announcement Cards */}
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            className="mb-4"
+          >
+            {/* First Announcement */}
+            <View className="bg-white p-4 rounded-xl shadow-sm mr-4 border border-gray-100 w-full">
+              <View className="flex-row items-center mb-3">
+                <View className="bg-green-100 p-2 rounded-full">
+                  <Ionicons name="megaphone" size={20} color="#048404" />
+                </View>
+                <View className="ml-3 flex-1">
+                  <Text className="text-base font-bold text-gray-800">Announcement</Text>
+                  {/* <Text className="text-xs text-gray-500">2 hours ago</Text> */}
+                </View>
+              </View>
+              <Text className="text-gray-600 text-sm mb-3">
+              To help {farmerData.name} you can give reviews , rating and can talk by adding them to group also
+              </Text>
+              {/* <TouchableOpacity className="flex-row items-center">
+                <Text className="text-green-600 text-sm font-medium">Learn More</Text>
+                <Ionicons name="arrow-forward" size={16} color="#048404" style={{ marginLeft: 4 }} />
+              </TouchableOpacity> */}
+            </View>
+
+            {/* Second Announcement */}
+            {/* <View className="bg-white p-4 rounded-xl shadow-sm mr-4 border border-gray-100 w-72">
+              <View className="flex-row items-center mb-3">
+                <View className="bg-blue-100 p-2 rounded-full">
+                  <Ionicons name="notifications" size={20} color="#0066FF" />
+                </View>
+                <View className="ml-3 flex-1">
+                  <Text className="text-base font-bold text-gray-800">Seasonal Update</Text>
+                  <Text className="text-xs text-gray-500">1 day ago</Text>
+                </View>
+              </View>
+              <Text className="text-gray-600 text-sm mb-3">
+                Get ready for the upcoming harvest season with special offers!
+              </Text>
+              <TouchableOpacity className="flex-row items-center">
+                <Text className="text-green-600 text-sm font-medium">View Details</Text>
+                <Ionicons name="arrow-forward" size={16} color="#048404" style={{ marginLeft: 4 }} />
+              </TouchableOpacity>
+            </View> */}
+          </ScrollView>
         </View>
 
         {/* Reviews Section */}

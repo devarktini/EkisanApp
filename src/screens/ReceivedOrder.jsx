@@ -30,7 +30,6 @@ const ReceivedOrder = ({ navigation }) => {
 
     fetchProducts();
   }, []);
-
   const getFilteredOrders = () => {
     return receivedOrders.filter(order => {
       const searchLower = searchQuery.toLowerCase();

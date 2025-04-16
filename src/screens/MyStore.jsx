@@ -9,11 +9,14 @@ import {
   Image,
   Dimensions,
   ScrollView,
+  Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // For back button icon
 import { AppContext } from '../context/AppContext';
-import { fetchRejectedProducts, fetchItemToVerify } from '../services/productService';
-
+import { fetchRejectedProducts, fetchItemToVerify, fetchProducts } from '../services/productService';
+import filterProduct from '../services/filterProduct';
+import AddProduct from './AddProduct';
+import { LinearGradient } from 'expo-linear-gradient';
 const { width } = Dimensions.get('window'); // Get screen width for responsive design
 const tabs = [ 'Verified', 'Pending', 'Rejected', 'Rent'];
 
@@ -24,24 +27,31 @@ const MyStore = ({ navigation }) => {
   const [pendingProducts, setPendingProducts] = useState([]);
   const [rejectedProducts, setRejectedProducts] = useState([]);
   const [rentProducts, setRentProducts] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+
  
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchProductss = async () => {
       try {
         // Fetch rejected products
         const rejectedResponse = await fetchRejectedProducts(userData.uid || userData.userId);
         setRejectedProducts(rejectedResponse);
-    
-
         // Fetch pending and verified products
         const verifyingResponse = await fetchItemToVerify(userData.uid || userData.uiId);
-        const verified = verifyingResponse.filter((item) => item.status === 'verified');
+        const verified = await fetchProducts({})
         const RentProduct = verifyingResponse.filter((item) => item.isRented === true);
         const pending = verifyingResponse.filter((item) => item.status === 'pending');
         // Fetch received orders
+        const filteredProducts = filterProduct({
+          verified,
+          filterBy: "seller",
+          sellerUID: userData.uid || userData.userId,
+        });
+        console.log("dddddddd", rejectedResponse)
         setRentProducts(RentProduct)
-        setVerifiedProducts(verified);
+        setVerifiedProducts(filteredProducts);
         setPendingProducts(pending);
 
     
@@ -51,7 +61,7 @@ const MyStore = ({ navigation }) => {
       }
     };
 
-    fetchProducts();
+    fetchProductss();
   }, []);
 
   // Function to Render Product Cards
@@ -59,12 +69,21 @@ const MyStore = ({ navigation }) => {
     <View style={styles.card}>
       <Image source={{ uri: item.imgUrl }} style={styles.cardImage} />
       <View style={styles.cardContent}>
-        <Text style={styles.cardTitle}>{item.title}</Text>
+        <Text style={styles.cardTitle}>{item.title? item.title : item.name}</Text>
         <Text style={styles.cardDescription} numberOfLines={2}>
           {item.description}
         </Text>
-        <Text style={styles.cardPrice}>Price: ₹{item.price}</Text>
-        <Text style={styles.cardDate}>Created: {item.createdDate}</Text>
+        <Text style={styles.cardPrice}>Price: ₹{item.price? item.price : item.rentPrice}</Text>
+        <Text style={styles.cardDate}>Created: {item.createdDate? item.createdDate : item.createdAt}</Text>
+        
+        {/* Show rejection reason if product is rejected */}
+        {item.status === 'pending' && item.reason && (
+          <View style={styles.rejectionContainer}>
+            <Text style={styles.rejectionLabel}>Rejection Reason:</Text>
+            <Text style={styles.rejectionText}>{item.reason}</Text>
+          </View>
+        )}
+
         <Text
           style={[
             styles.cardStatus,
@@ -79,6 +98,7 @@ const MyStore = ({ navigation }) => {
     </View>
   );
 
+  
   // Determine which data to display based on the active tab
   const getTabData = () => {
     switch (activeTab) {
@@ -139,6 +159,31 @@ const MyStore = ({ navigation }) => {
           <Text style={styles.emptyText}>No products available in this category.</Text>
         }
       />
+
+      <Modal visible={isModalVisible} transparent={true} animationType="slide" onRequestClose={() => setIsModalVisible(false)}>
+              <View style={styles.modalOverlay}>
+                <View style={styles.modalContent}>
+                  <AddProduct setIsModalVisible={setIsModalVisible} />
+                  <TouchableOpacity style={styles.closeButton} onPress={() => setIsModalVisible(false)}>
+                    <Text style={styles.closeButtonText}>Close</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
+
+      {/* Floating Action Button */}
+      <TouchableOpacity 
+        style={styles.fab}
+        onPress={() => setIsModalVisible(true)}
+      >
+        <LinearGradient
+          colors={['#048404', '#38a169']}
+          style={styles.fabGradient}
+        >
+          <Ionicons name="add" size={24} color="white" />
+        </LinearGradient>
+      </TouchableOpacity>
+            
     </SafeAreaView>
   );
 };
@@ -267,5 +312,44 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#888',
     marginTop: 20,
+  },
+  fab: {
+    position: 'absolute',
+    right: 20,
+    bottom: 20,
+    borderRadius: 30,
+    overflow: 'hidden',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  fabGradient: {
+    width: 56,
+    height: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalOverlay: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+  modalContent: { width: '90%', height: '95%', backgroundColor: 'white', borderRadius: 10, padding: 10, alignItems: 'center' },
+  closeButton: { backgroundColor: '#048404', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 5 },
+  closeButtonText: { color: 'white', fontWeight: 'bold' },
+  logoutButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  rejectionContainer: {
+    backgroundColor: '#FEE2E2',
+    padding: 8,
+    borderRadius: 6,
+    marginVertical: 5,
+  },
+  rejectionLabel: {
+    color: '#DC2626',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginBottom: 2,
+  },
+  rejectionText: {
+    color: '#7F1D1D',
+    fontSize: 12,
   },
 });

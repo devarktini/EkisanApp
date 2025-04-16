@@ -14,9 +14,11 @@ import { Picker } from '@react-native-picker/picker'; // For dropdown picker
 import * as ImagePicker from 'expo-image-picker'; // For image selection
 import { AppContext } from '../context/AppContext';
 import { sendItemToVerification, sendRentItemForVerification } from '../services/productService';
+import { LoaderContext } from '../context/LoaderContext';
 
 const RentProductScreen = ({ navigation }) => {
   const {userData}= useContext(AppContext)
+  const { setLoading } = useContext(LoaderContext);
   const [category, setCategory] = useState('');
   const [productName, setProductName] = useState('');
   const [description, setDescription] = useState('');
@@ -42,58 +44,64 @@ const RentProductScreen = ({ navigation }) => {
     }
   };
 
-  // const handleSubmit = async() => {
-  //   if (!productName || !rentPrice || !quantity || !rentDuration || !category) {
-  //     Alert.alert('Error', 'Please fill in all required fields.');
-  //     return;
-  //   }
+  const handleNameChange = (text) => {
+    // Allow only letters, spaces, and basic punctuation
+    const nameRegex = /^[a-zA-Z0-9\s.,'-]*$/;
+    if (nameRegex.test(text) || text === '') {
+      setProductName(text);
+    }
+  };
 
-  //   const formData = {
-  //     category,
-  //     productName,
-  //     description,
-  //     rentPrice,
-  //     quantity,
-  //     rentDuration,
-  //     image,
-  //   };
-  //   const rentProductData = {
-  //     ...formData,
-  //     rentPrice: Number(formData.rentPrice),
-  //     quantity: Number(formData.quantity),
-  //     createdAt: Date.now(),
-  //     isRented: userData?.userType === 'farmer' ? true : false,
-  //     userType: userData?.userType,
-  //   };
+  const handlePriceChange = (text) => {
+    // Allow only numbers and one decimal point
+    const numericValue = text.replace(/[^0-9.]/g, '');
+    // Prevent multiple decimal points
+    if (numericValue.split('.').length > 2) return;
+    setRentPrice(numericValue);
+  };
 
-  //   const result = await sendItemToVerification({
-  //     user: userData,
-  //     itemData: rentProductData,
-  //     productImage: image
-  //   });
+  const handleQuantityChange = (text) => {
+    // Allow only positive integers
+    const numericValue = text.replace(/[^0-9]/g, '');
+    setQuantity(numericValue);
+  };
 
-  
-
-
- 
-  //   Alert.alert('Success', 'Product submitted successfully!');
-  //   // Add form submission logic here
-  // };
+  const validateForm = () => {
+    if (!category) {
+      Alert.alert('Error', 'Please select a category');
+      return false;
+    }
+    if (!productName || productName.trim().length < 3) {
+      Alert.alert('Error', 'Product name must be at least 3 characters');
+      return false;
+    }
+    if (!rentPrice || parseFloat(rentPrice) <= 0) {
+      Alert.alert('Error', 'Please enter a valid rent price');
+      return false;
+    }
+    if (!quantity || parseInt(quantity) <= 0) {
+      Alert.alert('Error', 'Please enter a valid quantity');
+      return false;
+    }
+    if (!rentDuration) {
+      Alert.alert('Error', 'Please select rent duration');
+      return false;
+    }
+    if (!image) {
+      Alert.alert('Error', 'Please upload a product image');
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async () => {
     try {
-      // Validate required fields
-      if (!productName || !rentPrice || !quantity || !rentDuration || !category) {
-        Alert.alert('Error', 'Please fill in all required fields.');
+      if (!validateForm()) {
         return;
       }
-  
-      // Ensure the productName field is properly set
-      if (!productName) {
-        Alert.alert('Error', 'Product name is required.');
-        return;
-      }
-  
+
+      setLoading(true); // Start loading
+
       const formData = {
         category,
         productName,
@@ -102,7 +110,6 @@ const RentProductScreen = ({ navigation }) => {
         quantity,
         rentDuration,
         image,
-        
       };
   
       const rentProductData = {
@@ -114,19 +121,15 @@ const RentProductScreen = ({ navigation }) => {
         userType: userData?.userType,
       };
   
-   
-  
-      // Send data to verification
       const result = await sendRentItemForVerification({
         user: userData,
         itemData: rentProductData,
         productImage: image,
       });
      
-  
       if (result?.success) {
         Alert.alert('Success', 'Product submitted successfully!');
-        // Reset the form
+        // Reset form
         setCategory('');
         setProductName('');
         setDescription('');
@@ -134,14 +137,18 @@ const RentProductScreen = ({ navigation }) => {
         setQuantity('');
         setRentDuration('');
         setImage(null);
+        navigation.goBack();
       } else {
         Alert.alert('Error', result?.message || 'Failed to submit the product. Please try again.');
       }
     } catch (error) {
       console.error('Error in sendItemToVerification:', error);
       Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false); // Stop loading regardless of outcome
     }
   };
+
   return (
     <View style={styles.container}>
       {/* Header with Back Button */}
@@ -200,7 +207,8 @@ const RentProductScreen = ({ navigation }) => {
             style={styles.input}
             placeholder="Enter product name"
             value={productName}
-            onChangeText={setProductName}
+            onChangeText={handleNameChange}
+            maxLength={50}
           />
 
           {/* Description */}
@@ -220,8 +228,9 @@ const RentProductScreen = ({ navigation }) => {
             style={styles.input}
             placeholder="Enter rent price"
             value={rentPrice}
-            onChangeText={setRentPrice}
-            keyboardType="numeric"
+            onChangeText={handlePriceChange}
+            keyboardType="decimal-pad"
+            maxLength={10}
           />
 
           {/* Quantity */}
@@ -230,8 +239,9 @@ const RentProductScreen = ({ navigation }) => {
             style={styles.input}
             placeholder="Enter quantity"
             value={quantity}
-            onChangeText={setQuantity}
-            keyboardType="numeric"
+            onChangeText={handleQuantityChange}
+            keyboardType="number-pad"
+            maxLength={5}
           />
 
           {/* Rent Duration */}

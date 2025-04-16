@@ -1,5 +1,5 @@
 import { database } from '../../firebase.config';
-import { get, push, ref, remove, set } from "firebase/database";
+import { get, push, ref, remove, set, update } from "firebase/database";
 import { orderTrack } from "./TrackOrderService";
 // import english from "@/util/name/english";
 
@@ -114,7 +114,6 @@ export const fetchOrdersByUserId = async (userId) => {
     if (!snapshot.exists()) {
       return [];
     }
-
     const orders = Object.entries(snapshot.val())
       .map(([orderId, order]) => ({
         orderId,
@@ -194,3 +193,63 @@ try {
   throw error;
 }
 };
+
+export const updateOrderStatus = async (user, orderId, newStatus) => {
+  const userId = user?.userId || user?.uid;
+  console.log("order Id", orderId)
+  try {
+    if (!userId || !orderId) {
+      return { success: false, message: "User ID and Order ID are required." };
+    }
+    // Get current order data first
+    const orderRef = ref(database, `orders/${orderId}`);
+    const snapshot = await get(orderRef);
+    //  console.log("snapshot", snapshot.val())
+    if (!snapshot.exists()) {
+      return { success: false, message: "Order not found" };
+    }
+    const currentOrderData = snapshot.val();
+    console.log("sssssssssss",currentOrderData)
+    // Update only the orderStatus while preserving other data
+    await update(ref(database, `orders/${orderId}`), {
+      ...currentOrderData,
+      orderStatus: newStatus
+    });
+
+    // return { success: true, message: "Order status updated successfully." };
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    return { success: false, message: "Failed to update order status." };
+  }
+};
+
+export const updateOrderStatus1 = async (userId, orderId, newStatus) => {
+  // const userId = user?.userId || user?.uid;
+  console.log("Buyer Id", userId)
+  console.log("order Id", orderId)
+  try {
+    if (!userId || !orderId) {
+      return { success: false, message: "User ID and Order ID are required." };
+    }
+    // Get current order data first
+    const orderRef = ref(database, `users/${userId}/orders/${orderId}`);
+    const snapshot = await get(orderRef);
+    //  console.log("snapshot", snapshot.val())
+    if (!snapshot.exists()) {
+      return { success: false, message: "Order not found" };
+    }
+    const currentOrderData = snapshot.val();
+    console.log("sssssssssss",currentOrderData)
+    // Update only the orderStatus while preserving other data
+    await update(ref(database, `users/${userId}/orders/${orderId}`), {
+      ...currentOrderData,
+      orderStatus: newStatus
+    });
+
+    // return { success: true, message: "Order status updated successfully." };
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    return { success: false, message: "Failed to update order status." };
+  }
+};
+

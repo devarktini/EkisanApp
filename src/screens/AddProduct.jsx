@@ -20,9 +20,11 @@ import {
   sendItemToVerification,
   uploadImage,
 } from "../services/productService";
+import { LoaderContext } from "../context/LoaderContext";
 
 const AddProduct = ({ setIsModalVisible }) => {
   const { userData } = useContext(AppContext);
+  const { setLoading } = useContext(LoaderContext);
   const [categories, setCategories] = useState([]);
   const [crops, setCrops] = useState([]);
   const [selectedImages, setSelectedImages] = useState([]);
@@ -95,15 +97,40 @@ const AddProduct = ({ setIsModalVisible }) => {
   }, []);
 
   const handleInputChange = (field, value) => {
-    setFormValue((prev) => ({
+    // Numeric validation for specific fields
+    if (['quantity', 'price', 'marketPrice'].includes(field)) {
+      // Only allow numbers and decimal point
+      const numericValue = value.replace(/[^0-9.]/g, '');
+      // Prevent multiple decimal points
+      if (numericValue.split('.').length > 2) return;
+      
+      setFormValue(prev => ({
+        ...prev,
+        [field]: numericValue
+      }));
+      return;
+    }
+
+    // Certificate number validation - only numbers and letters
+    if (field === 'certificateNo') {
+      const alphanumericValue = value.replace(/[^0-9a-zA-Z]/g, '');
+      setFormValue(prev => ({
+        ...prev,
+        [field]: alphanumericValue
+      }));
+      return;
+    }
+
+    // Default case for other fields
+    setFormValue(prev => ({
       ...prev,
-      [field]: value,
+      [field]: value
     }));
   };
 
   const handleSubmit = async () => {
     try {
-  
+      setLoading(true); // Show loader when submission starts
 
       // Validate required fields
       if (
@@ -114,11 +141,13 @@ const AddProduct = ({ setIsModalVisible }) => {
         !formValue.unit ||
         !formValue.marketPrice
       ) {
+        setLoading(false); // Hide loader if validation fails
         Alert.alert("Error", "Please fill in all required fields marked with an asterisk (*).");
         return;
       }
 
       if (formValue.organic === "yes" && !formValue.certificateNo) {
+        setLoading(false); // Hide loader if validation fails
         Alert.alert("Error", "Please provide a certificate number for organic products.");
         return;
       }
@@ -135,24 +164,21 @@ const AddProduct = ({ setIsModalVisible }) => {
         userType: userData?.userType,
       };
 
-  
-
       // Send data to verification
       const result = await sendItemToVerification({
         user: userData,
         itemData: completeItemData,
         productImages: selectedImages,
       });
-      Toast.show({
-      type: "success",
-      text1: "Product submitted successfully for verification",
-      position: "top",
-    });
-  
 
       if (result?.success) {
-        Alert.alert("Success", "Product submitted successfully for verification.");
-        // Optionally reset the form
+        Toast.show({
+          type: "success",
+          text1: "Product submitted successfully for verification",
+          position: "top",
+        });
+        
+        // Reset form
         setFormValue({
           category: "",
           organic: "no",
@@ -175,6 +201,8 @@ const AddProduct = ({ setIsModalVisible }) => {
     } catch (error) {
       console.error("Error submitting product:", error);
       Alert.alert("Error", "An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false); // Hide loader when submission completes or fails
     }
   };
 
@@ -271,9 +299,10 @@ const AddProduct = ({ setIsModalVisible }) => {
         <TextInput
           style={styles.input}
           placeholder="Enter quantity"
-          keyboardType="numeric"
+          keyboardType="decimal-pad"
           value={formValue.quantity}
           onChangeText={(value) => handleInputChange("quantity", value)}
+          maxLength={10}
         />
       </View>
 
@@ -308,9 +337,10 @@ const AddProduct = ({ setIsModalVisible }) => {
           <TextInput
             style={styles.input}
             placeholder="Enter price"
-            keyboardType="numeric"
+            keyboardType="decimal-pad"
             value={formValue.price}
             onChangeText={(value) => handleInputChange("price", value)}
+            maxLength={10}
           />
         </View>
         {/* Unit Picker */}
@@ -341,9 +371,10 @@ const AddProduct = ({ setIsModalVisible }) => {
         <TextInput
           style={styles.input}
           placeholder="Enter market price or MRP"
-          keyboardType="numeric"
+          keyboardType="decimal-pad"
           value={formValue.marketPrice}
           onChangeText={(value) => handleInputChange("marketPrice", value)}
+          maxLength={10}
         />
       </View>
 
@@ -367,6 +398,8 @@ const AddProduct = ({ setIsModalVisible }) => {
             placeholder="Enter certificate number"
             value={formValue.certificateNo}
             onChangeText={(value) => handleInputChange("certificateNo", value)}
+            autoCapitalize="characters"
+            maxLength={20}
           />
         </View>
       )}

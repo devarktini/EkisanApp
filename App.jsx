@@ -12,6 +12,8 @@ import Toast from 'react-native-toast-message';
 import { AppProvider } from "./src/context/AppContext";
 import { ProgressProvider } from "./src/context/ProgressContext";
 import GlobalProgressBar from "./src/components/GlobalProgressBar";
+import { LoaderProvider } from "./src/context/LoaderContext";
+import { CorporateProvider } from './src/context/CorporateContext';
 
 export default function App() {
   const [isSplashVisible, setSplashVisible] = useState(true);
@@ -52,19 +54,23 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <ProgressProvider>
-        <GlobalProgressBar />
-        <NavigationContainer>
-          <AppProvider>
-            <FarmProvider>
-              <CartProvider>
-                <AppNavigator isFirstLaunch={isFirstLaunch} />
-              </CartProvider>
-            </FarmProvider>
-          </AppProvider>
-          <Toast />
-        </NavigationContainer>
-      </ProgressProvider>
+      <NavigationContainer>
+        <ProgressProvider>
+          <LoaderProvider>
+            <GlobalProgressBar />
+            <AppProvider>
+              <FarmProvider>
+                <CartProvider>
+                  <CorporateProvider>
+                    <AppNavigator isFirstLaunch={isFirstLaunch} />
+                  </CorporateProvider>
+                </CartProvider>
+              </FarmProvider>
+            </AppProvider>
+          </LoaderProvider>
+        </ProgressProvider>
+        <Toast />
+      </NavigationContainer>
     </SafeAreaProvider>
   );
 }

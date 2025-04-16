@@ -37,16 +37,23 @@ import TrackOrderScreen from "../screens/TrackOrderScreen";
 import SplashScreen from "../components/SplashScreen";
 import ProfileScreen from "../screens/Profile/ProfileScreen";
 import WishlistScreen from "../screens/Wishlist";
+import { View, ActivityIndicator } from "react-native";
+import { LoaderContext, useLoader } from "../context/LoaderContext";
+import AddCorporateProfile from "../screens/AddCorporateProfile";
+import CorporateProfileScreen from "../screens/CorporateProfileScreen";
 
 const Stack = createStackNavigator();
 
 const AppNavigator = ({ isFirstLaunch }) => {
   const { isAuthenticated, setIsAuthenticated } = useContext(AppContext);
- 
+  const { setLoading } = useContext(LoaderContext);
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        setLoading(true);
         const userData = await getUserData();
+        
         if (!userData) {
           setIsAuthenticated(false);
           return;
@@ -69,6 +76,8 @@ const AppNavigator = ({ isFirstLaunch }) => {
       } catch (error) {
         console.error('Auth check failed:', error);
         setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
       }
     };
     checkAuth();
@@ -96,7 +105,11 @@ const AppNavigator = ({ isFirstLaunch }) => {
         </>
       ) : isAuthenticated ? (
         <>
-          <Stack.Screen name="Main" component={DrawerNavigator} />
+          <Stack.Screen 
+            name="Main" 
+            component={DrawerNavigator}
+            options={{ animationEnabled: false }}
+          />
           <Stack.Screen name="Checkout" component={CheckoutScreen} />
           <Stack.Screen name="PersonalInfo" component={PersonalDetails} />
           <Stack.Screen name="ProductList" component={ProductsListingPage} />
@@ -108,6 +121,7 @@ const AppNavigator = ({ isFirstLaunch }) => {
           <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="ShoppingCart" component={ShoppingCart} />
           <Stack.Screen name="Wishlist" component={WishlistScreen} />
+          
           <Stack.Screen 
             name="AddFarm" 
             component={AddFarm}
@@ -116,6 +130,7 @@ const AppNavigator = ({ isFirstLaunch }) => {
               headerShown: false,
             }}
           />
+          <Stack.Screen name ="BusinessProfile" component={CorporateProfileScreen} />
           <Stack.Screen name='MyAccount' component={MyAccount} />
           <Stack.Screen name ='order' component={OrderScreen} />
           <Stack.Screen name ='groupList' component={MessageGroup} />
@@ -139,6 +154,7 @@ const AppNavigator = ({ isFirstLaunch }) => {
               gestureDirection: 'vertical',
             }}
           />
+          <Stack.Screen name="CorporateProfile" component={CorporateProfileScreen} />
         </>
       ) : (
         <>

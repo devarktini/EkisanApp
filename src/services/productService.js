@@ -139,6 +139,28 @@ const fetchProducts = ({
   });
 };
 
+export const fetchProductData = (id) => {
+  return new Promise(async (resolve) => {
+      const itemsRef = ref(database, `items/${id}`);
+      onValue(itemsRef, (snapShot => {
+          const snapVal = snapShot.val();
+          if (snapVal) {
+              resolve(
+                  {
+                      ...snapVal,
+                      price: incGST(snapVal),
+                      id: id
+                  }
+              );
+          }
+          else {
+              resolve(undefined)
+          }
+      }));
+
+  });
+};
+
 const fetchProductDatabyId = (id) => {
   return new Promise(async (resolve) => {
     const itemsRef = ref(database, `items/${id}`);

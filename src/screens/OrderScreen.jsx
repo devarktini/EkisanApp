@@ -84,10 +84,10 @@ const OrderScreen = () => {
                   <Ionicons name="location-outline" size={18} color="#048404" />
                   <Text style={styles.trackButtonText}>Track Order</Text>
                 </TouchableOpacity>
-                {/* <TouchableOpacity style={styles.reorderButton}>
+                <TouchableOpacity style={styles.reorderButton}>
                   <Ionicons name="repeat-outline" size={18} color="#fff" />
-                  <Text style={styles.reorderButtonText}>Reorder</Text>
-                </TouchableOpacity> */}
+                  <Text style={styles.reorderButtonText}>{order.orderStatus}</Text>
+                </TouchableOpacity>
               </View>
             </View>
           ))

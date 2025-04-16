@@ -15,7 +15,6 @@ const filterProduct = ({
 }) => {
     limit = limit ? limit : products.length - 1
     var localProducts = products;
-
     if (category && producedBy) {
         var catdata = [];
         category = category.toLowerCase()
@@ -51,10 +50,11 @@ const filterProduct = ({
         localProducts = localProducts.filter(item => item.sellerUID === sellerUID)
     }
     if (filterBy === "state") {
-        localProducts = localProducts.filter(item => item.state.toLowerCase() === state.toLowerCase())
+        localProducts = localProducts.filter(item => item.state && item?.state?.toLowerCase() === state.toLowerCase())
     }
     if (filterBy === "district") {
-        localProducts = localProducts.filter(item => item.district.toLowerCase() === district.toLowerCase())
+        
+        localProducts = localProducts.filter(item =>  item.district && item?.district?.toLowerCase() === district.toLowerCase())
     }
     if (filterBy === "block") {
         localProducts = localProducts.filter(item => item.block?.toLowerCase() === block.toLowerCase())

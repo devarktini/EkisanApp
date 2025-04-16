@@ -9,7 +9,7 @@ import AddProduct from "../AddProduct";
 import { StyleSheet } from "react-native";
 
 const ProfileScreen = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  // const [isModalVisible, setIsModalVisible] = useState(false);
   const navigator = useNavigation();
   const { userData } = useContext(AppContext);
   return (
@@ -37,11 +37,11 @@ const ProfileScreen = () => {
           <Text className="flex-1 text-lg font-bold text-white text-center mx-4">
             Profile
           </Text>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => setIsModalVisible(true)}
             className="bg-green-500 p-3 rounded-lg shadow-lg ">
             <Text className="text-white text-sm">Add Product</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           {/* <TouchableOpacity
             className="p-2 rounded-full bg-white/20 backdrop-blur-sm"
@@ -73,7 +73,7 @@ const ProfileScreen = () => {
                   : userData?.name}
               </Text>
               <TouchableOpacity className="bg-[#048404] px-4 py-2 ml-2  text-xs rounded-full ">
-                <Text className="text-white  text-sm text-center">{userData.userType}</Text>
+                <Text className="text-white  text-sm text-center">{userData.userType === 'corporate'? 'Company/Organisation':userData.userType}</Text>
               </TouchableOpacity>
             </View>
             <Text className="text-md font-bold ">
@@ -127,15 +127,25 @@ const ProfileScreen = () => {
         <Text className="font-bold text-lg mb-4">Services</Text>
         <View className="flex-row flex-wrap justify-between">
           {/* Card 1: My Farm */}
-          {userData.userType !== "consumer" && (
+          {(userData.userType === "farmer" || userData.userType === "corporate") && (
             <TouchableOpacity
-              onPress={() => navigator.navigate("AddFarm")}
+              onPress={() =>
+                userData.userType === "farmer"
+                  ? navigator.navigate("AddFarm")
+                  : navigator.navigate("BusinessProfile")
+              }
               className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border"
             >
               <Feather name="box" size={32} color="#048404" />
               <View className="ml-3 flex-1">
-                <Text className="font-semibold text-gray-800">My Farm</Text>
-                <Text className="text-sm text-gray-500">Manage your farm</Text>
+                <Text className="font-semibold text-gray-800">
+                  {userData.userType === "farmer" ? "My Farm" : "My Business Profile"}
+                </Text>
+                <Text className="text-sm text-gray-500">
+                  {userData.userType === "farmer"
+                    ? "Manage your farm"
+                    : "Manage your business"}
+                </Text>
               </View>
             </TouchableOpacity>
           )}
@@ -195,7 +205,8 @@ const ProfileScreen = () => {
           </TouchableOpacity>
 
           {/* Card 6: Talk to Expert */}
-          <TouchableOpacity
+         {userData.userType !== "corporate" && (
+            <TouchableOpacity
             onPress={() => navigator.navigate("TalkToExpert")}
             className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border"
           >
@@ -207,10 +218,11 @@ const ProfileScreen = () => {
               <Text className="text-sm text-gray-500">Get expert advice</Text>
             </View>
           </TouchableOpacity>
+         )}
         </View>
       </View>
 
-      <Modal visible={isModalVisible} transparent={true} animationType="slide" onRequestClose={() => setIsModalVisible(false)}>
+      {/* <Modal visible={isModalVisible} transparent={true} animationType="slide" onRequestClose={() => setIsModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <AddProduct setIsModalVisible={setIsModalVisible} />
@@ -219,7 +231,7 @@ const ProfileScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
     </ScrollView>
   );
 };

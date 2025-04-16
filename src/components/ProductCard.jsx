@@ -22,7 +22,7 @@ export default function ProductCard({ item }) {
     <TouchableOpacity
       className="w-[160px] mr-4 bg-white rounded-lg overflow-hidden shadow-lg relative"
       onPress={() => {
-        navigation.navigate("ProductDetails", { product: item });
+        navigation.navigate("ProductDetails", { product: item});
       }}
     >
       <View className="absolute top-2 right-2 flex-col gap-5 z-20 backdrop-blur-sm">
@@ -51,6 +51,12 @@ export default function ProductCard({ item }) {
         <Text className="text-xs text-gray-500 mt-1" numberOfLines={1}>
           {item.description}
         </Text>
+        <View className="flex-row items-center mt-1">
+          <Ionicons name="location-outline" size={18} color="#999" />
+          <Text className="text-xs font-bold text-gray-500 ml-1" numberOfLines={1}>
+            {item.district}  {item.state}
+          </Text>
+        </View>
         <View className="flex-row items-center justify-between mt-1">
           <Text className="text-sm font-bold text-green-600">₹{item?.price}</Text>
           <View className="flex-row items-center">

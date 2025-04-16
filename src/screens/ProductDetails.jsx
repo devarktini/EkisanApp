@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,9 @@ import {
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { useCart } from "../context/CartContext";
+import filterProduct from "../services/filterProduct";
+import { fetchProducts } from "../services/productService";
+import ProductCard from "../components/ProductCard";
 
 const ProductDetails = ({}) => {
   const navigation = useNavigation();
@@ -21,6 +24,27 @@ const ProductDetails = ({}) => {
   );
   const [cartItems, setCartItems] = useState([]);
   const [mainImage, setMainImage] = useState(product?.imgUrl);
+  const [similarProducts, setSimilarProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchSimilarProducts = async () => {
+      try {
+        const allProducts = await fetchProducts({});
+        const filtered = filterProduct({
+          products: allProducts,
+          filterBy: "category",
+          category: product.category
+        }).filter(item => item.id !== product.id).slice(0, 6);
+        setSimilarProducts(filtered);
+      } catch (error) {
+        console.error("Error fetching similar products:", error);
+      }
+    };
+
+    if (product?.category) {
+      fetchSimilarProducts();
+    }
+  }, [product]);
 
   if (!product) {
     return <Text>No product data available.</Text>;
@@ -65,7 +89,24 @@ const ProductDetails = ({}) => {
 
   const handleImagePress = (url) => {
     setMainImage(url);
+    const pr = filterProduct({products:product, url})
   };
+
+  const handleLocationPress = (key ,location) => {
+    console.log("first", key)
+    navigation.navigate("ProductList", {filterKey: key, filterValue:location });
+// fetchProducts({})
+//   .then((products) => {
+//     console.log("Fetched products:", products.length);
+//     const pr = filterProduct({products:products, filterBy:"district", district:location})
+//     console.log("first", pr.length)
+//   })
+//   .catch((error) => {
+//     console.error("Error fetching products:", error);
+//   });
+
+    // Handle location press (e.g., navigate to a map or details scree
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -132,8 +173,10 @@ const ProductDetails = ({}) => {
 
         {/* Size Selection */}
         <View className="px-4 py-3">
-          <View className=" flex flex-wrap items-center justify-start flex-row">
-            <Text className="text-base mb-2">SellerName: </Text>
+          <View className=" flex flex-wrap flex-col items-start justify-start">
+           <View className="flex-row items-center">
+           <Text className="text-base mb-2">{product.userType === 'corporate'? 'Company/Organisation':product.userType}: </Text>
+            
             <TouchableOpacity
               onPress={() =>
                 navigation.navigate("FarmerViewDetails", {
@@ -147,9 +190,26 @@ const ProductDetails = ({}) => {
                 </Text>
               </View>
             </TouchableOpacity>
-            <Text className="mr-2 px-2 border rounded-full text-center my-auto bg-green-300 border-gray-400">
+           </View>
+
+            {/* Location Details */}
+            <View className="flex-row items-center mt-2">
+              <Ionicons name="location-outline" size={16} color="#048404" />
+              <TouchableOpacity onPress={() => handleLocationPress("district", product?.district)}>
+                <Text className="ml-2 text-gray-700 underline">
+                  {product?.district}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleLocationPress("state",product?.state)}>
+                <Text className="ml-2 text-gray-700 underline">
+                  {product?.state}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* <Text className="mr-2 px-2 border rounded-full text-center my-auto bg-green-300 border-gray-400">
               Farmer
-            </Text>
+            </Text> */}
 
             <View className="flex-row">
               {product.availableSizes?.map((size, index) => (
@@ -226,7 +286,17 @@ const ProductDetails = ({}) => {
           </Text>
         </View> */}
 
-        {/* Product Category */}
+        {/* Similar Products */}
+        {similarProducts.length > 0 && (
+          <View className="px-4 py-3 border-t border-gray-200">
+            <Text className="text-lg font-bold mb-4">Similar Products</Text>
+            <View className="flex-row flex-wrap justify-between">
+              {similarProducts.map((item, index) => (
+                <ProductCard key={index} item={item} />
+              ))}
+            </View>
+          </View>
+        )}
       </ScrollView>
 
       {/* Bottom Buttons */}

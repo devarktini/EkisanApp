@@ -50,13 +50,26 @@ const SearchOverlay = ({ isVisible, onClose, onSearch, recentSearches = [], temp
         .filter(item => item.toLowerCase().includes(searchTerm));
       setFilteredItems(filtered);
 
-      // Filter products with null checks
+      // Filter products with expanded search criteria
+      console.log("first", tempFilterProduct.length)
       const filteredProds = tempFilterProduct
         .filter(product => product && typeof product === 'object')
         .filter(product => {
           const name = product.name?.toLowerCase() || '';
           const description = product.description?.toLowerCase() || '';
-          return name.includes(searchTerm) || description.includes(searchTerm);
+          const district = product.district?.toLowerCase() || '';
+          const block = product.block?.toLowerCase() || '';
+          const state = product.state?.toLowerCase() || '';
+          const seller = product.sellerName?.toLowerCase() || '';
+
+          return (
+            name.includes(searchTerm) ||
+            description.includes(searchTerm) ||
+            district.includes(searchTerm) ||
+            block.includes(searchTerm) ||
+            state.includes(searchTerm) ||
+            seller.includes(searchTerm)
+          );
         });
       setFilteredProducts(filteredProds);
     } catch (error) {
@@ -90,7 +103,7 @@ const SearchOverlay = ({ isVisible, onClose, onSearch, recentSearches = [], temp
           <Ionicons name="search-outline" size={20} color="#666" />
           <TextInput
             className="flex-1 ml-2 py-2 text-base font-medium"
-            placeholder="Search products, categories..."
+            placeholder="Search products, categories, Item, Seller, Location..."
             placeholderTextColor="#999"
             value={searchQuery}
             onChangeText={handleSearch}
@@ -152,7 +165,10 @@ const SearchOverlay = ({ isVisible, onClose, onSearch, recentSearches = [], temp
           {item.name}
         </Text>
         <Text className="text-gray-500 text-sm mb-1" numberOfLines={2}>
-          {item.description}
+          Seller: {item.sellerName}
+        </Text>
+        <Text className="text-gray-500 text-sm mb-1" numberOfLines={2}>
+          {item.block}, {item.district}, {item.state}
         </Text>
         <View className="flex-row items-center justify-between">
           <Text className="text-green-600 font-bold">

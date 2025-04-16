@@ -14,6 +14,7 @@ import { fetchCategories, fetchProducts } from '../../services/productService';
 import { AppContext } from '../../context/AppContext';
 import SearchOverlay from '../../components/SearchOverlay';
 import { Icon } from 'react-native-paper';
+import { LoaderContext, useLoader } from '../../context/LoaderContext';
 
 
 
@@ -57,6 +58,7 @@ const CategoryCircle = ({ coverUrl, coverImage, categorieName }) => {
 const HomeScreen = ({ route }) => {
   const navigation = useNavigation();
   const user = route?.params?.user;
+  const { setLoading, loading } = useContext(LoaderContext);
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [tempFilterProduct, setTempFilterProduct] = useState([]);
@@ -84,24 +86,38 @@ const HomeScreen = ({ route }) => {
     'Tools'
   ]);
   useEffect(() => {
-    fetchCategories({ user }).then(setCategories);
-    fetchCategories({ user }).then(setCategoryList);
-    fetchProducts({}).then(setTempFilterProduct);
-    fetchProducts({ sortType: "newest", limit: 10 }).then(setProducts);
-    fetchProducts({ sortType: "newest", limit: 10, search: "Fruits" }).then(setFruits);
-    fetchProducts({ sortType: "newest", limit: 10, search: "Vegetables" }).then(setVegetables);
-    fetchProducts({ sortType: "newest", limit: 10, search: "Grains" }).then(setGrains);
-    fetchProducts({ sortType: "newest", limit: 10, search: "Seeds" }).then(setSeeds);
-    fetchProducts({ sortType: "newest", limit: 10, search: "Pulses" }).then(setPulses);
+    const fetchAllData = async () => {
+      try {
+        setLoading(true);
+        await Promise.all([
+          fetchCategories({ user }).then(data => {
+            setCategories(data);
+            setCategoryList(data);
+          }),
+          fetchProducts({}).then(setTempFilterProduct),
+          fetchProducts({ sortType: "newest", limit: 10 }).then(setProducts),
+          fetchProducts({ sortType: "newest", limit: 10, search: "Fruits" }).then(setFruits),
+          fetchProducts({ sortType: "newest", limit: 10, search: "Vegetables" }).then(setVegetables),
+          fetchProducts({ sortType: "newest", limit: 10, search: "Grains" }).then(setGrains),
+          fetchProducts({ sortType: "newest", limit: 10, search: "Seeds" }).then(setSeeds),
+          fetchProducts({ sortType: "newest", limit: 10, search: "Pulses" }).then(setPulses),
+          fetchProducts({ sortType: "newest", limit: 10, search: "Spices" }).then(setSpeices),
+          fetchProducts({ sortType: "newest", limit: 10, search: "Flowers" }).then(setFlowers),
+          fetchProducts({ sortType: "newest", limit: 10, search: "Medicinal Plants" }).then(setMedicalPlants),
+          fetchProducts({ sortType: "newest", limit: 10, search: "Fertilizers & Pesticides" }).then(setFertilizers),
+          fetchProducts({ sortType: "newest", limit: 10, search: "Farm Machinery" }).then(setFarmMachinery),
+          fetchProducts({ sortType: "newest", limit: 10, search: "Irrigation Equipment" }).then(setIrrigation),
+          fetchProducts({ sortType: "newest", limit: 10, search: "Animal Husbandry" }).then(setAnimalhasbendry),
+          fetchProducts({ sortType: "newest", limit: 10, search: "Oilseeds" }).then(setOilSeeds),
+        ]);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    fetchProducts({ sortType: "newest", limit: 10, search: "Spices" }).then(setSpeices);
-    fetchProducts({ sortType: "newest", limit: 10, search: "Flowers" }).then(setFlowers);
-    fetchProducts({ sortType: "newest", limit: 10, search: "Medicinal Plants" }).then(setMedicalPlants);
-    fetchProducts({ sortType: "newest", limit: 10, search: "Fertilizers & Pesticides" }).then(setFertilizers);
-    fetchProducts({ sortType: "newest", limit: 10, search: "Farm Machinery" }).then(setFarmMachinery);
-    fetchProducts({ sortType: "newest", limit: 10, search: "Irrigation Equipment" }).then(setIrrigation);
-    fetchProducts({ sortType: "newest", limit: 10, search: "Animal Husbandry" }).then(setAnimalhasbendry);
-    fetchProducts({ sortType: "newest", limit: 10, search: "Oilseeds" }).then(setOilSeeds);
+    fetchAllData();
   }, [user]);
   const ViewAllProductList = (searchQuery) => {
 
@@ -124,9 +140,9 @@ const HomeScreen = ({ route }) => {
         >
           <Ionicons name="search-outline" size={20} color="#048404" />
           <Text className="flex-1 ml-2 py-2 text-base font-medium text-gray-700">
-            Search any Product..
+            Search, Item, Seller, Location...
           </Text>
-          <Ionicons name="mic-outline" size={20} color="#048404" />
+          {/* <Ionicons name="mic-outline" size={20} color="#048404" /> */}
         </TouchableOpacity>
       </View>
 
@@ -377,7 +393,7 @@ const HomeScreen = ({ route }) => {
       </View>
 
       {/* Contact Section */}
-      <View style={styles.section}>
+      {/* <View style={styles.section}>
         <Text style={styles.heading}>CONTACT</Text>
         <Text style={styles.text}>
           Address: <Text style={styles.highlight}>Loknathpur, Dalsinghsarai-848114, Samastipur, Bihar</Text>
@@ -388,7 +404,7 @@ const HomeScreen = ({ route }) => {
         <Text style={styles.text}>
           Email: <Text style={styles.highlight} onPress={() => Linking.openURL('mailto:info@ekisandarshan.in')}>info@ekisandarshan.in</Text>
         </Text>
-      </View>
+      </View> */}
     </View>
       </ScrollView>
     </SafeAreaView>
