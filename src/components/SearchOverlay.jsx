@@ -172,13 +172,13 @@ const SearchOverlay = ({ isVisible, onClose, onSearch, recentSearches = [], temp
         </Text>
         <View className="flex-row items-center justify-between">
           <Text className="text-green-600 font-bold">
-            ₹{item.price}
+            ₹{item.price}{item.inStock}
           </Text>
-          <View className={`px-2 py-1 rounded-full ${item.inStock ? 'bg-green-100' : 'bg-red-100'}`}>
+          {/* <View className={`px-2 py-1 rounded-full ${item.inStock ? 'bg-green-100' : 'bg-red-100'}`}>
             <Text className={`text-xs ${item.inStock ? 'text-green-700' : 'text-red-700'}`}>
               {item.inStock ? 'In Stock' : 'Out of Stock'}
             </Text>
-          </View>
+          </View> */}
         </View>
       </View>
     </TouchableOpacity>

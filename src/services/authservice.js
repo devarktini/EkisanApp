@@ -243,12 +243,12 @@ export const getCurrentUser = async (number) => {
 export const signInAnonymouslyToFirebase = async (number) => {
   try {
     const existingUser = await getUserByPhoneNumber(number);
- 
+   console.log("ccccccc", existingUser)
     
     if (existingUser) {
-      
+      console.log('xxxxxxxxxxx', number,  existingUser['uid'])
       var loggedInUser = await loginUser(number,  existingUser['uid'] !== undefined ? existingUser['uid'] : existingUser['userId']);
-     
+      console.log("first", loggedInUser)
       if (loggedInUser['message'] === "Invalid credentials") {
        
         const registerData = await registerUser(number,  existingUser['uid'] !== undefined ? existingUser['uid'] : existingUser['userId'], existingUser);

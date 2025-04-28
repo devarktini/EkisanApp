@@ -20,7 +20,7 @@ export default function ProductCard({ item }) {
 
   return (
     <TouchableOpacity
-      className="w-[160px] mr-4 bg-white rounded-lg overflow-hidden shadow-lg relative"
+      className="w-[160px] mr-4 mt-2 bg-white rounded-lg overflow-hidden shadow-lg relative"
       onPress={() => {
         navigation.navigate("ProductDetails", { product: item});
       }}

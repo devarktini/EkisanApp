@@ -32,9 +32,9 @@ const ProductDetails = ({}) => {
         const allProducts = await fetchProducts({});
         const filtered = filterProduct({
           products: allProducts,
-          filterBy: "category",
-          category: product.category
-        }).filter(item => item.id !== product.id).slice(0, 6);
+          filterBy: product.name,
+          category: product.name
+        })
         setSimilarProducts(filtered);
       } catch (error) {
         console.error("Error fetching similar products:", error);
@@ -165,7 +165,7 @@ const ProductDetails = ({}) => {
               <Image
                 source={{ uri: image.url }}
                 className="w-20 rounded-lg border border-green-400 h-20 mr-2"
-                resizeMode="cover"
+                resizeMode="contain"
               />
             </TouchableOpacity>
           ))}
@@ -288,9 +288,9 @@ const ProductDetails = ({}) => {
 
         {/* Similar Products */}
         {similarProducts.length > 0 && (
-          <View className="px-4 py-3 border-t border-gray-200">
+          <View className="px-4 py-3 border-t border-gray-200 mb-20">
             <Text className="text-lg font-bold mb-4">Similar Products</Text>
-            <View className="flex-row flex-wrap justify-between">
+            <View className="flex-row mt-10 flex-wrap justify-between">
               {similarProducts.map((item, index) => (
                 <ProductCard key={index} item={item} />
               ))}

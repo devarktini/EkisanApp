@@ -22,6 +22,7 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from "expo-image-picker";
 import { updatePfp } from '../services/productService';
+import { LoaderContext } from '../context/LoaderContext';
 
 
 const { width, height } = Dimensions.get('window');
@@ -42,11 +43,12 @@ const CustomCheckbox = ({ value, onValueChange }) => (
 );
 
 const UpdateProfileScreen = ({ navigation }) => {
+  const { setLoading } = useContext(LoaderContext);
 
   const route = useRoute();
   const { user, type } = route.params || {};
   const { userData, setUserData, setIsAuthenticated } = useContext(AppContext);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoadings] = useState(false);
   const object = {
     fullName: '',
     email: '',
@@ -62,7 +64,6 @@ const UpdateProfileScreen = ({ navigation }) => {
   const [optionBlock, setOptionBlock] = useState([]);
   const [userPhone, setUserPhone] = useState('');
   const [image, setImage] = useState(null);
-
   const pickImage = async () => {
     // Request media library permission
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -102,7 +103,7 @@ const UpdateProfileScreen = ({ navigation }) => {
   useEffect(() => {
     const getCurrentUserData = async () => {
       try {
-        const response = await getCurrentUser(user.phoneNumber || user.phone);
+        const response = await getCurrentUser(user);
         if (response.success) {
           setUserData(response.userData);
           setUserPhone(response.userData.phoneNumber);
@@ -152,6 +153,7 @@ const UpdateProfileScreen = ({ navigation }) => {
   const handleSubmit = async () => {
     try {
       setLoading(true);
+      setLoadings(true);
       setError('');
 
       // Validation
@@ -179,10 +181,17 @@ const UpdateProfileScreen = ({ navigation }) => {
         setError('Please agree to the terms and conditions');
         return;
       }
+        console.log("aaaaaaaa", userData)
+      if (!userData || (!userData.uid && !userData.userId)) {
+        setError('User data not found. Please try again later.');
+        setLoading(false);
+        setLoadings(false);
+        return;
+      }
 
       const result = await updateUserProfile({
         ...formData,
-        uid: userData.uid || userData.userId,
+        uid: userData?.uid || userData?.userId,
         phoneNumber: userPhone,
         isProfileComplete: true,
         isFirstTimeUser: false,
@@ -207,6 +216,7 @@ const UpdateProfileScreen = ({ navigation }) => {
       console.error('Profile update error:', error);
       setError('An error occurred. Please try again.');
     } finally {
+      setLoadings(false);
       setLoading(false);
     }
   };
@@ -314,11 +324,21 @@ const UpdateProfileScreen = ({ navigation }) => {
                 {/* Role Dropdown */}
                 <View style={styles.inputContainer}>
                   <Text style={styles.label}>Role*</Text>
-                  {renderDropdown(
-                    userType,
-                    formData.userType,
-                    (value) => handleFormChanges('userType', value),
-                    'Select userType'
+                  {type === 'edit' ? (
+                    <Picker
+                      selectedValue={formData.userType}
+                      enabled={false}
+                      style={styles.disabledInput}
+                    >
+                      <Picker.Item label={formData.userType} value={formData.userType} />
+                    </Picker>
+                  ) : (
+                    renderDropdown(
+                      userType,
+                      formData.userType,
+                      (value) => handleFormChanges('userType', value),
+                      'Select userType'
+                    )
                   )}
                 </View>
 
@@ -419,9 +439,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
+  disabledInput: {
+    padding: 16,
+    borderWidth: 2,
+    borderColor: '#f8f8f8',
+    backgroundColor: '#f8f8f8',
+    // borderColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  
   modalContent: {
-    width: width * 0.9,
-    maxHeight: height * 0.8,
+    width: width * 0.95,
+    maxHeight: height * 0.95,
     backgroundColor: '#fff',
     borderRadius: 20,
     overflow: 'hidden',
@@ -480,6 +508,9 @@ const styles = StyleSheet.create({
   picker: {
     height: 50,
     width: '100%',
+    borderColor: '#ddd',
+    borderRadius: 12,
+    backgroundColor: '#f8f8f8',
   },
   checkbox: {
     width: 24,

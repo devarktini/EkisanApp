@@ -6,8 +6,10 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // For icons
+import submitContactData from '../../services/ContactService';
 
 const ContactScreen = ({ navigation }) => {
   const [formData, setFormData] = useState({
@@ -17,13 +19,45 @@ const ContactScreen = ({ navigation }) => {
     mobile: '',
     message: '',
   });
+  const [errors, setErrors] = useState({});
 
   const handleInputChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
   };
 
-  const handleSubmit = () => {
-    // Add form submission logic here
+  const validateForm = () => {
+    let tempErrors = {};
+    
+    if (!formData.name.trim()) tempErrors.name = 'Name is required';
+    if (!formData.mobile.trim()) {
+      tempErrors.mobile = 'Mobile number is required';
+    } else if (!/^[0-9]{10}$/.test(formData.mobile)) {
+      tempErrors.mobile = 'Enter valid 10 digit mobile number';
+    }
+    if (!formData.message.trim()) tempErrors.message = 'Message is required';
+    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
+      tempErrors.email = 'Enter valid email address';
+    }
+
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (validateForm()) {
+      try {
+        const result = await submitContactData(formData);
+        console.log("result ", result)
+        if (result) {
+          Alert.alert('Success', 'Thank you for contacting us. We will get back to you soon!');
+          setFormData({ name: '', subject: '', email: '', mobile: '', message: '' });
+        } else {
+          Alert.alert('Error', result.message);
+        }
+      } catch (error) {
+        Alert.alert('Error', 'Something went wrong. Please try again.');
+      }
+    }
   };
 
   return (
@@ -48,11 +82,12 @@ const ContactScreen = ({ navigation }) => {
         <View style={styles.formContainer}>
           <View style={styles.row}>
             <TextInput
-              style={[styles.input, styles.halfInput]}
+              style={[styles.input, styles.halfInput, errors.name && styles.inputError]}
               placeholder="Your Name *"
               value={formData.name}
               onChangeText={(value) => handleInputChange('name', value)}
             />
+            {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
             <TextInput
               style={[styles.input, styles.halfInput]}
               placeholder="Subject (optional)"
@@ -61,26 +96,29 @@ const ContactScreen = ({ navigation }) => {
             />
           </View>
           <TextInput
-            style={styles.input}
+            style={[styles.input, errors.email && styles.inputError]}
             placeholder="Your email ID (optional)"
             value={formData.email}
             onChangeText={(value) => handleInputChange('email', value)}
           />
+          {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
           <TextInput
-            style={styles.input}
+            style={[styles.input, errors.mobile && styles.inputError]}
             placeholder="Mobile no. *"
             value={formData.mobile}
             onChangeText={(value) => handleInputChange('mobile', value)}
             keyboardType="phone-pad"
           />
+          {errors.mobile && <Text style={styles.errorText}>{errors.mobile}</Text>}
           <TextInput
-            style={[styles.input, styles.textArea]}
+            style={[styles.input, styles.textArea, errors.message && styles.inputError]}
             placeholder="Please describe your issue or message here properly *"
             value={formData.message}
             onChangeText={(value) => handleInputChange('message', value)}
             multiline
             numberOfLines={4}
           />
+          {errors.message && <Text style={styles.errorText}>{errors.message}</Text>}
           <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
             <Text style={styles.submitButtonText}>Submit</Text>
           </TouchableOpacity>
@@ -111,28 +149,6 @@ const ContactScreen = ({ navigation }) => {
               <Text style={styles.contactPhone}>+91 993 436 6082</Text>
             </View>
           </View>
-
-          <Text style={styles.otherWaysHeader}>Others ways to connect</Text>
-          <Text style={styles.otherWaysText}>
-            <Ionicons name="logo-facebook" size={16} color="#048404" /> Like us on{' '}
-            <Text style={styles.link}>Facebook</Text> today!
-          </Text>
-          <Text style={styles.otherWaysText}>
-            <Ionicons name="logo-twitter" size={16} color="#048404" /> Follow us on{' '}
-            <Text style={styles.link}>Twitter</Text>!
-          </Text>
-          <Text style={styles.otherWaysText}>
-            <Ionicons name="logo-instagram" size={16} color="#048404" /> Follow us on{' '}
-            <Text style={styles.link}>Instagram</Text>!
-          </Text>
-          <Text style={styles.otherWaysText}>
-            <Ionicons name="logo-linkedin" size={16} color="#048404" /> Follow us on{' '}
-            <Text style={styles.link}>LinkedIn</Text>!
-          </Text>
-          <Text style={styles.otherWaysText}>
-            <Ionicons name="logo-youtube" size={16} color="#048404" /> Follow us on{' '}
-            <Text style={styles.link}>YouTube</Text>!
-          </Text>
         </View>
       </ScrollView>
     </View>
@@ -140,6 +156,19 @@ const ContactScreen = ({ navigation }) => {
 };
 
 export default ContactScreen;
+
+const additionalStyles = {
+  inputError: {
+    borderColor: '#ff0000',
+  },
+  errorText: {
+    color: '#ff0000',
+    fontSize: 12,
+    marginTop: -12,
+    marginBottom: 8,
+    marginLeft: 4,
+  }
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -192,7 +221,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   row: {
-    flexDirection: 'row',
+    flexDirection: 'col',
     justifyContent: 'space-between',
   },
   input: {
@@ -206,7 +235,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   halfInput: {
-    width: '48%',
+    width: '100%',
   },
   textArea: {
     height: 100,
@@ -280,4 +309,5 @@ const styles = StyleSheet.create({
     color: '#048404',
     fontWeight: 'bold',
   },
+  ...additionalStyles,
 });

@@ -255,7 +255,7 @@ const HomeScreen = ({ route }) => {
         <View className="mt-4">
           <View className="flex-row justify-between items-center px-4 mb-3 ">
             <Text className="text-xl font-bold text-[#048404]">Spices</Text>
-            <TouchableOpacity onPress={() => ViewAllProductList()}>
+            <TouchableOpacity onPress={()=>ViewAllProductList("Spices")}>
               <Text className="text-[#048404]">View all</Text>
             </TouchableOpacity>
           </View>
@@ -273,7 +273,7 @@ const HomeScreen = ({ route }) => {
         <View className="mt-4">
           <View className="flex-row justify-between items-center px-4 mb-3 ">
             <Text className="text-xl font-bold text-[#048404]">Grains</Text>
-            <TouchableOpacity onPress={() => ViewAllProductList()}>
+            <TouchableOpacity onPress={() => ViewAllProductList('Grains')}>
               <Text className="text-[#048404]">View all</Text>
             </TouchableOpacity>
           </View>
@@ -294,7 +294,7 @@ const HomeScreen = ({ route }) => {
         <View className="mt-4">
           <View className="flex-row justify-between items-center px-4 mb-3 ">
             <Text className="text-xl font-bold text-[#048404]">Fruits</Text>
-            <TouchableOpacity onPress={() => ViewAllProductList()}>
+            <TouchableOpacity onPress={() => ViewAllProductList('Fruits')}>
               <Text className="text-[#048404]">View all</Text>
             </TouchableOpacity>
           </View>
@@ -312,7 +312,7 @@ const HomeScreen = ({ route }) => {
         <View className="mt-4">
           <View className="flex-row justify-between items-center px-4 mb-3 ">
             <Text className="text-xl font-bold text-[#048404]">farm Mechinery</Text>
-            <TouchableOpacity onPress={() => ViewAllProductList()}>
+            <TouchableOpacity onPress={() => ViewAllProductList('Farm Machinery')}>
               <Text className="text-[#048404]">View all</Text>
             </TouchableOpacity>
           </View>
@@ -330,7 +330,7 @@ const HomeScreen = ({ route }) => {
         <View className="mt-4">
           <View className="flex-row justify-between items-center px-4 mb-3 ">
             <Text className="text-xl font-bold text-[#048404]">Flowers</Text>
-            <TouchableOpacity onPress={() => ViewAllProductList()}>
+            <TouchableOpacity onPress={() => ViewAllProductList('Flowers')}>
               <Text className="text-[#048404]">View all</Text>
             </TouchableOpacity>
           </View>
@@ -348,7 +348,7 @@ const HomeScreen = ({ route }) => {
         <View className="mt-4">
           <View className="flex-row justify-between items-center px-4 mb-3 ">
             <Text className="text-xl font-bold text-[#048404]">Medicinal plants</Text>
-            <TouchableOpacity onPress={() => ViewAllProductList()}>
+            <TouchableOpacity onPress={() => ViewAllProductList('Medicinal Plants')}>
               <Text className="text-[#048404]">View all</Text>
             </TouchableOpacity>
           </View>
@@ -366,7 +366,7 @@ const HomeScreen = ({ route }) => {
         <View className="mt-4">
           <View className="flex-row justify-between items-center px-4 mb-3 ">
             <Text className="text-xl font-bold text-[#048404]">Oilseeds</Text>
-            <TouchableOpacity onPress={() => ViewAllProductList()}>
+            <TouchableOpacity onPress={() => ViewAllProductList('Oilseeds')}>
               <Text className="text-[#048404]">View all</Text>
             </TouchableOpacity>
           </View>

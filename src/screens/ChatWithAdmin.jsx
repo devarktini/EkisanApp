@@ -12,6 +12,7 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { AppContext } from '../context/AppContext';
 import { getAdminMessages, sendAdminMessage } from '../services/Message/sendMessage';
+import { StatusBar } from 'expo-status-bar';
 
 const ChatWithAdmin = ({navigation}) => {
     const { userData } = useContext(AppContext);
@@ -64,13 +65,18 @@ const ChatWithAdmin = ({navigation}) => {
       style={styles.container}
       behavior={Platform.select({ ios: 'padding', android: undefined })}
     >
+      <StatusBar backgroundColor="#4caf50" style="light" />
+      
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => alert('Back pressed')}>
-          <Ionicons name="arrow-back" size={24} color="white" style={styles.backIcon} />
-          {/* <Text style={styles.backText}>Back</Text> */}
+        <TouchableOpacity 
+          style={styles.backButton} 
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.headerText}>Chat with eKisan Darshan</Text>
+        <View style={styles.headerRight} />
       </View>
 
       {/* Messages */}
@@ -117,17 +123,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F6F8',
   },
   header: {
-    backgroundColor: '#3979F7',
+    backgroundColor: '#4caf50',
     paddingVertical: 12,
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: Platform.OS === 'android' ? 40 : 12,
   },
   backButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 4,
-    marginRight: 10,
+    padding: 8,
+    width: 40,
   },
   backText: {
     color: 'white',
@@ -136,7 +142,12 @@ const styles = StyleSheet.create({
   headerText: {
     color: 'white',
     fontWeight: '600',
-    fontSize: 16,
+    fontSize: 18,
+    flex: 1,
+    textAlign: 'center',
+  },
+  headerRight: {
+    width: 40,
   },
   messagesContainer: {
     flex: 1,

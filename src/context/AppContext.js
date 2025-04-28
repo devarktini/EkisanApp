@@ -21,14 +21,16 @@ export const AppProvider = ({ children }) => {
 
     useEffect(() => {
         const initializeAuth = async () => {
+           
             try {
                 const rawUserData = await getUserData();
                 if (!rawUserData) {
                     setIsAuthenticated(false);
                     return;
                 }
-
+                
                 const userList = JSON.parse(rawUserData);
+                
                 if (!userList) {
                     setIsAuthenticated(false);
                     return;
@@ -36,14 +38,14 @@ export const AppProvider = ({ children }) => {
 
                 const token = await getAuthToken();
                 const phoneNumber = userList?.phoneNumber || userList?.phone;
-                
+               
                 if (!phoneNumber || !token) {
                     setIsAuthenticated(false);
                     return;
                 }
 
                 const { user, userData } = await autoLogin(phoneNumber);
-                
+            
                 if (token && user) {
                     if (userData?.isFirstTimeUser) {
                         setShowUpdateProfile(true);
@@ -83,7 +85,7 @@ export const AppProvider = ({ children }) => {
 
     const login = async (token, user, userData, refreshToken) => {
         if (!token) {
-            console.error('Token or is missing');
+            console.error('Token is missing');
             return;
         }
         try {

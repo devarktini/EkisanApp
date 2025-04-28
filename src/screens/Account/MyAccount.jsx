@@ -64,9 +64,11 @@ const MyAccount = ({ navigation }) => {
               <Text className="text-gray-500">{userData?.phoneNumber||userData?.phone || 'Phone Number'}</Text>
               <Text className="text-gray-500">{userData?.email || 'Email Address'}</Text>
             </View>
-            <TouchableOpacity onPress={() => setIsModalVisible(true)} className="bg-green-500 p-3 rounded-lg shadow-lg">
+            {userData.userType !== 'consumer' && (
+              <TouchableOpacity onPress={() => setIsModalVisible(true)} className="bg-green-500 p-3 rounded-lg shadow-lg">
               <Text className="text-white text-sm">Add Product</Text>
             </TouchableOpacity>
+            )}
           </View>
 
           {/* Account Settings */}

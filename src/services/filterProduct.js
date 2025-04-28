@@ -31,7 +31,7 @@ const filterProduct = ({
         const allProducts = [...localProducts];
         category = category.includes("%") ? category.split("%")[0] : category
         category = category.toLowerCase()
-        localProducts = localProducts.filter(item => item.category.toLowerCase().includes(category))
+        localProducts = localProducts.filter(item => item?.category?.toLowerCase().includes(category))
         if(localProducts.length === 0){
                 const searchQuery = category.toLowerCase();
                 localProducts = allProducts.filter((item) => {
