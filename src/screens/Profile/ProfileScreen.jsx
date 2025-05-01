@@ -67,7 +67,6 @@ const ProfileScreen = () => {
               className="w-20 h-20 rounded-full border-2 border-white"
             />
             <View className=" flex flex-row">
-              {console.log("first", userData?.phone)}
               <Text className="text-lg font-bold mt-2">
                 {userData?.fullName !== undefined
                   ? userData?.fullName

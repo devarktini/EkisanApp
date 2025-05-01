@@ -63,7 +63,7 @@ const AuthOtpScreen = () => {
         setLoading(false);
       } else {
         var authResponse = await signInAnonymouslyToFirebase(phoneNumber);
-        console.log("sssssssssssss", authResponse)
+       
         if (authResponse.success) {
           const userData = authResponse.userData;
           setUserData(authResponse.userData);

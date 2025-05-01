@@ -314,7 +314,7 @@ const FarmerViewDetails = () => {
             <Text className="text-white/80 text-base">
               {farmerData.userType === 'corporate'? 'Company/Organisation':farmerData.userType || "Not Available"}
             </Text>
-             {console.log("first", farmerData)}
+             
             <View className="flex-row items-center mt-2">
               <Ionicons name="location" size={16} color="white" />
               <Text className="text-white/90 text-sm ml-1">

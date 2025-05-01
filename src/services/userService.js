@@ -146,7 +146,6 @@ export const fetchSeller = ({ sellerId }) => {
 }
 
 export const getReviews = async (userId) => {
-  console.log("first", userId)
   try {
     if (!userId) {
       

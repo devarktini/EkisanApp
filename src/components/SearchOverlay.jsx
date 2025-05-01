@@ -51,7 +51,7 @@ const SearchOverlay = ({ isVisible, onClose, onSearch, recentSearches = [], temp
       setFilteredItems(filtered);
 
       // Filter products with expanded search criteria
-      console.log("first", tempFilterProduct.length)
+     
       const filteredProds = tempFilterProduct
         .filter(product => product && typeof product === 'object')
         .filter(product => {

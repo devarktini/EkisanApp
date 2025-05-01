@@ -181,14 +181,12 @@ const UpdateProfileScreen = ({ navigation }) => {
         setError('Please agree to the terms and conditions');
         return;
       }
-        console.log("aaaaaaaa", userData)
       if (!userData || (!userData.uid && !userData.userId)) {
         setError('User data not found. Please try again later.');
         setLoading(false);
         setLoadings(false);
         return;
       }
-
       const result = await updateUserProfile({
         ...formData,
         uid: userData?.uid || userData?.userId,
@@ -197,6 +195,7 @@ const UpdateProfileScreen = ({ navigation }) => {
         isFirstTimeUser: false,
         updatedAt: new Date().toISOString()
       });
+      console.log("result", result)
       if (result.success) {
         setIsAuthenticated(true)
         setUserData(result.userData);

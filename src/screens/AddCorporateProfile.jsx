@@ -68,7 +68,7 @@ const AddCorporateProfile = ({ onClose, existingData, onSuccess }) => {
       } else {
           result = await createCorporateProfile({ data: formData, user: userData });
       }
-      console.log("first", result)
+     
       if (result) {
         updateProfile(formData);
         if (onSuccess) {

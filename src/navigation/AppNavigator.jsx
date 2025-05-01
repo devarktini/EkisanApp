@@ -144,7 +144,7 @@ const AppNavigator = ({ isFirstLaunch }) => {
           <Stack.Screen name="FarmerViewDetails" component={FarmerViewDetails} />
           <Stack.Screen name="recivedOrder" component={ReceivedOrder} />
           <Stack.Screen name="trackorder" component={TrackOrderScreen} />
-          <Stack.Screen 
+          {/* <Stack.Screen 
             name="UpdateProfile" 
             component={UpdateProfileScreen}
             options={{
@@ -153,7 +153,7 @@ const AppNavigator = ({ isFirstLaunch }) => {
               gestureEnabled: true,
               gestureDirection: 'vertical',
             }}
-          />
+          /> */}
           <Stack.Screen name="CorporateProfile" component={CorporateProfileScreen} />
         </>
       ) : (

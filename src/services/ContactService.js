@@ -2,7 +2,6 @@ import { database } from "../../firebase.config";
 import { ref, push } from "firebase/database";
 
 const submitContactData = (data) => {
-    console.log("first", data)
     return new Promise(resolve => {
         try {
             const userRef = ref(database, `/contactMail`)

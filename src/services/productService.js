@@ -452,7 +452,7 @@ const imgExtRemover = (uri) => {
 
 
  const updatePfp = async (productImage, user) => {
-  console.log("firstssss", productImage, user)
+
   try {
     if (productImage) {
       
