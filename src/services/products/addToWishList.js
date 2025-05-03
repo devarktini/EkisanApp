@@ -94,7 +94,7 @@ export const getUserWishlist = async (userId) => {
             const wishlistItems = snapshot.val();
             return wishlistItems; // Returns an object with the user's wishlist items
         } else {
-            console.log("No items found in the wishlist for this user.");
+           
             return []; // Return an empty array if no items found
         }
     } catch (error) {
@@ -120,7 +120,7 @@ export const deleteWishlistItem = (userId, productId) => {
             const data = snapshot.val();
 
             if (!data) {
-                console.log("No wishlist found!");
+                
                 showToast({ icon: "error", title: "Wishlist not found!" });
                 return;
             }
@@ -135,7 +135,7 @@ export const deleteWishlistItem = (userId, productId) => {
                     const itemRef = ref(database, `new-wishlist/${wishlistId}`);
                     remove(itemRef)
                         .then(() => {
-                            console.log(`Wishlist item removed successfully: ${wishlistId}`);
+                           
                             showToast({ icon: "success", title: "Item removed from wishlist!" });
                         })
                         .catch((error) => {
@@ -146,7 +146,7 @@ export const deleteWishlistItem = (userId, productId) => {
                 }
             }
 
-            console.log("No matching wishlist entry found!");
+           
             showToast({ icon: "info", title: "No matching item found in wishlist!" });
         },
         (error) => {

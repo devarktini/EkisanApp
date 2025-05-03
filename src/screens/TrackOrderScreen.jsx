@@ -91,7 +91,7 @@ const TrackOrderScreen = ({ navigation, route }) => {
       
     }, [route.params]);
   const handleStatusUpdate = async (status) => {
-    console.log("ssssssss", orderTrackData)
+   
     try {
      const response = await updateRequestStatus(orderTrackData?.orderTrackId, status);
     const response2 = await updateOrderStatus(userData, orderTrackData.orderId, status )

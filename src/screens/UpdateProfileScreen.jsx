@@ -101,9 +101,10 @@ const UpdateProfileScreen = ({ navigation }) => {
   }, [user]);
 
   useEffect(() => {
+    console.log("usersssssss", user)
     const getCurrentUserData = async () => {
       try {
-        const response = await getCurrentUser(user);
+        const response = await getCurrentUser(user.phoneNumber || user.phone);
         if (response.success) {
           setUserData(response.userData);
           setUserPhone(response.userData.phoneNumber);
@@ -200,13 +201,16 @@ const UpdateProfileScreen = ({ navigation }) => {
         setIsAuthenticated(true)
         setUserData(result.userData);
         await AsyncStorage.setItem("isFirstLaunch", "false");
+        await AsyncStorage.setItem("isFirstTimeUser", "false");
+         console.log("type", type)
         if (type === 'edit') {
+          setIsAuthenticated(true)
           navigation.navigate('MyAccount');
         }
         else {
-          setTimeout(() => {
+          // setTimeout(() => {
             navigation.navigate('Main');
-          }, 100);
+          // }, 100);
         }
       } else {
         setError(result.error || 'Failed to update profile');

@@ -196,7 +196,7 @@ try {
 
 export const updateOrderStatus = async (user, orderId, newStatus) => {
   const userId = user?.userId || user?.uid;
-  console.log("order Id", orderId)
+  
   try {
     if (!userId || !orderId) {
       return { success: false, message: "User ID and Order ID are required." };
@@ -209,7 +209,7 @@ export const updateOrderStatus = async (user, orderId, newStatus) => {
       return { success: false, message: "Order not found" };
     }
     const currentOrderData = snapshot.val();
-    console.log("sssssssssss",currentOrderData)
+   
     // Update only the orderStatus while preserving other data
     await update(ref(database, `orders/${orderId}`), {
       ...currentOrderData,
@@ -225,8 +225,7 @@ export const updateOrderStatus = async (user, orderId, newStatus) => {
 
 export const updateOrderStatus1 = async (userId, orderId, newStatus) => {
   // const userId = user?.userId || user?.uid;
-  console.log("Buyer Id", userId)
-  console.log("order Id", orderId)
+
   try {
     if (!userId || !orderId) {
       return { success: false, message: "User ID and Order ID are required." };
@@ -239,7 +238,7 @@ export const updateOrderStatus1 = async (userId, orderId, newStatus) => {
       return { success: false, message: "Order not found" };
     }
     const currentOrderData = snapshot.val();
-    console.log("sssssssssss",currentOrderData)
+   
     // Update only the orderStatus while preserving other data
     await update(ref(database, `users/${userId}/orders/${orderId}`), {
       ...currentOrderData,

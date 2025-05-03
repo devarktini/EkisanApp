@@ -9,13 +9,13 @@ export const test = (arg) =>{
 }
 
 const addToCart = async (user, item, setUser )=> {
-    console.log("moved to cart !")
+  
     if (user) {
-        console.log('add item to cart', user)
+       
         addItemToCart({ user, item, setUser })
     }
     else if (auth.currentUser) {
-        console.log("auth.currentUser", auth.currentUser)
+       
         addItemToCart({ user: await fetchUser({ user: auth.currentUser }), item, setUser })
     }
     else {
@@ -25,10 +25,10 @@ const addToCart = async (user, item, setUser )=> {
 };
 
 const addItemToCart = async ({ user, item, setUser }) => {
-    console.log("add item to cart function")
+  
     //if seller is trying to buy his own items
     if (user.uid === item?.sellerUID) {
-        console.log("condition user.uid === item.sellerUID",user.uid === item.sellerUID)
+      
         showToast({ title: "You can't buy your own Products", icon: "error" });
         return;
     }

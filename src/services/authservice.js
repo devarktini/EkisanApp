@@ -354,6 +354,7 @@ const getUserByPhoneNumber = async (phoneValue) => {
     return null;
   }
 };
+
 const signInWithExistingUser = async (userData) => {
   try {
     const userCredential = await signInAnonymously(auth);

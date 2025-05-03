@@ -30,22 +30,29 @@ export const AppProvider = ({ children }) => {
                 }
                 
                 const userList = JSON.parse(rawUserData);
-                
+                 console.log("userlist , ", userList)
                 if (!userList) {
                     setIsAuthenticated(false);
                     return;
                 }
 
                 const token = await getAuthToken();
+                console.log("firstToken", token)
                 const phoneNumber = userList?.phoneNumber || userList?.phone;
                
                 if (!phoneNumber || !token) {
                     setIsAuthenticated(false);
                     return;
                 }
-
+    
                 const { user, userData } = await autoLogin(phoneNumber);
-            
+                console.log("userData", userData)
+                console.log("user", user)
+                if (!user || !userData) {
+                    setIsAuthenticated(false);
+                    return;
+                }
+             console.log("userDataxxx", userData.isFirstTimeUser)
                 if (token && user) {
                     if (userData?.isFirstTimeUser) {
                         setShowUpdateProfile(true);

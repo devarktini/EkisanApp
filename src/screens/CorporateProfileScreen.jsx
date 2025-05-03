@@ -167,7 +167,7 @@ const CorporateProfileScreen = () => {
               onClose={() => setIsModalVisible(false)}
               existingData={profileData}
               onSuccess={(data) => {
-                console.log(data);
+               
                 setIsModalVisible(false);
               }}
             />

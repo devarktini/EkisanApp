@@ -47,7 +47,7 @@ const ContactScreen = ({ navigation }) => {
     if (validateForm()) {
       try {
         const result = await submitContactData(formData);
-        console.log("result ", result)
+       
         if (result) {
           Alert.alert('Success', 'Thank you for contacting us. We will get back to you soon!');
           setFormData({ name: '', subject: '', email: '', mobile: '', message: '' });

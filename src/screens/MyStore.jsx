@@ -49,7 +49,7 @@ const MyStore = ({ navigation }) => {
           filterBy: "seller",
           sellerUID: userData.uid || userData.userId,
         });
-        console.log("dddddddd", rejectedResponse)
+       
         setRentProducts(RentProduct)
         setVerifiedProducts(filteredProducts);
         setPendingProducts(pending);

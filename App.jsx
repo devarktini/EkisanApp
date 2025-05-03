@@ -33,7 +33,7 @@ export default function App() {
           setIsFirstLaunch(false);
         }
       } catch (error) {
-        console.log("Error checking first launch: ", error);
+       
       }
     };
     checkFirstLaunch();
