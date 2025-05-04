@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { 
   View, Text, TextInput, TouchableOpacity, 
   FlatList, StatusBar, Modal, Dimensions,
@@ -13,71 +13,96 @@ const SearchOverlay = ({ isVisible, onClose, onSearch, recentSearches = [], temp
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredItems, setFilteredItems] = useState([]);
-  const [trendingSearches] = useState([
-    'Organic Vegetables', 'Farm Equipment', 'Seeds', 'Fertilizers', 'Tools'
-  ]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  
-  const animatedValue = new Animated.Value(0);
+  const animatedValue = useRef(new Animated.Value(0)).current;
+  const searchTimeout = useRef(null);
 
+  const trendingSearches = useMemo(() => [
+    'Organic Vegetables',
+    'Farm Equipment',
+    'Seeds',
+    'Fertilizers',
+    'Tools'
+  ], []);
+
+  // Reset state when overlay opens/closes
   useEffect(() => {
     if (isVisible) {
       setSearchQuery('');
+      setFilteredItems([]);
+      setFilteredProducts([]);
       Animated.spring(animatedValue, {
         toValue: 1,
         useNativeDriver: true,
         tension: 50,
         friction: 7
       }).start();
+    } else {
+      Animated.timing(animatedValue, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
     }
+
+    return () => {
+      if (searchTimeout.current) {
+        clearTimeout(searchTimeout.current);
+      }
+    };
   }, [isVisible]);
 
-  const handleSearch = (text) => {
-    if (!text) {
-      setSearchQuery('');
-      setFilteredItems([]);
-      setFilteredProducts([]);
-      return;
+  const handleSearch = useCallback((text) => {
+    setSearchQuery(text);
+
+    if (searchTimeout.current) {
+      clearTimeout(searchTimeout.current);
     }
 
-    try {
-      setSearchQuery(text);
-      const searchTerm = text.toLowerCase().trim();
+    searchTimeout.current = setTimeout(() => {
+      try {
+        if (!text.trim()) {
+          setFilteredItems([]);
+          setFilteredProducts([]);
+          return;
+        }
 
-      // Filter suggestions with null checks
-      const filtered = [...recentSearches, ...trendingSearches]
-        .filter(item => item && typeof item === 'string')
-        .filter(item => item.toLowerCase().includes(searchTerm));
-      setFilteredItems(filtered);
+        const searchTerm = text.toLowerCase().trim();
 
-      // Filter products with expanded search criteria
-     
-      const filteredProds = tempFilterProduct
-        .filter(product => product && typeof product === 'object')
-        .filter(product => {
-          const name = product.name?.toLowerCase() || '';
-          const description = product.description?.toLowerCase() || '';
-          const district = product.district?.toLowerCase() || '';
-          const block = product.block?.toLowerCase() || '';
-          const state = product.state?.toLowerCase() || '';
-          const seller = product.sellerName?.toLowerCase() || '';
+        // Filter suggestions
+        const filtered = Array.from(new Set([...recentSearches, ...trendingSearches]))
+          .filter(item => item && typeof item === 'string')
+          .filter(item => item.toLowerCase().includes(searchTerm));
+        setFilteredItems(filtered);
 
-          return (
-            name.includes(searchTerm) ||
-            description.includes(searchTerm) ||
-            district.includes(searchTerm) ||
-            block.includes(searchTerm) ||
-            state.includes(searchTerm) ||
-            seller.includes(searchTerm)
-          );
-        });
-      setFilteredProducts(filteredProds);
-    } catch (error) {
-      console.error('Search error:', error);
-      setFilteredItems([]);
-      setFilteredProducts([]);
-    }
-  };
+        // Filter products
+        const filteredProds = tempFilterProduct
+          .filter(product => {
+            if (!product || typeof product !== 'object') return false;
+            
+            const searchFields = [
+              product.name,
+              product.description,
+              product.district,
+              product.block,
+              product.state,
+              product.sellerName
+            ];
+
+            return searchFields.some(field => 
+              field?.toLowerCase()?.includes(searchTerm)
+            );
+          })
+          .slice(0, 20); // Limit results for better performance
+
+        setFilteredProducts(filteredProds);
+      } catch (error) {
+        console.error('Search error:', error);
+        setFilteredItems([]);
+        setFilteredProducts([]);
+      }
+    }, 300); // Debounce delay
+  }, [recentSearches, tempFilterProduct]);
 
   const renderSearchHeader = () => (
     <Animated.View 
@@ -187,7 +212,7 @@ const SearchOverlay = ({ isVisible, onClose, onSearch, recentSearches = [], temp
   return (
     <Modal
       visible={isVisible}
-      animationType="slide"
+      animationType="none" // Handle animation ourselves
       transparent={false}
       onRequestClose={onClose}
     >
@@ -195,70 +220,80 @@ const SearchOverlay = ({ isVisible, onClose, onSearch, recentSearches = [], temp
         <StatusBar backgroundColor="#fff" barStyle="dark-content" />
         {renderSearchHeader()}
         
-        <View className="flex-1">
-          {searchQuery.length === 0 ? (
-            <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-              {renderSection('Recent Searches', recentSearches, 'time-outline')}
-              {renderSection('Trending Searches', trendingSearches, 'trending-up-outline')}
-              
-              <View className="px-4 py-6 mt-4 bg-gray-50">
-                <Text className="text-center text-sm text-gray-500">
-                  Try searching for products, categories, or brands
-                </Text>
-              </View>
-            </ScrollView>
-          ) : (
-            <ScrollView className="flex-1 px-4">
-              {filteredProducts.length > 0 && (
-                <View className="mb-4">
-                  <Text className="text-sm font-bold text-gray-600 uppercase mb-2">
-                    Products ({filteredProducts.length})
+        <Animated.View className="flex-1" style={{
+          opacity: animatedValue,
+          transform: [{
+            translateY: animatedValue.interpolate({
+              inputRange: [0, 1],
+              outputRange: [50, 0]
+            })
+          }]
+        }}>
+          <View className="flex-1">
+            {searchQuery.length === 0 ? (
+              <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+                {renderSection('Recent Searches', recentSearches, 'time-outline')}
+                {renderSection('Trending Searches', trendingSearches, 'trending-up-outline')}
+                
+                <View className="px-4 py-6 mt-4 bg-gray-50">
+                  <Text className="text-center text-sm text-gray-500">
+                    Try searching for products, categories, or brands
                   </Text>
-                  {filteredProducts.map((item, index) => (
-                    <View key={index}>
-                      {renderProductCard({ item })}
-                    </View>
-                  ))}
                 </View>
-              )}
-              
-              {filteredItems.length > 0 && (
-                <View className="mb-4">
-                  <Text className="text-sm font-bold text-gray-600 uppercase mb-2">
-                    Suggestions
-                  </Text>
-                  {filteredItems.map((item, index) => (
-                    <TouchableOpacity 
-                      key={index}
-                      className="flex-row items-center py-3 border-b border-gray-100"
-                      onPress={() => {
-                        onSearch(item);
-                        onClose();
-                      }}
-                    >
-                      <Ionicons name="search-outline" size={18} color="#048404" />
-                      <Text className="ml-3 flex-1 text-gray-700">{item}</Text>
-                      <Ionicons name="arrow-forward" size={18} color="#999" />
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
-              
-              {filteredProducts.length === 0 && filteredItems.length === 0 && (
-                <View className="flex-1 items-center justify-center py-12">
-                  <View className="w-16 h-16 rounded-full bg-gray-100 items-center justify-center mb-4">
-                    <Ionicons name="search-outline" size={32} color="#999" />
+              </ScrollView>
+            ) : (
+              <ScrollView className="flex-1 px-4">
+                {filteredProducts.length > 0 && (
+                  <View className="mb-4">
+                    <Text className="text-sm font-bold text-gray-600 uppercase mb-2">
+                      Products ({filteredProducts.length})
+                    </Text>
+                    {filteredProducts.map((item, index) => (
+                      <View key={index}>
+                        {renderProductCard({ item })}
+                      </View>
+                    ))}
                   </View>
-                  <Text className="text-gray-500 font-medium">No results found</Text>
-                  <Text className="text-gray-400 text-sm mt-1">Try a different search term</Text>
-                </View>
-              )}
-            </ScrollView>
-          )}
-        </View>
+                )}
+                
+                {filteredItems.length > 0 && (
+                  <View className="mb-4">
+                    <Text className="text-sm font-bold text-gray-600 uppercase mb-2">
+                      Suggestions
+                    </Text>
+                    {filteredItems.map((item, index) => (
+                      <TouchableOpacity 
+                        key={index}
+                        className="flex-row items-center py-3 border-b border-gray-100"
+                        onPress={() => {
+                          onSearch(item);
+                          onClose();
+                        }}
+                      >
+                        <Ionicons name="search-outline" size={18} color="#048404" />
+                        <Text className="ml-3 flex-1 text-gray-700">{item}</Text>
+                        <Ionicons name="arrow-forward" size={18} color="#999" />
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
+                
+                {filteredProducts.length === 0 && filteredItems.length === 0 && (
+                  <View className="flex-1 items-center justify-center py-12">
+                    <View className="w-16 h-16 rounded-full bg-gray-100 items-center justify-center mb-4">
+                      <Ionicons name="search-outline" size={32} color="#999" />
+                    </View>
+                    <Text className="text-gray-500 font-medium">No results found</Text>
+                    <Text className="text-gray-400 text-sm mt-1">Try a different search term</Text>
+                  </View>
+                )}
+              </ScrollView>
+            )}
+          </View>
+        </Animated.View>
       </View>
     </Modal>
   );
 };
 
-export default SearchOverlay;
+export default React.memo(SearchOverlay);

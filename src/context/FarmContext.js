@@ -12,6 +12,7 @@ export const FarmProvider = ({ children }) => {
     setFarms([...farms, farmData]);
     try {
       const response = await addFarmerFarms(farmData, user);
+      console.log("firstResponsezzzzzzzzzz", response)
       if (response.success) {
         // Handle success
         Toast.show({

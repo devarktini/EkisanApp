@@ -20,17 +20,18 @@ export const AppProvider = ({ children }) => {
     
 
     useEffect(() => {
+        
         const initializeAuth = async () => {
            
             try {
                 const rawUserData = await getUserData();
+                console.log("firstUserData", rawUserData)
                 if (!rawUserData) {
                     setIsAuthenticated(false);
                     return;
                 }
                 
                 const userList = JSON.parse(rawUserData);
-                 console.log("userlist , ", userList)
                 if (!userList) {
                     setIsAuthenticated(false);
                     return;
@@ -46,13 +47,10 @@ export const AppProvider = ({ children }) => {
                 }
     
                 const { user, userData } = await autoLogin(phoneNumber);
-                console.log("userData", userData)
-                console.log("user", user)
                 if (!user || !userData) {
                     setIsAuthenticated(false);
                     return;
                 }
-             console.log("userDataxxx", userData.isFirstTimeUser)
                 if (token && user) {
                     if (userData?.isFirstTimeUser) {
                         setShowUpdateProfile(true);
@@ -91,6 +89,8 @@ export const AppProvider = ({ children }) => {
     }, [isAuthenticated]);
 
     const login = async (token, user, userData, refreshToken) => {
+        console.log("firstToken", token)
+        console.log("firstUser", user.uid)
         if (!token) {
             console.error('Token is missing');
             return;
@@ -101,6 +101,7 @@ export const AppProvider = ({ children }) => {
             await saveRefreshToken(refreshToken)
             setAuthToken(token);
             setUserData(user);
+            saveUserData(JSON.stringify(userData));
             setIsAuthenticated(true);
         } catch (error) {
             console.error('Error during login:', error);

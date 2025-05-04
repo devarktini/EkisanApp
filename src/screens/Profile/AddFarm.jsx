@@ -93,8 +93,10 @@ const AddFarm = ({ navigation }) => {
       };
 
       if (editingFarm) {
+        
         await updateFarm(userData, selectedIndex, farmData);
       } else {
+        
         await addFarm(farmData, userData);
       }
 

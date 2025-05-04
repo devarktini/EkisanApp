@@ -5,6 +5,56 @@ import { ref, set, get, query, orderByChild, push, equalTo, onValue, update } fr
 import { saveAuthToken, saveUserData, getAuthToken, removeAuthToken, removeUserData, getRefreshToken } from '../asyncStorege/authStorage';
 import { Alert } from 'react-native';
 
+
+const getUserByPhoneNumber = async (phoneValue) => {
+  try {
+    if (!phoneValue) {
+      throw new Error('Phone number is required');
+    }
+
+    const sanitizedPhone = phoneValue.toString().trim();
+    if (!sanitizedPhone) {
+      throw new Error('Invalid phone number format');
+    }
+
+    const usersRef = ref(database, 'users');
+
+    // Query for phoneNumber
+    const phoneNumberQuery = query(
+      usersRef, 
+      orderByChild('phoneNumber'), 
+      equalTo(sanitizedPhone)
+    );
+    const snapshot1 = await get(phoneNumberQuery);
+    const data1 = snapshot1.val();
+
+    if (data1) {
+      const userId = Object.keys(data1)[0];
+      const userRef = ref(database, `users/${userId}`);
+      return (await get(userRef)).val();
+    }
+
+    // Try alternative phone field if first query fails
+    const phoneQuery = query(
+      usersRef, 
+      orderByChild('phone'), 
+      equalTo(sanitizedPhone)
+    );
+    const snapshot2 = await get(phoneQuery);
+    const data2 = snapshot2.val();
+
+    if (data2) {
+      const userId = Object.keys(data2)[0];
+      const userRef = ref(database, `users/${userId}`);
+      return (await get(userRef)).val();
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error fetching user by phone number:", error);
+    return null;
+  }
+};
 // export const signupAuthService = async (email, password, userData) => {
 
 //     try {
@@ -311,49 +361,7 @@ export const signInAnonymouslyToFirebase = async (number) => {
 //   }
 // };
 
-const getUserByPhoneNumber = async (phoneValue) => {
-  try {
-    const usersRef = ref(database, 'users');
 
-    // Query for phoneNumber
-    const phoneNumberQuery = query(usersRef, orderByChild('phoneNumber'), equalTo(phoneValue));
-    const snapshot1 = await get(phoneNumberQuery);
-    const data1 = snapshot1.val();
-
-    // Query for phone
-    const phoneQuery = query(usersRef, orderByChild('phone'), equalTo(phoneValue));
-    const snapshot2 = await get(phoneQuery);
-    const data2 = snapshot2.val();
-
-    // Merge results: Return first non-null match
-    if (data1) {
-      if (data1 && data1[Object.keys(data1)[0]] && !data1[Object.keys(data1)[0]].isFirstTimeUser && !data1[Object.keys(data1)[0]].isProfileComplete) {
-        const userRef = ref(database, `users/${Object.keys(data1)[0]}`);
-        await update(userRef, {
-          isFirstTimeUser: false,
-          isProfileComplete: true,
-        });
-      }
-      return (await get(ref(database, `users/${Object.keys(data1)[0]}`))).val();
-    }
-       
-    if (data2) {
-      if (data2 && data2[Object.keys(data2)[0]] && !data2[Object.keys(data2)[0]].isFirstTimeUser && !data2[Object.keys(data2)[0]].isProfileComplete) {
-        const userRef = ref(database, `users/${Object.keys(data2)[0]}`);
-        await update(userRef, {
-          isFirstTimeUser: false,
-          isProfileComplete: true,
-        });
-      }
-      return (await get(ref(database, `users/${Object.keys(data2)[0]}`))).val();
-    } 
-
-    return null;
-  } catch (error) {
-    console.error("Error fetching user by phone number or phone:", error);
-    return null;
-  }
-};
 
 const signInWithExistingUser = async (userData) => {
   try {
@@ -556,7 +564,6 @@ export const saveUserInDatabase = async (uid, phoneNumber) => {
 };
 
 export const updateUserProfile = async (userData) => {
-
   try {
     const userRef = ref(database, `users/${userData.uid}`);
     

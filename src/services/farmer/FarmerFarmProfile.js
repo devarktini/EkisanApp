@@ -2,6 +2,8 @@ import { auth, database } from '../../../firebase.config';
 import { ref, set, get, update, serverTimestamp } from "firebase/database";
 
 export const addFarmerFarms = async (data, user) => {
+  console.log("sssssssss",)
+  console.log("d", data, user)
   try {
     if (!data || !user?.uid) {
       throw new Error('Invalid input parameters');
@@ -20,9 +22,10 @@ export const addFarmerFarms = async (data, user) => {
 
     // Ensure `data` is wrapped inside an array and validate farm data
     const newFarm = Array.isArray(data) ? data : [data];
+    console.log("new farm ", newFarm)
     newFarm.forEach(farm => {
-      if (!farm.name || !farm.location) {
-        throw new Error('Farm must have name and location');
+      if (!farm.cropName || !farm.cropType) {
+        throw new Error('Farm must have crop name and grain type');
       }
     });
 

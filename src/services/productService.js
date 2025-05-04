@@ -474,7 +474,6 @@ const imgExtRemover = (uri) => {
           profilePic: imageUrl,
           isApproved: false
       };
-
       // Reference to the user node in Firebase database
       const userRef = ref(database, `users/${user.uid}`);
 

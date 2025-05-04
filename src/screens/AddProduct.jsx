@@ -21,6 +21,7 @@ import {
   uploadImage,
 } from "../services/productService";
 import { LoaderContext } from "../context/LoaderContext";
+import { Ionicons } from "@expo/vector-icons";
 
 const AddProduct = ({ setIsModalVisible }) => {
   const { userData } = useContext(AppContext);
@@ -206,6 +207,12 @@ const AddProduct = ({ setIsModalVisible }) => {
     }
   };
 
+  const handleRemoveImage = (indexToRemove) => {
+    setSelectedImages((prevImages) =>
+      prevImages.filter((_, index) => index !== indexToRemove)
+    );
+  };
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <Text style={styles.title}></Text>
@@ -216,7 +223,15 @@ const AddProduct = ({ setIsModalVisible }) => {
       </TouchableOpacity>
       <View style={styles.imageContainer}>
         {selectedImages.map((uri, index) => (
-          <Image key={index} source={{ uri }} style={styles.imagePreview} />
+          <View key={index} style={styles.imageWrapper}>
+            <Image source={{ uri }} style={styles.imagePreview} />
+            <TouchableOpacity
+              style={styles.removeImageBtn}
+              onPress={() => handleRemoveImage(index)}
+            >
+              <Ionicons name="close-circle" size={24} color="#FF0000" />
+            </TouchableOpacity>
+          </View>
         ))}
       </View>
 
@@ -444,6 +459,11 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     marginBottom: 20,
   },
+  imageWrapper: {
+    position: "relative",
+    marginRight: 10,
+    marginBottom: 10,
+  },
   imagePreview: {
     width: 120,
     height: 120,
@@ -452,6 +472,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderWidth: 1,
     borderColor: "#ddd",
+  },
+  removeImageBtn: {
+    position: "absolute",
+    right: -10,
+    top: -10,
+    backgroundColor: "white",
+    borderRadius: 12,
+    padding: 2,
   },
   inputBox: {
     marginBottom: 20,

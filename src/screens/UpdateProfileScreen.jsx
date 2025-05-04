@@ -101,7 +101,7 @@ const UpdateProfileScreen = ({ navigation }) => {
   }, [user]);
 
   useEffect(() => {
-    console.log("usersssssss", user)
+    
     const getCurrentUserData = async () => {
       try {
         const response = await getCurrentUser(user.phoneNumber || user.phone);
@@ -188,29 +188,32 @@ const UpdateProfileScreen = ({ navigation }) => {
         setLoadings(false);
         return;
       }
+      console.log("userPhone number", userData)
       const result = await updateUserProfile({
         ...formData,
         uid: userData?.uid || userData?.userId,
-        phoneNumber: userPhone,
+        phoneNumber: userData?.phoneNumber || user || userPhone,
         isProfileComplete: true,
         isFirstTimeUser: false,
         updatedAt: new Date().toISOString()
       });
-      console.log("result", result)
       if (result.success) {
-        setIsAuthenticated(true)
+        setIsAuthenticated(true);
         setUserData(result.userData);
         await AsyncStorage.setItem("isFirstLaunch", "false");
         await AsyncStorage.setItem("isFirstTimeUser", "false");
-         console.log("type", type)
+
         if (type === 'edit') {
-          setIsAuthenticated(true)
-          navigation.navigate('MyAccount');
-        }
-        else {
-          // setTimeout(() => {
-            navigation.navigate('Main');
-          // }, 100);
+          // Replace the current screen with MyAccount instead of pushing a new one
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Main' }, { name: 'MyAccount' }],
+          });
+        } else {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Main' }],
+          });
         }
       } else {
         setError(result.error || 'Failed to update profile');
@@ -219,12 +222,14 @@ const UpdateProfileScreen = ({ navigation }) => {
       console.error('Profile update error:', error);
       setError('An error occurred. Please try again.');
     } finally {
+      setIsAuthenticated(true);
       setLoadings(false);
       setLoading(false);
     }
   };
 
   const handleUpload = async () => {
+    console.log("firstImage", userData)
     if (!image) return;
 
     await updatePfp(image, userData);
@@ -569,4 +574,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UpdateProfileScreen; 
+export default UpdateProfileScreen;

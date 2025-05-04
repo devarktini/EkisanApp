@@ -9,9 +9,16 @@ import AddProduct from "../AddProduct";
 import { StyleSheet } from "react-native";
 
 const ProfileScreen = () => {
-  // const [isModalVisible, setIsModalVisible] = useState(false);
   const navigator = useNavigation();
   const { userData } = useContext(AppContext);
+
+  const handleBack = () => {
+    navigator.reset({
+      index: 0,
+      routes: [{ name: 'Main' }],
+    });
+  };
+
   return (
     <ScrollView className="flex-1 bg-white">
       {/* Header with Background Image */}
@@ -29,7 +36,7 @@ const ProfileScreen = () => {
         <View className="flex-row items-center justify-between px-4 py-3">
           <TouchableOpacity
             className="p-2 rounded-full bg-white/20 backdrop-blur-sm"
-            onPress={() => navigator.goBack()}
+            onPress={handleBack}
           >
             <Ionicons name="arrow-back" size={24} color="white" />
           </TouchableOpacity>
@@ -73,7 +80,7 @@ const ProfileScreen = () => {
                   : userData?.name}
               </Text>
               <TouchableOpacity className="bg-[#048404] px-4 py-2 ml-2  text-xs rounded-full ">
-                <Text className="text-white  text-sm text-center">{userData.userType === 'corporate'? 'Company/Organisation':userData.userType}</Text>
+                <Text className="text-white  text-sm text-center">{userData?.userType === 'corporate'? 'Company/Organisation':userData?.userType}</Text>
               </TouchableOpacity>
             </View>
             <Text className="text-md font-bold ">
@@ -127,10 +134,10 @@ const ProfileScreen = () => {
         <Text className="font-bold text-lg mb-4">Services</Text>
         <View className="flex-row flex-wrap justify-between">
           {/* Card 1: My Farm */}
-          {(userData.userType === "farmer" || userData.userType === "corporate") && (
+          {(userData?.userType === "farmer" || userData?.userType === "corporate") && (
             <TouchableOpacity
               onPress={() =>
-                userData.userType === "farmer"
+                userData?.userType === "farmer"
                   ? navigator.navigate("AddFarm")
                   : navigator.navigate("BusinessProfile")
               }
@@ -139,10 +146,10 @@ const ProfileScreen = () => {
               <Feather name="box" size={32} color="#048404" />
               <View className="ml-3 flex-1">
                 <Text className="font-semibold text-gray-800">
-                  {userData.userType === "farmer" ? "My Farm" : "My Business Profile"}
+                  {userData?.userType === "farmer" ? "My Farm" : "My Business Profile"}
                 </Text>
                 <Text className="text-sm text-gray-500">
-                  {userData.userType === "farmer"
+                  {userData?.userType === "farmer"
                     ? "Manage your farm"
                     : "Manage your business"}
                 </Text>
@@ -151,7 +158,7 @@ const ProfileScreen = () => {
           )}
 
           {/* Card 2: Rent Product */}
-          {userData.userType === "farmer" && (
+          {userData?.userType === "farmer" && (
             <TouchableOpacity
               onPress={() => navigator.navigate("rentProduct")}
               className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border"
@@ -179,7 +186,7 @@ const ProfileScreen = () => {
           </TouchableOpacity>
 
           {/* Card 4: My Store */}
-          {userData.userType !== "consumer" && (
+          {userData?.userType !== "consumer" && (
             <TouchableOpacity
               onPress={() => navigator.navigate("myStore")}
               className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border"
@@ -205,7 +212,7 @@ const ProfileScreen = () => {
           </TouchableOpacity>
 
           {/* Card 6: Talk to Expert */}
-         {userData.userType !== "corporate" && (
+         {userData?.userType !== "corporate" && (
             <TouchableOpacity
             onPress={() => navigator.navigate("TalkToExpert")}
             className="w-[48%] bg-white p-4 rounded-xl shadow-md mb-4 flex-row items-center border-[#048404] border"

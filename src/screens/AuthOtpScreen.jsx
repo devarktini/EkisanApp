@@ -22,14 +22,15 @@ import {
 import { saveToStorage } from "../asyncStorege/authStorage";
 
 const AuthOtpScreen = () => {
+  // const { userData, setUserData } = useContext(AppContext);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [userData, setUserData] = useState(null);
+  // const [userData, setUserData] = useState(null);
   const navigation = useNavigation();
   const route = useRoute();
   const { phoneNumber } = route.params; // Get the phone number from the previous screen
-  const { login } = useContext(AppContext);
+  const { login, userData, setUserData } = useContext(AppContext);
 
   // Create refs for the input fields
   const inputRefs = [
@@ -63,7 +64,7 @@ const AuthOtpScreen = () => {
         setLoading(false);
       } else {
         var authResponse = await signInAnonymouslyToFirebase(phoneNumber);
-       
+        console.log("ssssssssss", authResponse)
         if (authResponse.success) {
           const userData = authResponse.userData;
           setUserData(authResponse.userData);

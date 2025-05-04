@@ -8,7 +8,7 @@ const GlobalProgressBar = () => {
   const animatedProgress = useSharedValue(0);
 
   useEffect(() => {
-    animatedProgress.value = withTiming(progress, { duration: 500 });
+    animatedProgress.value = withTiming(progress, { duration: 100 });
   }, [progress]);
 
   const animatedStyle = useAnimatedStyle(() => ({

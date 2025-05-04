@@ -82,7 +82,6 @@ const AppNavigator = ({ isFirstLaunch }) => {
     };
     checkAuth();
   }, []);
- 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {isFirstLaunch ? (

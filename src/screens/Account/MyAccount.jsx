@@ -17,6 +17,13 @@ const MyAccount = ({ navigation }) => {
     });
   };
 
+  const handleBack = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Profile' }],
+    });
+  };
+
   return (
     <View className="flex-1 bg-gray-100">
       {/* Header */}
@@ -24,7 +31,7 @@ const MyAccount = ({ navigation }) => {
       <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-gray-100 shadow-sm">
         <TouchableOpacity
           className="p-2 rounded-full bg-gray-50"
-          onPress={() => navigation.goBack()}
+          onPress={handleBack}
         >
           <Ionicons name="arrow-back" size={24} color="#048404" />
         </TouchableOpacity>

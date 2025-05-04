@@ -95,17 +95,6 @@ const ProductDetails = ({}) => {
   const handleLocationPress = (key ,location) => {
     console.log("first", key)
     navigation.navigate("ProductList", {filterKey: key, filterValue:location });
-// fetchProducts({})
-//   .then((products) => {
-//     console.log("Fetched products:", products.length);
-//     const pr = filterProduct({products:products, filterBy:"district", district:location})
-//     console.log("first", pr.length)
-//   })
-//   .catch((error) => {
-//     console.error("Error fetching products:", error);
-//   });
-
-    // Handle location press (e.g., navigate to a map or details scree
   }
 
   return (
@@ -145,7 +134,7 @@ const ProductDetails = ({}) => {
         {/* Product Image */}
         <ScrollView>
           <Image
-            source={{ uri: mainImage }}
+            source={{ uri:product?.imgUrl }}
             className="w-full h-72"
             resizeMode="cover"
           />

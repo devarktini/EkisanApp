@@ -58,15 +58,7 @@ const TabNavigator = ({ route }) => {
         }}
       />
       <Tab.Screen name="Profile" component={ProfileScreen} />
-      {/* <Tab.Screen name="Wishlist" component={Wishlist} 
-        options={{
-        title: 'Wishlist',
-        tabBarBadge: getWishlistItemCount() > 0 ? getWishlistItemCount() : null, // Dynamic badge
-      }}
-      /> */}
-      {/* <Tab.Screen name="ShoppingBag" component={ShoppingBag} /> */}
 
-      {/* <Tab.Screen name="Settings" component={SettingsScreen} /> */}
     
     </Tab.Navigator>
   );
